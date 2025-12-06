@@ -1,0 +1,10 @@
+name: piper
+description: "A lightweight, dependency-free state management library for Flutter."
+version: 0.0.1
+license: MIT
+homepage:
+
+environment:
+  sdk: ^3.9.2
+
+resolution: workspace

@@ -1,0 +1,66 @@
+# Rivolo - Flutter State Management Library
+
+# Default recipe: list available commands
+default:
+    @just --list
+
+# Run the example app (default platform)
+flutter-run:
+    cd example && flutter run
+
+# Run the example app on macOS
+flutter-run-macos:
+    cd example && flutter run -d macos
+
+# Run the example app on iOS simulator
+flutter-run-ios:
+    cd example && flutter run -d ios
+
+# Run the example app on Chrome
+flutter-run-web:
+    cd example && flutter run -d chrome
+
+# Run all tests
+test:
+    flutter test
+
+# Run tests with coverage
+test-coverage:
+    flutter test --coverage
+
+# Analyze code for issues
+analyze:
+    flutter analyze
+
+# Format all Dart files
+format:
+    dart format lib test example/lib
+
+# Check formatting without changes
+format-check:
+    dart format --set-exit-if-changed lib test example/lib
+
+# Get dependencies for library and example
+deps:
+    flutter pub get
+    cd example && flutter pub get
+
+# Clean build artifacts
+clean:
+    flutter clean
+    cd example && flutter clean
+
+# Build example for macOS (debug)
+build-macos:
+    cd example && flutter build macos --debug
+
+# Build example for macOS (release)
+build-macos-release:
+    cd example && flutter build macos --release
+
+# Run library tests and analyze
+ci: deps analyze test
+
+# Watch tests (re-run on file changes)
+test-watch:
+    flutter test --watch
