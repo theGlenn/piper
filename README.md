@@ -16,7 +16,7 @@ class UserViewModel extends ViewModel {
     load(profile, () => _auth.fetchProfile());
   }
 
-  late final user = streamTo(_auth.userStream, initial: null);
+  late final user = bind(_auth.userStream, initial: null);
   late final profile = asyncState<Profile>();
 }
 ```

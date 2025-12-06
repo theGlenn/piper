@@ -30,33 +30,33 @@ class TransformViewModel extends ViewModel {
   late final StateHolder<int> doubled;
 }
 
-class StreamToViewModel extends ViewModel {
-  StreamToViewModel(Stream<int> stream) {
-    data = streamTo(stream, initial: 0);
+class BindViewModel extends ViewModel {
+  BindViewModel(Stream<int> stream) {
+    data = bind(stream, initial: 0);
   }
 
   late final StateHolder<int> data;
 }
 
-class StreamToTransformViewModel extends ViewModel {
-  StreamToTransformViewModel(Stream<int> stream) {
-    data = streamTo(stream, initial: 0, transform: (v) => v * 2);
+class BindTransformViewModel extends ViewModel {
+  BindTransformViewModel(Stream<int> stream) {
+    data = bind(stream, initial: 0, transform: (v) => v * 2);
   }
 
   late final StateHolder<int> data;
 }
 
-class StreamToAsyncViewModel extends ViewModel {
-  StreamToAsyncViewModel(Stream<int> stream) {
-    data = streamToAsync(stream);
+class BindAsyncViewModel extends ViewModel {
+  BindAsyncViewModel(Stream<int> stream) {
+    data = bindAsync(stream);
   }
 
   late final AsyncStateHolder<int> data;
 }
 
-class StreamToAsyncTransformViewModel extends ViewModel {
-  StreamToAsyncTransformViewModel(Stream<int> stream) {
-    data = streamToAsync(stream, transform: (v) => v * 2);
+class BindAsyncTransformViewModel extends ViewModel {
+  BindAsyncTransformViewModel(Stream<int> stream) {
+    data = bindAsync(stream, transform: (v) => v * 2);
   }
 
   late final AsyncStateHolder<int> data;
@@ -143,11 +143,11 @@ void main() {
     });
   });
 
-  group('streamTo', () {
+  group('bind', () {
     test('updates state when stream emits', () async {
       final scope = TestScope();
       final controller = StreamController<int>.broadcast();
-      final vm = scope.create(StreamToViewModel(controller.stream));
+      final vm = scope.create(BindViewModel(controller.stream));
 
       expect(vm.data.value, 0);
 
@@ -163,7 +163,7 @@ void main() {
     test('applies transform when provided', () async {
       final scope = TestScope();
       final controller = StreamController<int>.broadcast();
-      final vm = scope.create(StreamToTransformViewModel(controller.stream));
+      final vm = scope.create(BindTransformViewModel(controller.stream));
 
       controller.add(5);
       await Future.microtask(() {});
@@ -177,7 +177,7 @@ void main() {
     test('subscription is cancelled on dispose', () async {
       final scope = TestScope();
       final controller = StreamController<int>.broadcast();
-      final vm = scope.create(StreamToViewModel(controller.stream));
+      final vm = scope.create(BindViewModel(controller.stream));
 
       scope.dispose();
 
@@ -191,11 +191,11 @@ void main() {
     });
   });
 
-  group('streamToAsync', () {
+  group('bindAsync', () {
     test('starts in loading state', () {
       final scope = TestScope();
       final controller = StreamController<int>.broadcast();
-      final vm = scope.create(StreamToAsyncViewModel(controller.stream));
+      final vm = scope.create(BindAsyncViewModel(controller.stream));
 
       expect(vm.data.isLoading, true);
       expect(vm.data.hasData, false);
@@ -207,7 +207,7 @@ void main() {
     test('transitions to data on emission', () async {
       final scope = TestScope();
       final controller = StreamController<int>.broadcast();
-      final vm = scope.create(StreamToAsyncViewModel(controller.stream));
+      final vm = scope.create(BindAsyncViewModel(controller.stream));
 
       controller.add(42);
       await Future.microtask(() {});
@@ -223,7 +223,7 @@ void main() {
     test('transitions to error on stream error', () async {
       final scope = TestScope();
       final controller = StreamController<int>.broadcast();
-      final vm = scope.create(StreamToAsyncViewModel(controller.stream));
+      final vm = scope.create(BindAsyncViewModel(controller.stream));
 
       controller.addError(Exception('Test error'));
       await Future.microtask(() {});
@@ -238,7 +238,7 @@ void main() {
     test('applies transform when provided', () async {
       final scope = TestScope();
       final controller = StreamController<int>.broadcast();
-      final vm = scope.create(StreamToAsyncTransformViewModel(controller.stream));
+      final vm = scope.create(BindAsyncTransformViewModel(controller.stream));
 
       controller.add(5);
       await Future.microtask(() {});
@@ -252,7 +252,7 @@ void main() {
     test('subscription is cancelled on dispose', () async {
       final scope = TestScope();
       final controller = StreamController<int>.broadcast();
-      final vm = scope.create(StreamToAsyncViewModel(controller.stream));
+      final vm = scope.create(BindAsyncViewModel(controller.stream));
 
       scope.dispose();
 

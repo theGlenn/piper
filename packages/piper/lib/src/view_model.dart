@@ -61,10 +61,10 @@ abstract class ViewModel {
   ///
   /// Example:
   /// ```dart
-  /// late final user = streamTo(_authRepo.userStream, initial: null);
+  /// late final user = bind(_authRepo.userStream, initial: null);
   /// ```
   @protected
-  StateHolder<T> streamTo<T>(
+  StateHolder<T> bind<T>(
     Stream<T> stream, {
     required T initial,
     T Function(T)? transform,
@@ -108,10 +108,10 @@ abstract class ViewModel {
   ///
   /// Example:
   /// ```dart
-  /// late final todos = streamToAsync(_todoRepo.watchAll());
+  /// late final todos = bindAsync(_todoRepo.watchAll());
   /// ```
   @protected
-  AsyncStateHolder<T> streamToAsync<T>(
+  AsyncStateHolder<T> bindAsync<T>(
     Stream<T> stream, {
     T Function(T)? transform,
   }) {

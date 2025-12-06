@@ -7,7 +7,7 @@ class TodosViewModel extends ViewModel {
 
   TodosViewModel(this._todoRepo);
 
-  late final todos = streamToAsync<List<Todo>>(_todoRepo.todosStream);
+  late final todos = bindAsync<List<Todo>>(_todoRepo.todosStream);
 
   List<Todo> get pendingTodos =>
       todos.dataOrNull?.where((t) => !t.completed).toList() ?? [];

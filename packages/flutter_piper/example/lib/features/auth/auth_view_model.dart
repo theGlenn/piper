@@ -8,7 +8,7 @@ class AuthViewModel extends ViewModel {
 
   AuthViewModel(this._authRepo);
 
-  late final user = streamTo<User?>(_authRepo.userStream, initial: null);
+  late final user = bind<User?>(_authRepo.userStream, initial: null);
   late final loginState = asyncState<void>();
 
   void login(String email, String password) {
