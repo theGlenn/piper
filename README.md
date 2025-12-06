@@ -1,4 +1,4 @@
-# Piper
+# Piper 🚰
 
 State management that gets out of your way.
 
@@ -137,31 +137,52 @@ user.setEmpty();
 void loadUser() => load(user, () => _repo.getUser());
 ```
 
+### Stream Bindings
+
+Bind streams directly to state. Subscription auto-cancels on dispose.
+
+```dart
+// Bind stream to StateHolder
+late final user = streamTo<User?>(_authRepo.userStream, initial: null);
+
+// Bind with transformation
+late final userName = stateFrom<User, String>(
+  _authRepo.userStream,
+  initial: '',
+  transform: (user) => user.name,
+);
+
+// Bind to AsyncStateHolder (auto loading/error handling)
+late final todos = streamToAsync<List<Todo>>(_todoRepo.watchAll());
+```
+
 ### ViewModel
 
 Lifecycle-aware base class. Manages state, subscriptions, and async tasks.
 
 ```dart
-class ProfileViewModel extends ViewModel {
-  final AuthRepository _auth;
+class AuthViewModel extends ViewModel {
+  final AuthRepository _authRepo;
 
-  ProfileViewModel(this._auth) {
-    // Stream subscription — auto-cancelled on dispose
-    subscribe(_auth.userStream, (u) => user.value = u);
+  AuthViewModel(this._authRepo);
+
+  // Stream bound to state — one line
+  late final user = streamTo<User?>(_authRepo.userStream, initial: null);
+  late final loginState = asyncState<void>();
+
+  void login(String email, String password) {
+    load(loginState, () => _authRepo.login(email, password));
   }
 
-  late final user = state<User?>(null);
-  late final posts = asyncState<List<Post>>();
-
-  void loadPosts() {
-    // Async work — auto-cancelled on dispose
-    load(posts, () => _repo.getPosts(user.value!.id));
+  void logout() {
+    load(loginState, () => _authRepo.logout());
   }
 }
 ```
 
 **Managed automatically:**
 - `state()` / `asyncState()` — disposed
+- `streamTo()` / `stateFrom()` / `streamToAsync()` — subscriptions cancelled
 - `subscribe()` — cancelled
 - `launch()` / `launchWith()` / `load()` — cancelled
 
