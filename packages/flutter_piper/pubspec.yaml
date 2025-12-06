@@ -1,4 +1,4 @@
-name: piper
+name: flutter_piper
 description: "A lightweight, dependency-free state management library"
 version: 0.0.1
 license: MIT
@@ -14,7 +14,6 @@ dependencies:
   flutter:
     sdk: flutter
   piper:
-    path: ../piper
 
 dev_dependencies:
   flutter_test:

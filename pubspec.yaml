@@ -3,6 +3,5 @@ publish_to: none
 environment:
   sdk: ^3.9.2
 workspace:
-  - packages/shared
-  - packages/client_package
-  - packages/server_package
+  - packages/piper
+  - packages/flutter_piper
