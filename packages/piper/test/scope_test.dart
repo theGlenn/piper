@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:piper/piper.dart';
+import 'package:piper/flutter_piper.dart';
 
 class CounterViewModel extends ViewModel {
   late final count = state(0);

@@ -1,4 +1,4 @@
-import 'package:piper/piper.dart';
+import 'package:piper/flutter_piper.dart';
 
 import '../../data/auth_repository.dart';
 import '../../domain/user.dart';

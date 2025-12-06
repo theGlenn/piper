@@ -1,6 +1,6 @@
 import 'package:example/data/todo_repository.dart';
 import 'package:example/domain/todo.dart';
-import 'package:piper/piper.dart';
+import 'package:piper/flutter_piper.dart';
 
 class TodosViewModel extends ViewModel {
   final TodoRepository _todoRepo;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:piper/piper.dart';
+import 'package:piper/flutter_piper.dart';
 
 void main() {
   group('AsyncStateHolder', () {

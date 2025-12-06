@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:piper/piper.dart';
+import 'package:piper/flutter_piper.dart';
 
 import 'auth_view_model.dart';
 
