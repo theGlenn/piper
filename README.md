@@ -2,7 +2,7 @@
 
 State management that gets out of your way.
 
-Lifecycle-aware ViewModels, explicit dependencies, automatic cleanup. Patterns that have worked for years — now in Flutter.
+Lifecycle-aware ViewModels, explicit dependencies, automatic cleanup. Patterns that have worked for years, now in Flutter.
 
 ## Why Piper?
 
