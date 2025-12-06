@@ -6,38 +6,47 @@ Lifecycle-aware ViewModels, explicit dependencies, automatic cleanup. Patterns t
 
 ## In a nutshell
 
-Define a ViewModel with stream binding:
+**Bind a stream** — state updates automatically, subscription auto-cancels on dispose:
 
 ```dart
-class UserViewModel extends ViewModel {
-  final AuthRepository _auth;
-
-  UserViewModel(this._auth) {
-    load(profile, () => _auth.fetchProfile());
-  }
+class AuthViewModel extends ViewModel {
+  AuthViewModel(AuthRepository auth);
 
   late final user = bind(_auth.userStream, initial: null);
-  late final profile = asyncState<Profile>();
+
+  bool get isLoggedIn => user.value != null;
 }
 ```
 
-Listen to state in your UI and handle loading/error states:
+```dart
+// In your widget
+vm.user.build((user) => Text('Hello, ${user?.name ?? "Guest"}'));
+```
+
+**Async operations** — loading/error/data handled automatically:
 
 ```dart
-class ProfilePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final vm = context.vm<UserViewModel>();
+late final profile = asyncState<Profile>();
 
-    return vm.profile.build(
-      (state) => switch (state) {
-        AsyncData(:final data) => Text('Hello, ${data.name}'),
-        AsyncError(:final message) => Text('Error: $message'),
-        _ => const CircularProgressIndicator(),
-      },
-    );
-  }
-}
+void loadProfile() => load(profile, () => _repo.fetchProfile());
+```
+
+```dart
+vm.profile.build(
+  (state) => switch (state) {
+    AsyncData(:final data) => Text(data.name),
+    AsyncError(:final message) => Text('Error: $message'),
+    _ => const CircularProgressIndicator(),
+  },
+);
+```
+
+**Simple state** — just values:
+
+```dart
+late final count = state(0);
+
+void increment() => count.update((c) => c + 1);
 ```
 
 ## Why Piper?
