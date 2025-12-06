@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart' as flutter;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_piper/flutter_piper.dart';
@@ -6,7 +6,7 @@ import 'package:flutter_piper/flutter_piper.dart';
 void main() {
   group('StateListener', () {
     testWidgets('calls onChange when value changes', (tester) async {
-      final notifier = flutter.ValueNotifier(0);
+      final notifier = ValueNotifier(0);
       final changes = <(int, int)>[];
 
       await tester.pumpWidget(
@@ -33,7 +33,7 @@ void main() {
     });
 
     testWidgets('does not rebuild child on value change', (tester) async {
-      final notifier = flutter.ValueNotifier(0);
+      final notifier = ValueNotifier(0);
       var buildCount = 0;
 
       await tester.pumpWidget(
@@ -61,7 +61,7 @@ void main() {
     });
 
     testWidgets('tracks previous value correctly', (tester) async {
-      final notifier = flutter.ValueNotifier(10);
+      final notifier = ValueNotifier(10);
       final previousValues = <int>[];
 
       await tester.pumpWidget(
@@ -89,8 +89,8 @@ void main() {
     });
 
     testWidgets('handles listenable change', (tester) async {
-      final notifier1 = flutter.ValueNotifier(0);
-      final notifier2 = flutter.ValueNotifier(100);
+      final notifier1 = ValueNotifier(0);
+      final notifier2 = ValueNotifier(100);
       final changes = <(int, int)>[];
 
       await tester.pumpWidget(
@@ -134,7 +134,7 @@ void main() {
     });
 
     testWidgets('removes listener on dispose', (tester) async {
-      final notifier = flutter.ValueNotifier(0);
+      final notifier = ValueNotifier(0);
       var callCount = 0;
 
       await tester.pumpWidget(

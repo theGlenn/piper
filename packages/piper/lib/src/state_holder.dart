@@ -1,4 +1,4 @@
-import 'listenable.dart';
+import 'package:flutter/foundation.dart';
 
 /// Synchronous state container wrapping [ValueNotifier].
 ///

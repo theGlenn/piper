@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart' as flutter;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_piper/flutter_piper.dart';
@@ -6,7 +6,7 @@ import 'package:flutter_piper/flutter_piper.dart';
 void main() {
   group('StateEffect', () {
     testWidgets('fires effect on value change', (tester) async {
-      final notifier = flutter.ValueNotifier(0);
+      final notifier = ValueNotifier(0);
       final effects = <int>[];
 
       await tester.pumpWidget(
@@ -27,7 +27,7 @@ void main() {
 
     testWidgets('effect runs in post-frame callback (not immediately)',
         (tester) async {
-      final notifier = flutter.ValueNotifier(false);
+      final notifier = ValueNotifier(false);
       var effectFired = false;
 
       await tester.pumpWidget(
@@ -50,7 +50,7 @@ void main() {
 
     testWidgets('when condition receives previous and current values',
         (tester) async {
-      final notifier = flutter.ValueNotifier(0);
+      final notifier = ValueNotifier(0);
       final whenCalls = <(int, int)>[];
 
       await tester.pumpWidget(
@@ -75,7 +75,7 @@ void main() {
     });
 
     testWidgets('when condition can prevent effect from firing', (tester) async {
-      final notifier = flutter.ValueNotifier(0);
+      final notifier = ValueNotifier(0);
       var effectFired = false;
 
       await tester.pumpWidget(
@@ -96,7 +96,7 @@ void main() {
     });
 
     testWidgets('does not rebuild child on value change', (tester) async {
-      final notifier = flutter.ValueNotifier(0);
+      final notifier = ValueNotifier(0);
       var buildCount = 0;
 
       await tester.pumpWidget(
@@ -124,7 +124,7 @@ void main() {
     });
 
     testWidgets('removes listener on dispose', (tester) async {
-      final notifier = flutter.ValueNotifier(0);
+      final notifier = ValueNotifier(0);
       var effectCount = 0;
 
       await tester.pumpWidget(
@@ -151,7 +151,7 @@ void main() {
     });
 
     testWidgets('does not fire if unmounted before post-frame', (tester) async {
-      final notifier = flutter.ValueNotifier(false);
+      final notifier = ValueNotifier(false);
       var effectFired = false;
 
       await tester.pumpWidget(
@@ -173,7 +173,7 @@ void main() {
     });
 
     testWidgets('effect receives valid context', (tester) async {
-      final notifier = flutter.ValueNotifier(false);
+      final notifier = ValueNotifier(false);
       BuildContext? capturedContext;
 
       await tester.pumpWidget(
@@ -199,7 +199,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: StateEffect<int>(
-            listenable: holder.flutterListenable,
+            listenable: holder.listenable,
             when: (prev, curr) {
               lastWhenCall = (prev, curr);
               return true;

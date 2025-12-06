@@ -1,4 +1,4 @@
-import 'package:test/test.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:piper/piper.dart';
 
 void main() {
@@ -127,8 +127,8 @@ void main() {
         final holder = AsyncStateHolder<int>();
         holder.dispose();
 
-        // After dispose, setting value should throw
-        expect(() => holder.setData(42), throwsStateError);
+        // After dispose, setting value should throw (FlutterError in debug mode)
+        expect(() => holder.setData(42), throwsFlutterError);
       });
     });
   });

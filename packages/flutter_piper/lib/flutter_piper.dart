@@ -21,4 +21,3 @@ export 'src/scope.dart';
 // Flutter Extensions
 export 'src/state_holder_extensions.dart';
 export 'src/async_state_holder_extensions_flutter.dart';
-export 'src/flutter_listenable_adapter.dart';

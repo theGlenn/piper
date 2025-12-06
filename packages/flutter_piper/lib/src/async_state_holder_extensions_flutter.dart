@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:piper/piper.dart';
 
-import 'flutter_listenable_adapter.dart';
 import 'state_holder_extensions.dart';
 import 'state_listener.dart';
 
@@ -72,7 +71,7 @@ extension AsyncStateHolderFlutter<T> on AsyncStateHolder<T> {
     required Widget child,
   }) {
     return StateListener<AsyncState<T>>(
-      listenable: flutterListenable,
+      listenable: listenable,
       onChange: (previous, current) {
         if (onData != null && current is AsyncData<T>) {
           onData(current.data);

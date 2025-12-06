@@ -1,7 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:piper/piper.dart';
 
-import 'flutter_listenable_adapter.dart';
 import 'state_listener.dart';
 
 /// Flutter widget extensions for [StateHolder].
@@ -16,7 +15,7 @@ extension StateHolderWidgets<T> on StateHolder<T> {
   /// ```
   Widget build(Widget Function(T value) builder) {
     return ValueListenableBuilder<T>(
-      valueListenable: flutterListenable,
+      valueListenable: listenable,
       builder: (_, value, __) => builder(value),
     );
   }
@@ -39,7 +38,7 @@ extension StateHolderWidgets<T> on StateHolder<T> {
     Widget? child,
   }) {
     return ValueListenableBuilder<T>(
-      valueListenable: flutterListenable,
+      valueListenable: listenable,
       builder: (_, value, child) => builder(value, child),
       child: child,
     );
@@ -63,7 +62,7 @@ extension StateHolderWidgets<T> on StateHolder<T> {
     required Widget child,
   }) {
     return StateListener<T>(
-      listenable: flutterListenable,
+      listenable: listenable,
       onChange: onChange,
       child: child,
     );
