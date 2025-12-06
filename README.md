@@ -41,12 +41,33 @@ vm.profile.build(
 );
 ```
 
-**Simple state** — just values:
+## "Just show me a counter"
 
 ```dart
-late final count = state(0);
+class CounterViewModel extends ViewModel {
+  late final count = state(0);
 
-void increment() => count.update((c) => c + 1);
+  void increment() => count.update((c) => c + 1);
+}
+```
+
+```dart
+class CounterPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final vm = context.vm<CounterViewModel>();
+
+    return Scaffold(
+      body: Center(
+        child: vm.count.build((count) => Text('$count')),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: vm.increment,
+        child: Icon(Icons.add),
+      ),
+    );
+  }
+}
 ```
 
 ## Why Piper?
