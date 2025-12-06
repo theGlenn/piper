@@ -1,0 +1,11 @@
+pubspec.lock
+node_modules
+package-lock.json
+
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/

@@ -1,0 +1,36 @@
+# Node modules
+node_modules/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build output
+dist/
+build/
+.tmp/
+.temp/
+.cache/
+coverage/
+
+# Misc
+.env
+.env.*.local
+.DS_Store
+.idea/
+.vscode/
+*.local
+
+# Dependency directories
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# SvelteKit, Next.js, Nuxt.js, etc. outputs
+.svelte-kit/
+.next/
+.nuxt/
+
