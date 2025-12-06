@@ -4,7 +4,7 @@ State management that gets out of your way.
 
 Lifecycle-aware ViewModels, explicit dependencies, automatic cleanup. Patterns that have worked for years, now in Flutter.
 
-## Long story short
+## In a nutshell
 
 Define a ViewModel with stream binding:
 
