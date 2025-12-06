@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
+import 'package:test/test.dart';
 import 'package:piper/piper.dart';
 
 void main() {
@@ -129,7 +128,7 @@ void main() {
         holder.dispose();
 
         // After dispose, setting value should throw
-        expect(() => holder.setData(42), throwsFlutterError);
+        expect(() => holder.setData(42), throwsStateError);
       });
     });
   });
@@ -236,118 +235,6 @@ void main() {
         expect(state, isA<AsyncError<int>>());
         expect((state as AsyncError<int>).error, exception);
       });
-    });
-  });
-
-  group('AsyncStateHolder.listenAsync', () {
-    testWidgets('calls onData when transitioning to data state', (tester) async {
-      final holder = AsyncStateHolder<int>();
-      int? receivedData;
-
-      await tester.pumpWidget(
-        MaterialApp(
-          home: holder.listenAsync(
-            onData: (data) => receivedData = data,
-            child: const Text('test'),
-          ),
-        ),
-      );
-
-      holder.setData(42);
-      await tester.pump();
-
-      expect(receivedData, 42);
-    });
-
-    testWidgets('calls onError when transitioning to error state', (tester) async {
-      final holder = AsyncStateHolder<int>();
-      String? receivedError;
-
-      await tester.pumpWidget(
-        MaterialApp(
-          home: holder.listenAsync(
-            onError: (msg) => receivedError = msg,
-            child: const Text('test'),
-          ),
-        ),
-      );
-
-      holder.setError('Something went wrong');
-      await tester.pump();
-
-      expect(receivedError, 'Something went wrong');
-    });
-
-    testWidgets('calls onLoading when transitioning to loading state', (tester) async {
-      final holder = AsyncStateHolder<int>.data(0);
-      var loadingCalled = false;
-
-      await tester.pumpWidget(
-        MaterialApp(
-          home: holder.listenAsync(
-            onLoading: () => loadingCalled = true,
-            child: const Text('test'),
-          ),
-        ),
-      );
-
-      holder.setLoading();
-      await tester.pump();
-
-      expect(loadingCalled, true);
-    });
-
-    testWidgets('does not rebuild child on state change', (tester) async {
-      final holder = AsyncStateHolder<int>();
-      var buildCount = 0;
-
-      await tester.pumpWidget(
-        MaterialApp(
-          home: holder.listenAsync(
-            onData: (_) {},
-            child: Builder(
-              builder: (context) {
-                buildCount++;
-                return const Text('test');
-              },
-            ),
-          ),
-        ),
-      );
-
-      expect(buildCount, 1);
-
-      holder.setData(42);
-      await tester.pump();
-
-      // Child should not rebuild
-      expect(buildCount, 1);
-    });
-
-    testWidgets('only calls relevant callback for state type', (tester) async {
-      final holder = AsyncStateHolder<int>();
-      var dataCalled = false;
-      var errorCalled = false;
-      var loadingCalled = false;
-
-      await tester.pumpWidget(
-        MaterialApp(
-          home: holder.listenAsync(
-            onData: (_) => dataCalled = true,
-            onError: (_) => errorCalled = true,
-            onLoading: () => loadingCalled = true,
-            child: const Text('test'),
-          ),
-        ),
-      );
-
-      // Transition to data
-      holder.setData(42);
-      await tester.pump();
-
-      expect(dataCalled, true);
-      expect(errorCalled, false);
-      expect(loadingCalled, false);
     });
   });
 }

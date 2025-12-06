@@ -57,7 +57,7 @@ class AuthGate extends StatelessWidget {
 
     // Rebuild when user changes (logged in/out)
     return StateBuilder(
-      listenable: authVm.user.listenable,
+      listenable: authVm.user.flutterListenable,
       builder: (context, user, __) {
         if (user != null) {
           return const TodoListPage();

@@ -1,14 +1,9 @@
-
-import 'package:flutter/widgets.dart';
-
 import 'async_state.dart';
 import 'state_holder.dart';
-import 'state_listener.dart';
 
 /// Extended [StateHolder] for async operations with built-in state management.
 ///
-/// Wraps [AsyncState] and provides convenient methods for state transitions
-/// and widget building.
+/// Wraps [AsyncState] and provides convenient methods for state transitions.
 ///
 /// Example:
 /// ```dart
@@ -17,13 +12,6 @@ import 'state_listener.dart';
 ///
 ///   void loadUser() => load(user, () => _repo.getUser());
 /// }
-///
-/// // In widget
-/// vm.user.when(
-///   loading: () => CircularProgressIndicator(),
-///   error: (msg) => Text('Error: $msg'),
-///   data: (user) => Text('Hello, ${user.name}'),
-/// )
 /// ```
 class AsyncStateHolder<T> extends StateHolder<AsyncState<T>> {
   /// Creates an [AsyncStateHolder] in the empty state.
@@ -69,44 +57,4 @@ class AsyncStateHolder<T> extends StateHolder<AsyncState<T>> {
 
   /// Transitions to the empty state.
   void setEmpty() => value = const AsyncEmpty();
-
-  // Side effects
-
-  /// Listen to async state changes for side effects.
-  ///
-  /// Provides type-safe callbacks for each async state type.
-  /// Use for side effects like showing snackbars on error, navigation, etc.
-  ///
-  /// Example:
-  /// ```dart
-  /// vm.saveState.listenAsync(
-  ///   onData: (data) => Navigator.of(context).pop(),
-  ///   onError: (msg) => ScaffoldMessenger.of(context).showSnackBar(
-  ///     SnackBar(content: Text(msg)),
-  ///   ),
-  ///   child: // rest of UI
-  /// )
-  /// ```
-  Widget listenAsync({
-    void Function(T data)? onData,
-    void Function(String message)? onError,
-    void Function()? onLoading,
-    required Widget child,
-  }) {
-    return StateListener<AsyncState<T>>(
-      listenable: listenable,
-      onChange: (previous, current) {
-        if (onData != null && current is AsyncData<T>) {
-          onData(current.data);
-        }
-        if (onError != null && current is AsyncError<T>) {
-          onError(current.message);
-        }
-        if (onLoading != null && current is AsyncLoading<T>) {
-          onLoading();
-        }
-      },
-      child: child,
-    );
-  }
 }

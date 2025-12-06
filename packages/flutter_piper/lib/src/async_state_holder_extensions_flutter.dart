@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:piper/piper.dart';
 
+import 'flutter_listenable_adapter.dart';
+import 'state_holder_extensions.dart';
+import 'state_listener.dart';
+
+/// Flutter widget extensions for [AsyncStateHolder].
 extension AsyncStateHolderFlutter<T> on AsyncStateHolder<T> {
   /// Widget builder with built-in state handling.
   ///
@@ -9,7 +14,7 @@ extension AsyncStateHolderFlutter<T> on AsyncStateHolder<T> {
   ///
   /// Example:
   /// ```dart
-  /// vm.user.when(
+  /// vm.user.displayWhen(
   ///   data: (user) => Text('Hello, ${user.name}'),
   /// )
   /// ```
@@ -43,5 +48,43 @@ extension AsyncStateHolderFlutter<T> on AsyncStateHolder<T> {
   /// Uses default widgets for empty, loading, and error states.
   Widget displayWhenData(Widget Function(T data) builder) {
     return displayWhen(data: builder);
+  }
+
+  /// Listen to async state changes for side effects.
+  ///
+  /// Provides type-safe callbacks for each async state type.
+  /// Use for side effects like showing snackbars on error, navigation, etc.
+  ///
+  /// Example:
+  /// ```dart
+  /// vm.saveState.listenAsync(
+  ///   onData: (data) => Navigator.of(context).pop(),
+  ///   onError: (msg) => ScaffoldMessenger.of(context).showSnackBar(
+  ///     SnackBar(content: Text(msg)),
+  ///   ),
+  ///   child: // rest of UI
+  /// )
+  /// ```
+  Widget listenAsync({
+    void Function(T data)? onData,
+    void Function(String message)? onError,
+    void Function()? onLoading,
+    required Widget child,
+  }) {
+    return StateListener<AsyncState<T>>(
+      listenable: flutterListenable,
+      onChange: (previous, current) {
+        if (onData != null && current is AsyncData<T>) {
+          onData(current.data);
+        }
+        if (onError != null && current is AsyncError<T>) {
+          onError(current.message);
+        }
+        if (onLoading != null && current is AsyncLoading<T>) {
+          onLoading();
+        }
+      },
+      child: child,
+    );
   }
 }

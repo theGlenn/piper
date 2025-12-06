@@ -78,7 +78,7 @@ class _LoginPageFormState extends State<LoginPageForm> {
           const SizedBox(height: 8),
           // Error message and submit button
           StateBuilder<AsyncState<void>>(
-            listenable: authVm.loginState.listenable,
+            listenable: authVm.loginState.flutterListenable,
             builder: (context, state, _) {
               void onSubmit() {
                 if (_formKey.currentState!.validate()) {

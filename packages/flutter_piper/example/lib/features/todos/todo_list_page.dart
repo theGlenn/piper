@@ -41,7 +41,7 @@ class _TodoListPageState extends State<TodoListPage> {
         ],
       ),
       body: StateBuilder<AsyncState<List<Todo>>>(
-        listenable: todosVm.todos.listenable,
+        listenable: todosVm.todos.flutterListenable,
         builder: (context, state, _) {
           return state.when(
             empty: () => const Center(child: CircularProgressIndicator()),

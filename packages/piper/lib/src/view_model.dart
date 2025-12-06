@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
+import 'package:meta/meta.dart';
 
 import 'async_state_holder.dart';
 import 'state_holder.dart';
@@ -205,7 +205,7 @@ abstract class ViewModel {
 
   /// Disposes all managed resources.
   ///
-  /// Subclasses overriding this method must call `super.dispose()`.
+  /// Subclasses overriding this method should call `super.dispose()`.
   @mustCallSuper
   void dispose() {
     _taskScope.dispose();

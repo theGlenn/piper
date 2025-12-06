@@ -63,7 +63,7 @@ class _TodoDetailContentState extends State<_TodoDetailContent> {
         if (current) Navigator.of(context).pop();
       },
       child: StateBuilder<bool>(
-          listenable: vm.isLoading.listenable,
+          listenable: vm.isLoading.flutterListenable,
           builder: (context, isLoading, _) {
             if (isLoading) {
               return Scaffold(
@@ -76,7 +76,7 @@ class _TodoDetailContentState extends State<_TodoDetailContent> {
             }
 
             return StateBuilder<Todo?>(
-              listenable: vm.todo.listenable,
+              listenable: vm.todo.flutterListenable,
               builder: (context, todo, _) {
                 if (todo == null) {
                   return Scaffold(
@@ -98,7 +98,7 @@ class _TodoDetailContentState extends State<_TodoDetailContent> {
                         Theme.of(context).colorScheme.inversePrimary,
                     actions: [
                       StateBuilder<bool>(
-                        listenable: vm.isSaving.listenable,
+                        listenable: vm.isSaving.flutterListenable,
                         builder: (context, isSaving, _) {
                           return IconButton(
                             icon: isSaving
@@ -129,7 +129,7 @@ class _TodoDetailContentState extends State<_TodoDetailContent> {
                       children: [
                         // Error message
                         StateBuilder<String?>(
-                          listenable: vm.error.listenable,
+                          listenable: vm.error.flutterListenable,
                           builder: (context, error, _) {
                             if (error == null) return const SizedBox.shrink();
                             return Container(
@@ -194,7 +194,7 @@ class _TodoDetailContentState extends State<_TodoDetailContent> {
                         SizedBox(
                           width: double.infinity,
                           child: StateBuilder<bool>(
-                            listenable: vm.isSaving.listenable,
+                            listenable: vm.isSaving.flutterListenable,
                             builder: (context, isSaving, _) {
                               return FilledButton.icon(
                                 onPressed: isSaving ? null : () => vm.save(),
