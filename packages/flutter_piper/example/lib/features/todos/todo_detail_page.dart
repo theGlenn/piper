@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:piper/flutter_piper.dart';
+import 'package:flutter_piper/flutter_piper.dart';
 
 import '../../di/app_dependencies.dart';
 import '../../domain/todo.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:piper/flutter_piper.dart';
+import 'package:piper/piper.dart';
 
 void main() {
   group('Task', () {

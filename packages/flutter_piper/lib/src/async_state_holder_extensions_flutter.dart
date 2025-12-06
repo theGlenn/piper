@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'async_state_holder.dart';
+import 'package:piper/piper.dart';
 
 extension AsyncStateHolderFlutter<T> on AsyncStateHolder<T> {
   /// Widget builder with built-in state handling.

@@ -5,3 +5,4 @@ environment:
 workspace:
   - packages/piper
   - packages/flutter_piper
+  - packages/flutter_piper/example

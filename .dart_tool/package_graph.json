@@ -1,5 +1,6 @@
 {
   "roots": [
+    "example",
     "flutter_piper",
     "piper",
     "workspace"
@@ -14,14 +15,32 @@
     {
       "name": "piper",
       "version": "0.0.1",
-      "dependencies": [],
-      "devDependencies": []
+      "dependencies": [
+        "flutter"
+      ],
+      "devDependencies": [
+        "flutter_lints",
+        "flutter_test"
+      ]
     },
     {
       "name": "flutter_piper",
       "version": "0.0.1",
       "dependencies": [
         "flutter",
+        "piper"
+      ],
+      "devDependencies": [
+        "flutter_lints",
+        "flutter_test"
+      ]
+    },
+    {
+      "name": "example",
+      "version": "0.1.0",
+      "dependencies": [
+        "flutter",
+        "flutter_piper",
         "piper"
       ],
       "devDependencies": [

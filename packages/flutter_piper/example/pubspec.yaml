@@ -6,11 +6,13 @@ version: 0.1.0
 environment:
   sdk: ^3.9.2
 
+resolution: workspace
+
 dependencies:
   flutter:
     sdk: flutter
+  flutter_piper:
   piper:
-    path: ../
 
 dev_dependencies:
   flutter_test:

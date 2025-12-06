@@ -1,31 +1,16 @@
-/// A lightweight, dependency-free state management library for Flutter.
+/// Flutter bindings for Piper state management library.
 ///
-/// Piper prioritizes:
-/// - Constructor injection for explicit dependency graphs
-/// - Plain Dart classes for business logic
-/// - Clear separation between UI-local state and remote state
-/// - Lifecycle-aware scoping via the widget tree
-/// - Framework-agnostic ViewModels that are testable without Flutter
+/// This package re-exports everything from `piper` and adds Flutter-specific
+/// extensions.
+///
+/// For most Flutter apps, just import this package:
+/// ```dart
+/// import 'package:flutter_piper/flutter_piper.dart';
+/// ```
 library;
 
-// State
-export 'src/async_state.dart';
-export 'src/state_holder.dart';
-export 'src/async_state_holder.dart';
+// Re-export everything from piper
+export 'package:piper/piper.dart';
 
-// Task
-export 'src/task.dart';
-
-// ViewModel
-export 'src/view_model.dart';
-
-// Scope
-export 'src/scope.dart';
-
-// Widgets
-export 'src/state_builder.dart';
-export 'src/state_listener.dart';
-export 'src/state_effect.dart';
-
-// Testing
-export 'src/testing.dart';
+// Flutter-specific extensions
+export 'src/async_state_holder_extensions_flutter.dart';
