@@ -1,28 +1,64 @@
 import { defineConfig } from 'vitepress'
 
-// https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: "Piper",
-  description: "TODO",
+  title: 'Piper',
+  description: 'State management that gets out of your way',
+
   themeConfig: {
-    // https://vitepress.dev/reference/default-theme-config
     nav: [
-      { text: 'Home', link: '/' },
-      { text: 'Examples', link: '/markdown-examples' }
+      { text: 'Guide', link: '/guide/what-is-piper' },
+      { text: 'Examples', link: '/examples/counter' }
     ],
 
-    sidebar: [
-      {
-        text: 'Examples',
-        items: [
-          { text: 'Markdown Examples', link: '/markdown-examples' },
-          { text: 'Runtime API Examples', link: '/api-examples' }
-        ]
-      }
-    ],
+    sidebar: {
+      '/guide/': [
+        {
+          text: 'Introduction',
+          items: [
+            { text: 'What is Piper?', link: '/guide/what-is-piper' },
+            { text: 'Getting Started', link: '/guide/getting-started' }
+          ]
+        },
+        {
+          text: 'Core Concepts',
+          items: [
+            { text: 'StateHolder', link: '/guide/state-holder' },
+            { text: 'AsyncStateHolder', link: '/guide/async-state-holder' },
+            { text: 'ViewModel', link: '/guide/view-model' },
+            { text: 'Stream Bindings', link: '/guide/stream-bindings' },
+            { text: 'Task', link: '/guide/task' }
+          ]
+        },
+        {
+          text: 'Flutter Integration',
+          items: [
+            { text: 'ViewModelScope', link: '/guide/view-model-scope' },
+            { text: 'Building UI', link: '/guide/building-ui' }
+          ]
+        },
+        {
+          text: 'Going Further',
+          items: [
+            { text: 'Testing', link: '/guide/testing' },
+            { text: 'Comparison', link: '/guide/comparison' }
+          ]
+        }
+      ],
+      '/examples/': [
+        {
+          text: 'Examples',
+          items: [
+            { text: 'Counter', link: '/examples/counter' },
+            { text: 'Authentication', link: '/examples/auth' },
+            { text: 'Todo List', link: '/examples/todos' },
+            { text: 'Search', link: '/examples/search' }
+          ]
+        }
+      ]
+    },
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/vuejs/vitepress' }
+      { icon: 'github', link: 'https://github.com/piper-flutter/piper' }
     ]
   }
 })

@@ -1,25 +1,25 @@
 ---
-# https://vitepress.dev/reference/default-theme-home-page
 layout: home
 
 hero:
-  name: "Piper"
-  text: "TODO"
-  tagline: My great project tagline
+  name: Piper
+  text: State management that gets out of your way
+  tagline: Lifecycle-aware ViewModels, explicit dependencies, automatic cleanup. Patterns that have worked for years — now in Flutter.
   actions:
     - theme: brand
-      text: Markdown Examples
-      link: /markdown-examples
+      text: Get Started
+      link: /guide/what-is-piper
     - theme: alt
-      text: API Examples
-      link: /api-examples
+      text: View on GitHub
+      link: https://github.com/piper-flutter/piper
 
 features:
-  - title: Feature A
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature B
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature C
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+  - title: Explicit Dependencies
+    details: Constructor injection, not magic. You can trace the dependency graph by reading the code.
+  - title: Automatic Lifecycle
+    details: No more "if (mounted)" checks. Subscriptions cancel, tasks stop, state disposes — all automatically.
+  - title: Plain Dart
+    details: ViewModels are just Dart classes. Test without Flutter, mock without framework internals.
+  - title: Incremental Adoption
+    details: Works alongside your existing state solution. Migrate one feature at a time.
 ---
-
