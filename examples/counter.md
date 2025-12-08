@@ -23,9 +23,8 @@ class CounterPage extends StatelessWidget {
 
     return Scaffold(
       body: Center(
-        child: StateBuilder(
-          listenable: vm.count.listenable,
-          builder: (context, count) => Text(
+        child: vm.count.build(
+          (count) => Text(
             '$count',
             style: Theme.of(context).textTheme.displayLarge,
           ),

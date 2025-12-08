@@ -1,6 +1,6 @@
 # StateHolder
 
-`StateHolder<T>` is a synchronous state container that wraps Flutter's `ValueNotifier` with a cleaner API.
+`StateHolder<T>` is a synchronous state container with change notification support. It's a pure Dart class with no Flutter dependency.
 
 ## Creating State
 
@@ -49,14 +49,7 @@ Use `.build()` to create a widget that rebuilds on state changes:
 vm.count.build((count) => Text('Count: $count'))
 ```
 
-This is equivalent to:
-
-```dart
-ValueListenableBuilder<int>(
-  valueListenable: vm.count.listenable,
-  builder: (_, count, __) => Text('Count: $count'),
-)
-```
+Under the hood, `flutter_piper` adapts the StateHolder to Flutter's `ValueListenableBuilder`.
 
 ## Listening Without Rebuilding
 
@@ -71,12 +64,12 @@ vm.isDeleted.listen(
 )
 ```
 
-## Accessing the Listenable
+## Adding Listeners
 
-If you need the underlying `ValueListenable` (for `AnimatedBuilder`, etc.):
+Add listeners directly for custom integrations:
 
 ```dart
-ValueListenable<int> listenable = vm.count.listenable;
+vm.count.addListener(() => print('Count changed: ${vm.count.value}'));
 ```
 
 ## Outside ViewModels

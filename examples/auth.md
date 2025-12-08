@@ -34,15 +34,12 @@ class AuthGate extends StatelessWidget {
   Widget build(BuildContext context) {
     final vm = context.vm<AuthViewModel>();
 
-    return StateBuilder(
-      listenable: vm.user.listenable,
-      builder: (context, user) {
-        if (user == null) {
-          return LoginPage();
-        }
-        return HomePage();
-      },
-    );
+    return vm.user.build((user) {
+      if (user == null) {
+        return LoginPage();
+      }
+      return HomePage();
+    });
   }
 }
 
@@ -58,7 +55,7 @@ class LoginPage extends StatelessWidget {
           children: [
             TextField(controller: _emailController),
             TextField(controller: _passwordController, obscureText: true),
-            vm.authState.builder(
+            vm.authState.build(
               (state) => switch (state) {
                 AsyncLoading() => CircularProgressIndicator(),
                 AsyncError(:final message) => Text(message, style: TextStyle(color: Colors.red)),

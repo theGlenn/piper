@@ -1,17 +1,36 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:piper/piper.dart';
 
 import 'state_listener.dart';
 
-/// Flutter widget extensions for [StateHolder].
-extension StateHolderWidgets<T> on StateHolder<T> {
-  /// Direct widget building - primary API for UI binding.
-  ///
+/// Adapts piper's [StateHolder] to Flutter's [ValueListenable].
+class _StateHolderListenable<T> implements ValueListenable<T> {
+  final StateHolder<T> _holder;
+
+  _StateHolderListenable(this._holder);
+
+  @override
+  T get value => _holder.value;
+
+  @override
+  void addListener(VoidCallback listener) => _holder.addListener(listener);
+
+  @override
+  void removeListener(VoidCallback listener) =>
+      _holder.removeListener(listener);
+}
+
+/// Flutter extensions for [StateHolder].
+extension StateHolderFlutter<T> on StateHolder<T> {
+  /// Exposes this [StateHolder] as a Flutter [ValueListenable].
+  ValueListenable<T> get listenable => _StateHolderListenable(this);
+
   /// Builds a widget that rebuilds when this state changes.
   ///
   /// Example:
   /// ```dart
-  /// counter.build((value) => Text('$value'));
+  /// vm.counter.build((count) => Text('$count'))
   /// ```
   Widget build(Widget Function(T value) builder) {
     return ValueListenableBuilder<T>(
@@ -20,18 +39,16 @@ extension StateHolderWidgets<T> on StateHolder<T> {
     );
   }
 
-  /// Build with child optimization for static subtrees.
-  ///
-  /// Use this when part of the widget tree doesn't depend on the value.
+  /// Builds a widget with child optimization for static subtrees.
   ///
   /// Example:
   /// ```dart
-  /// counter.buildWithChild(
+  /// vm.counter.buildWithChild(
   ///   builder: (value, child) => Column(
   ///     children: [Text('$value'), child!],
   ///   ),
   ///   child: const ExpensiveWidget(),
-  /// );
+  /// )
   /// ```
   Widget buildWithChild({
     required Widget Function(T value, Widget? child) builder,
@@ -44,9 +61,9 @@ extension StateHolderWidgets<T> on StateHolder<T> {
     );
   }
 
-  /// Listen to changes without rebuilding.
+  /// Listens to changes without rebuilding.
   ///
-  /// Use for side effects like navigation, showing snackbars, etc.
+  /// Use for side effects like navigation, snackbars, etc.
   ///
   /// Example:
   /// ```dart

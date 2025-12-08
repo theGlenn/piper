@@ -1,4 +1,4 @@
-import 'package:flutter_test/flutter_test.dart';
+import 'package:test/test.dart';
 import 'package:piper/piper.dart';
 
 void main() {
@@ -27,7 +27,7 @@ void main() {
       final holder = StateHolder(0);
       int notificationCount = 0;
 
-      holder.listenable.addListener(() {
+      holder.notifier.addListener(() {
         notificationCount++;
       });
 
@@ -42,7 +42,7 @@ void main() {
       final holder = StateHolder(42);
       int notificationCount = 0;
 
-      holder.listenable.addListener(() {
+      holder.notifier.addListener(() {
         notificationCount++;
       });
 

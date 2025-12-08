@@ -19,5 +19,5 @@ export 'src/state_effect.dart';
 export 'src/scope.dart';
 
 // Flutter Extensions
-export 'src/state_holder_extensions.dart';
+export 'src/state_holder_flutter.dart';
 export 'src/async_state_holder_extensions_flutter.dart';

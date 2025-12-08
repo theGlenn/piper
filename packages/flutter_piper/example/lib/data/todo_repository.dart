@@ -8,13 +8,13 @@ class TodoRepository {
   final List<Todo> _todos = [
     const Todo(
       id: '1',
-      title: 'Learn Rivolo',
+      title: 'Learn Piper',
       description: 'Understand the ViewModel pattern and state management',
     ),
     const Todo(
       id: '2',
       title: 'Build an app',
-      description: 'Create a todo app using Rivolo',
+      description: 'Create a todo app using Piper',
     ),
     const Todo(
       id: '3',
