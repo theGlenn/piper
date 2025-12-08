@@ -1,4 +1,4 @@
-# Piper - Flutter State Management Library
+# Flutter Piper - Flutter Widgets for Piper
 
 # Default recipe: list available commands
 default:
@@ -6,15 +6,15 @@ default:
 
 # Run all tests
 test:
-    dart test
+    flutter test
 
 # Run tests with coverage
 test-coverage:
-    dart test --coverage
+    flutter test --coverage
 
 # Analyze code for issues
 analyze:
-    dart analyze
+    flutter analyze
 
 # Format all Dart files
 format:
@@ -24,15 +24,13 @@ format:
 format-check:
     dart format --set-exit-if-changed .
 
-# Get dependencies for library and example
+# Get dependencies
 deps:
-    dart pub get
-    cd example && dart pub get
+    flutter pub get
 
 # Clean build artifacts
 clean:
-    dart clean
-    cd example && dart clean
+    flutter clean
 
 # Publish package
 publish-dry-run:
@@ -45,5 +43,5 @@ publish:
 bump-version:
     dart run change_version --version-file pubspec.yaml
 
-# Run library tests and analyze
+# Run tests and analyze
 ci: deps analyze test
