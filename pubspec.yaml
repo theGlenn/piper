@@ -1,7 +1,7 @@
 name: workspace
 publish_to: none
 environment:
-  sdk: ^3.0.0
+  sdk: ^3.5.0
 workspace:
   - packages/piper
   - packages/flutter_piper

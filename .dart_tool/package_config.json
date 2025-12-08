@@ -371,19 +371,19 @@
       "name": "workspace",
       "rootUri": "../",
       "packageUri": "lib/",
-      "languageVersion": "3.9"
+      "languageVersion": "3.5"
     },
     {
       "name": "piper",
       "rootUri": "../packages/piper",
       "packageUri": "lib/",
-      "languageVersion": "3.9"
+      "languageVersion": "3.5"
     },
     {
       "name": "flutter_piper",
       "rootUri": "../packages/flutter_piper",
       "packageUri": "lib/",
-      "languageVersion": "3.9"
+      "languageVersion": "3.5"
     },
     {
       "name": "example",

@@ -7,7 +7,7 @@ repository: https://github.com/glennsonna/piper
 issue_tracker: https://github.com/glennsonna/piper/issues
 
 environment:
-  sdk: ^3.0.0
+  sdk: ^3.5.0
 
 resolution: workspace
 
