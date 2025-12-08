@@ -6,8 +6,8 @@ Flutter widgets for [Piper](https://pub.dev/packages/piper) state management.
 
 ```yaml
 dependencies:
-  piper: ^0.1.0
-  flutter_piper: ^0.1.0
+  piper: ^0.0.1
+  flutter_piper: ^0.0.1
 ```
 
 ## Widgets

@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0
+## 0.0.1
 
 - Initial release
 - `ViewModelScope` — provides ViewModels to widget tree
