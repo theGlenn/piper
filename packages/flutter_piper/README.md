@@ -14,7 +14,7 @@ dependencies:
 
 ### ViewModelScope
 
-Provides ViewModels to the widget tree:
+Provides multiple ViewModels to the widget tree:
 
 ```dart
 ViewModelScope(
@@ -27,6 +27,22 @@ ViewModelScope(
 
 // Access anywhere below:
 final vm = context.vm<AuthViewModel>();
+```
+
+### Scoped&lt;T&gt;
+
+Scopes a single typed ViewModel with a builder pattern:
+
+```dart
+Scoped<DetailViewModel>(
+  create: () => DetailViewModel(id),
+  builder: (context, vm) => DetailPage(),
+)
+
+// Access via context:
+final vm = context.vm<DetailViewModel>();
+// Or use the semantic alias:
+final vm = context.scoped<DetailViewModel>();
 ```
 
 ### StateBuilder

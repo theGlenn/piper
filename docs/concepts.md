@@ -86,7 +86,7 @@ ViewModelScope(
     () => AuthViewModel(authRepo),
     () => TodosViewModel(todoRepo),
   ],
-  child: MyApp(),
+  child: MyApp(), // All descendants can access both VMs
 )
 
 // Access anywhere below:

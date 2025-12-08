@@ -1,10 +1,15 @@
-# ViewModelScope
+# ViewModelScope & Scoped
 
-`ViewModelScope` provides ViewModels to the widget tree and manages their lifecycle.
+Piper provides two ways to scope ViewModels in the widget tree:
 
-## Basic Usage
+- **`ViewModelScope`** — Holds multiple ViewModels, ideal for app-level or feature-level scoping
+- **`Scoped<T>`** — Holds a single typed ViewModel with a builder pattern, ideal for page-level scoping
 
-Wrap your app or a subtree:
+Both manage ViewModel lifecycle automatically and work with `context.vm<T>()`.
+
+## ViewModelScope
+
+Wrap your app or a subtree with multiple ViewModels:
 
 ```dart
 ViewModelScope(
@@ -12,13 +17,29 @@ ViewModelScope(
     () => AuthViewModel(authRepo),
     () => SettingsViewModel(settingsRepo),
   ],
-  child: MyApp(),
+  child: MyApp(), // All descendants can access both VMs
 )
 ```
 
+## Scoped&lt;T&gt;
+
+Scope a single ViewModel with type safety and a builder:
+
+```dart
+Scoped<DetailViewModel>(
+  create: () => DetailViewModel(id),
+  builder: (context, vm) => DetailPage(), // All descendants can access
+)
+
+// Any descendant
+final vm = context.vm<DetailViewModel>();
+```
+
+The builder receives the ViewModel directly, so you don't need to call `context.vm<T>()` in the immediate child.
+
 ## Accessing ViewModels
 
-Use `context.vm<T>()` to retrieve a ViewModel:
+Use `context.vm<T>()` to retrieve a ViewModel from either scope type:
 
 ```dart
 class ProfilePage extends StatelessWidget {
@@ -30,6 +51,12 @@ class ProfilePage extends StatelessWidget {
     return // ...
   }
 }
+```
+
+For `Scoped<T>`, you can also use `context.scoped<T>()` as a semantic alias:
+
+```dart
+final vm = context.scoped<DetailViewModel>();
 ```
 
 ## Lifecycle
@@ -96,9 +123,9 @@ void main() {
 }
 ```
 
-## Page-Level Scoping
+## Page-Level Scoping with Scoped&lt;T&gt;
 
-For page-specific ViewModels:
+`Scoped<T>` is ideal for page-specific ViewModels:
 
 ```dart
 class TodoDetailPage extends StatelessWidget {
@@ -110,13 +137,18 @@ class TodoDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final todoRepo = context.vm<TodosViewModel>().repository;
 
-    return ViewModelScope(
-      create: [() => TodoDetailViewModel(todoRepo, todoId)],
-      child: TodoDetailContent(),
+    return Scoped<TodoDetailViewModel>(
+      create: () => TodoDetailViewModel(todoRepo, todoId),
+      builder: (context, vm) => TodoDetailContent(),
     );
   }
 }
 ```
+
+Benefits of `Scoped<T>`:
+- Type is explicit in the widget declaration
+- Builder receives the ViewModel directly
+- Clear single-responsibility: one widget, one ViewModel
 
 ## Without ViewModelScope
 
