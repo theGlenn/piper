@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.2
+
+- Version bump for flutter_piper compatibility
+
 ## 0.0.1
 
 - Initial release
