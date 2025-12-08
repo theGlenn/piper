@@ -1,0 +1,99 @@
+:root {
+  /* Logo colors */
+  --piper-purple: #6366F1;
+  --piper-teal: #14B8A6;
+  --piper-teal-light: #2DD4BF;
+  --piper-coral: #F87171;
+
+  /* Override VitePress brand colors */
+  --vp-c-brand-1: var(--piper-purple);
+  --vp-c-brand-2: #7C6AEF;
+  --vp-c-brand-3: var(--piper-purple);
+  --vp-c-brand-soft: rgba(99, 102, 241, 0.14);
+
+  /* Home hero title gradient */
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: linear-gradient(135deg, var(--piper-purple) 0%, var(--piper-teal) 100%);
+
+  /* Hero image glow - handled via custom CSS below */
+
+  /* Button colors */
+  --vp-button-brand-bg: var(--piper-purple);
+  --vp-button-brand-hover-bg: #7C6AEF;
+  --vp-button-brand-active-bg: #5558E3;
+}
+
+.dark {
+  --vp-c-brand-1: #818CF8;
+  --vp-c-brand-2: #A5B4FC;
+  --vp-c-brand-3: #818CF8;
+  --vp-home-hero-name-background: linear-gradient(135deg, #818CF8 0%, var(--piper-teal-light) 100%);
+}
+
+/* Feature card icons/titles with accent colors */
+.VPFeature .title {
+  color: var(--piper-purple);
+}
+
+.dark .VPFeature .title {
+  color: #818CF8;
+}
+
+/* Hero image glow */
+.VPImage.image-src {
+  filter: drop-shadow(0 0 40px rgba(124, 106, 239, 0.5))
+          drop-shadow(0 0 80px rgba(45, 212, 191, 0.3));
+}
+
+.VPHero .image-container {
+  position: relative;
+}
+
+.VPHero .image-container::before {
+  content: '';
+  position: absolute;
+  inset: -12%;
+  background: radial-gradient(
+    circle,
+    rgba(124, 106, 239, 0.4) 0%,
+    rgba(45, 212, 191, 0.2) 28%,
+    transparent 48%
+  );
+  z-index: -1;
+  filter: blur(28px);
+}
+
+/* Hero logo size */
+.VPHero .VPImage.image-src {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* Code showcase section on home page */
+.code-showcase {
+  max-width: 800px;
+  margin: 4rem auto;
+  padding: 0 14px;
+}
+
+.code-showcase h2 {
+  text-align: center;
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, var(--piper-purple) 0%, var(--piper-teal) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.code-showcase .vp-code-group {
+  /*box-shadow: 0 8px 32px rgba(99, 102, 241, 0.15),
+              0 4px 16px rgba(45, 212, 191, 0.1);*/
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.dark .code-showcase .vp-code-group {
+  /*box-shadow: 0 8px 32px rgba(99, 102, 241, 0.25),
+              0 4px 16px rgba(45, 212, 191, 0.15);*/
+}

@@ -70,7 +70,7 @@ export default defineConfig({
     },
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/glennsonna/piper' }
+      { icon: 'github', link: 'https://github.com/theglenn/piper' }
     ]
   }
 })
