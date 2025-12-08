@@ -1,12 +1,14 @@
 name: flutter_piper
-description: "A lightweight, dependency-free state management library"
-version: 0.0.1
+description: "Lifecycle-aware state management for Flutter. ViewModels, async state, stream bindings, and task cancellation."
+version: 0.1.0
 license: MIT
-homepage:
+homepage: https://github.com/glennsonna/piper
+repository: https://github.com/glennsonna/piper
+issue_tracker: https://github.com/glennsonna/piper/issues
 
 environment:
-  sdk: ^3.9.2
-  flutter: ">=1.17.0"
+  sdk: ^3.0.0
+  flutter: ">=3.0.0"
 
 resolution: workspace
 
