@@ -157,18 +157,10 @@ class _LoginPageFormState extends State<LoginPageForm> {
 
 class _TextField extends StatelessWidget {
   final TextEditingController? controller;
-  final InputDecoration? decoration;
+  final InputDecoration decoration;
   final FormFieldValidator<String>? validator;
   final TextInputType? keyboardType;
   final bool obscureText;
-
-  const _TextField({
-    this.controller,
-    required this.decoration,
-    this.validator,
-    this.keyboardType,
-    this.obscureText = false,
-  });
 
   const _TextField.email({this.controller, this.validator})
     : decoration = const InputDecoration(

@@ -8,6 +8,9 @@ class TestViewModel extends ViewModel {
   late final name = state('');
 
   void increment() => counter.update((c) => c + 1);
+
+  // Expose launch for testing
+  Task<T> testLaunch<T>(Future<T> Function() work) => launch(work);
 }
 
 class StreamViewModel extends ViewModel {
@@ -106,7 +109,7 @@ void main() {
     test('dispose() cancels subscriptions', () async {
       final scope = TestScope();
       final controller = StreamController<int>.broadcast();
-      final vm = scope.create(StreamViewModel(controller.stream));
+      scope.create(StreamViewModel(controller.stream));
 
       scope.dispose();
 
@@ -121,7 +124,7 @@ void main() {
       final scope = TestScope();
       final vm = scope.create(TestViewModel());
 
-      final task = vm.launch(() async => 42);
+      final task = vm.testLaunch(() async => 42);
       expect(await task.result, 42);
 
       scope.dispose();
@@ -131,7 +134,7 @@ void main() {
       final scope = TestScope();
       final vm = scope.create(TestViewModel());
 
-      final task = vm.launch(() async {
+      final task = vm.testLaunch(() async {
         await Future.delayed(const Duration(milliseconds: 100));
         return 42;
       });
@@ -280,11 +283,11 @@ void main() {
       final vm1 = scope.create(TestViewModel());
       final vm2 = scope.create(TestViewModel());
 
-      final task1 = vm1.launch(() async {
+      final task1 = vm1.testLaunch(() async {
         await Future.delayed(const Duration(seconds: 1));
         return 1;
       });
-      final task2 = vm2.launch(() async {
+      final task2 = vm2.testLaunch(() async {
         await Future.delayed(const Duration(seconds: 1));
         return 2;
       });
