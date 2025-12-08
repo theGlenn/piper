@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.x'
+          channel: stable
+
+      # Get dependencies for the workspace
+      - run: flutter pub get
+
+      # piper package (pure Dart)
+      - name: Analyze piper
+        run: dart analyze --fatal-infos
+        working-directory: packages/piper
+      - name: Test piper
+        run: dart test
+        working-directory: packages/piper
+
+      # flutter_piper package
+      - name: Analyze flutter_piper
+        run: flutter analyze --fatal-infos
+        working-directory: packages/flutter_piper
+      - name: Test flutter_piper
+        run: flutter test
+        working-directory: packages/flutter_piper
