@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/public/logo.png" alt="Piper" width="120" />
+</p>
+
 # Piper 🚰
 
 State management that gets out of your way.
