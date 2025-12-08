@@ -21,6 +21,20 @@ ViewModelScope(
 )
 ```
 
+### With BuildContext
+
+Use `ViewModelScope.withContext` when you need access to the widget tree for dependency injection:
+
+```dart
+ViewModelScope.withContext(
+  create: [
+    (context) => AuthViewModel(context.read<AuthRepository>()),
+    (context) => SettingsViewModel(context.read<SettingsRepository>()),
+  ],
+  child: MyApp(),
+)
+```
+
 ## Scoped&lt;T&gt;
 
 Scope a single ViewModel with type safety and a builder:
@@ -36,6 +50,17 @@ final vm = context.vm<DetailViewModel>();
 ```
 
 The builder receives the ViewModel directly, so you don't need to call `context.vm<T>()` in the immediate child.
+
+### With BuildContext
+
+Use `Scoped.withContext` when you need access to the widget tree for dependency injection:
+
+```dart
+Scoped<DetailViewModel>.withContext(
+  create: (context) => DetailViewModel(context.read<Repository>()),
+  builder: (context, vm) => DetailPage(),
+)
+```
 
 ## Accessing ViewModels
 
@@ -59,15 +84,23 @@ For `Scoped<T>`, you can also use `context.scoped<T>()` as a semantic alias:
 final vm = context.scoped<DetailViewModel>();
 ```
 
+### Optional Lookup
+
+Use `context.maybeVm<T>()` when the ViewModel may not be available:
+
+```dart
+final authVm = context.maybeVm<AuthViewModel>(); // Returns null if not found
+```
+
 ## Lifecycle
 
 ViewModels are:
-- **Created eagerly** in `initState` of the ViewModelScope
-- **Disposed automatically** when ViewModelScope is removed from the tree
+- **Created once** when the scope widget is first built
+- **Disposed automatically** when the scope is removed from the tree
 
 ## Nested Scopes
 
-You can nest ViewModelScopes for feature-specific ViewModels:
+You can nest scopes for feature-specific ViewModels:
 
 ```dart
 // App-level
@@ -123,6 +156,24 @@ void main() {
 }
 ```
 
+Or use `withContext` to read from the widget tree:
+
+```dart
+void main() {
+  runApp(
+    Provider<AuthRepository>(
+      create: (_) => AuthRepository(apiClient),
+      child: ViewModelScope.withContext(
+        create: [
+          (context) => AuthViewModel(context.read<AuthRepository>()),
+        ],
+        child: MyApp(),
+      ),
+    ),
+  );
+}
+```
+
 ## Page-Level Scoping with Scoped&lt;T&gt;
 
 `Scoped<T>` is ideal for page-specific ViewModels:
@@ -145,6 +196,27 @@ class TodoDetailPage extends StatelessWidget {
 }
 ```
 
+Or with `withContext`:
+
+```dart
+class TodoDetailPage extends StatelessWidget {
+  final String todoId;
+
+  const TodoDetailPage({required this.todoId});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scoped<TodoDetailViewModel>.withContext(
+      create: (context) => TodoDetailViewModel(
+        context.read<TodoRepository>(),
+        todoId,
+      ),
+      builder: (context, vm) => TodoDetailContent(),
+    );
+  }
+}
+```
+
 Benefits of `Scoped<T>`:
 - Type is explicit in the widget declaration
 - Builder receives the ViewModel directly
@@ -152,11 +224,11 @@ Benefits of `Scoped<T>`:
 
 ## Named Scopes
 
-Use `ViewModelScope.named` when you need to share ViewModels across multiple routes or access a specific scope by name:
+Use the `name` parameter when you need to share ViewModels across multiple routes or access a specific scope by name:
 
 ```dart
 // Define a named scope that spans multiple pages
-ViewModelScope.named(
+ViewModelScope(
   name: 'checkout',
   create: [() => CheckoutViewModel()],
   child: CheckoutFlow(),  // Contains multiple pages
@@ -168,6 +240,16 @@ Access ViewModels from a named scope using the `scope` parameter:
 ```dart
 // Any descendant can access by name
 final checkoutVm = context.vm<CheckoutViewModel>(scope: 'checkout');
+```
+
+Named scopes work with both constructors:
+
+```dart
+ViewModelScope.withContext(
+  name: 'checkout',
+  create: [(context) => CheckoutViewModel(context.read<CartRepo>())],
+  child: CheckoutFlow(),
+)
 ```
 
 ### When to Use Named Scopes
@@ -183,7 +265,7 @@ Named scopes are useful when:
 class CheckoutPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ViewModelScope.named(
+    return ViewModelScope(
       name: 'checkout',
       create: [() => CheckoutViewModel()],
       child: Navigator(
@@ -220,6 +302,33 @@ class PaymentPage extends StatelessWidget {
 - When `scope` is specified, only named scopes with that name are searched
 - `Scoped<T>` widgets are skipped when searching for a named scope
 - Same-name scopes shadow each other (nearest wins)
+
+## API Summary
+
+### ViewModelScope
+
+| Constructor | Description |
+|-------------|-------------|
+| `ViewModelScope(create: [...])` | Factories without context |
+| `ViewModelScope.withContext(create: [...])` | Factories with BuildContext |
+
+Both support the optional `name` parameter for named scopes.
+
+### Scoped&lt;T&gt;
+
+| Constructor | Description |
+|-------------|-------------|
+| `Scoped<T>(create: () => ...)` | Factory without context |
+| `Scoped<T>.withContext(create: (context) => ...)` | Factory with BuildContext |
+
+### Context Extensions
+
+| Method | Description |
+|--------|-------------|
+| `context.vm<T>()` | Get ViewModel, throws if not found |
+| `context.vm<T>(scope: 'name')` | Get from named scope |
+| `context.maybeVm<T>()` | Get ViewModel, returns null if not found |
+| `context.scoped<T>()` | Alias for `vm<T>()` |
 
 ## Without ViewModelScope
 

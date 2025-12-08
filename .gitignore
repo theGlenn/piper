@@ -9,3 +9,5 @@ package-lock.json
 .pub-cache/
 .pub/
 build/
+
+.idea/

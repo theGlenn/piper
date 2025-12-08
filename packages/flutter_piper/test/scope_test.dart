@@ -346,7 +346,7 @@ void main() {
       late CounterViewModel capturedVm;
 
       await tester.pumpWidget(
-        ViewModelScope.named(
+        ViewModelScope(
           name: 'checkout',
           create: [() => CounterViewModel()],
           child: Builder(
@@ -368,7 +368,7 @@ void main() {
       late CounterViewModel capturedVm;
 
       await tester.pumpWidget(
-        ViewModelScope.named(
+        ViewModelScope(
           name: 'checkout',
           create: [() => CounterViewModel()],
           child: Builder(
@@ -386,7 +386,7 @@ void main() {
 
     testWidgets('throws when named scope not found', (tester) async {
       await tester.pumpWidget(
-        ViewModelScope.named(
+        ViewModelScope(
           name: 'checkout',
           create: [() => CounterViewModel()],
           child: Builder(
@@ -405,7 +405,7 @@ void main() {
     testWidgets('maybeVm returns null when named scope not found',
         (tester) async {
       await tester.pumpWidget(
-        ViewModelScope.named(
+        ViewModelScope(
           name: 'checkout',
           create: [() => CounterViewModel()],
           child: Builder(
@@ -427,7 +427,7 @@ void main() {
       late CounterViewModel unnamedVm;
 
       await tester.pumpWidget(
-        ViewModelScope.named(
+        ViewModelScope(
           name: 'checkout',
           create: [() => CounterViewModel()],
           child: Builder(
@@ -466,7 +466,7 @@ void main() {
       late CounterViewModel scopedVm;
 
       await tester.pumpWidget(
-        ViewModelScope.named(
+        ViewModelScope(
           name: 'checkout',
           create: [() => CounterViewModel()],
           child: Builder(
@@ -501,10 +501,10 @@ void main() {
       late NameViewModel cartVm;
 
       await tester.pumpWidget(
-        ViewModelScope.named(
+        ViewModelScope(
           name: 'checkout',
           create: [() => CounterViewModel()],
-          child: ViewModelScope.named(
+          child: ViewModelScope(
             name: 'cart',
             create: [() => NameViewModel()],
             child: Builder(
@@ -527,7 +527,7 @@ void main() {
       final completer = Completer<int>();
 
       await tester.pumpWidget(
-        ViewModelScope.named(
+        ViewModelScope(
           name: 'checkout',
           create: [() => CounterViewModel()],
           child: Builder(
@@ -551,13 +551,13 @@ void main() {
       late CounterViewModel innerVm;
 
       await tester.pumpWidget(
-        ViewModelScope.named(
+        ViewModelScope(
           name: 'checkout',
           create: [() => CounterViewModel()],
           child: Builder(
             builder: (context) {
               outerVm = context.vm<CounterViewModel>(scope: 'checkout');
-              return ViewModelScope.named(
+              return ViewModelScope(
                 name: 'checkout',
                 create: [() => CounterViewModel()],
                 child: Builder(

@@ -6,10 +6,10 @@ import 'package:piper/piper.dart';
 /// Unlike [ViewModelScope] which holds multiple ViewModels, [Scoped] is designed
 /// for cases where you want to scope a single ViewModel with a builder pattern.
 ///
-/// The ViewModel is eagerly instantiated in [initState] and disposed
-/// when the scope is removed from the tree.
+/// The ViewModel is created once and disposed when the widget is removed from the tree.
 ///
-/// Example:
+/// ## Basic Usage
+///
 /// ```dart
 /// Scoped<DetailViewModel>(
 ///   create: () => DetailViewModel(id),
@@ -17,85 +17,66 @@ import 'package:piper/piper.dart';
 /// )
 /// ```
 ///
-/// Access the ViewModel from descendants using:
+/// ## With BuildContext (for dependency injection)
+///
+/// Use [Scoped.withContext] when you need access to the widget tree:
+///
+/// ```dart
+/// Scoped<DetailViewModel>.withContext(
+///   create: (context) => DetailViewModel(context.read<Repository>()),
+///   builder: (context, vm) => DetailPage(),
+/// )
+/// ```
+///
+/// ## Accessing the ViewModel
+///
+/// From descendants:
 /// ```dart
 /// final vm = context.vm<DetailViewModel>();
 /// // or
 /// final vm = context.scoped<DetailViewModel>();
 /// ```
 class Scoped<T extends ViewModel> extends StatefulWidget {
-  /// Factory function that creates the ViewModel.
-  ///
-  /// Called once during [initState].
-  final T Function() create;
+  final T Function()? _create;
+  final T Function(BuildContext)? _createWithContext;
 
   /// Builder function that receives the context and the ViewModel.
-  ///
-  /// The ViewModel is guaranteed to be non-null when this is called.
   final Widget Function(BuildContext context, T viewModel) builder;
 
+  /// Creates a [Scoped] widget with a factory that doesn't require context.
   const Scoped({
     super.key,
-    required this.create,
+    required T Function() create,
     required this.builder,
-  });
+  })  : _create = create,
+        _createWithContext = null;
 
-  /// Creates a Scoped with access to BuildContext for dependency injection.
+  /// Creates a [Scoped] widget with access to [BuildContext] for dependency injection.
   ///
-  /// Use this when you need access to the BuildContext to create your ViewModel,
-  /// for example to read dependencies from the widget tree.
-  ///
-  /// Example:
-  /// ```dart
-  /// Scoped.builder<DetailViewModel>(
-  ///   create: (context) => DetailViewModel(
-  ///     repository: context.read<Repository>(),
-  ///   ),
-  ///   builder: (context, vm) => DetailPage(),
-  /// )
-  /// ```
-  static Widget builder<T extends ViewModel>({
-    Key? key,
-    required T Function(BuildContext context) create,
-    required Widget Function(BuildContext context, T viewModel) builder,
-  }) {
-    return _ScopedBuilder<T>(
-      key: key,
-      create: create,
-      builder: builder,
-    );
-  }
+  /// Use this when you need to read dependencies from the widget tree.
+  const Scoped.withContext({
+    super.key,
+    required T Function(BuildContext) create,
+    required this.builder,
+  })  : _create = null,
+        _createWithContext = create;
 
   @override
   State<Scoped<T>> createState() => _ScopedState<T>();
 }
 
-class _ScopedBuilder<T extends ViewModel> extends StatelessWidget {
-  final T Function(BuildContext context) create;
-  final Widget Function(BuildContext context, T viewModel) builder;
-
-  const _ScopedBuilder({
-    super.key,
-    required this.create,
-    required this.builder,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Scoped<T>(
-      create: () => create(context),
-      builder: builder,
-    );
-  }
-}
-
 class _ScopedState<T extends ViewModel> extends State<Scoped<T>> {
   late final T _instance;
+  bool _initialized = false;
 
   @override
-  void initState() {
-    super.initState();
-    _instance = widget.create();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initialized) {
+      _initialized = true;
+      _instance =
+          widget._create?.call() ?? widget._createWithContext!(context);
+    }
   }
 
   @override
@@ -105,12 +86,7 @@ class _ScopedState<T extends ViewModel> extends State<Scoped<T>> {
   }
 
   /// Retrieves the ViewModel if [U] matches [T], otherwise returns null.
-  U? get<U extends ViewModel>() {
-    if (U == T) {
-      return _instance as U;
-    }
-    return null;
-  }
+  U? get<U extends ViewModel>() => U == T ? _instance as U : null;
 
   @override
   Widget build(BuildContext context) {
@@ -135,12 +111,12 @@ class _InheritedScoped<T extends ViewModel> extends InheritedWidget {
   bool updateShouldNotify(covariant _InheritedScoped<T> oldWidget) => false;
 }
 
-/// Widget that holds ViewModels and provides them to descendants.
+/// Widget that holds multiple ViewModels and provides them to descendants.
 ///
-/// ViewModels are eagerly instantiated in [initState] and disposed
-/// when the scope is removed from the tree.
+/// ViewModels are created once and disposed when the scope is removed from the tree.
 ///
-/// Example:
+/// ## Basic Usage
+///
 /// ```dart
 /// ViewModelScope(
 ///   create: [
@@ -151,13 +127,27 @@ class _InheritedScoped<T extends ViewModel> extends InheritedWidget {
 /// )
 /// ```
 ///
-/// ## Named Scopes
+/// ## With BuildContext (for dependency injection)
 ///
-/// Use [ViewModelScope.named] to create a scope that can be accessed by name,
-/// useful when multiple routes need to share the same ViewModel:
+/// Use [ViewModelScope.withContext] when you need access to the widget tree:
 ///
 /// ```dart
-/// ViewModelScope.named(
+/// ViewModelScope.withContext(
+///   create: [
+///     (context) => AuthViewModel(context.read<AuthRepository>()),
+///     (context) => TodosViewModel(context.read<TodoRepository>()),
+///   ],
+///   child: MyApp(),
+/// )
+/// ```
+///
+/// ## Named Scopes
+///
+/// Use the optional [name] parameter to create a scope that can be accessed by name,
+/// useful when you need to access a specific scope from anywhere in the subtree:
+///
+/// ```dart
+/// ViewModelScope(
 ///   name: 'checkout',
 ///   create: [() => CheckoutViewModel()],
 ///   child: CheckoutFlow(),
@@ -166,15 +156,20 @@ class _InheritedScoped<T extends ViewModel> extends InheritedWidget {
 /// // Any descendant can access by name:
 /// final vm = context.vm<CheckoutViewModel>(scope: 'checkout');
 /// ```
+///
+/// Named scopes work with both constructors:
+///
+/// ```dart
+/// ViewModelScope.withContext(
+///   name: 'checkout',
+///   create: [(context) => CheckoutViewModel(context.read<CartRepo>())],
+///   child: CheckoutFlow(),
+/// )
+/// ```
 class ViewModelScope extends StatefulWidget {
-  /// The widget below this scope in the tree.
   final Widget child;
-
-  /// Factory functions that create ViewModels.
-  ///
-  /// Each factory is called once during [initState] and the
-  /// resulting ViewModels are stored by their runtime type.
-  final List<ViewModel Function()> create;
+  final List<ViewModel Function()>? _create;
+  final List<ViewModel Function(BuildContext)>? _createWithContext;
 
   /// Optional name for this scope.
   ///
@@ -182,131 +177,56 @@ class ViewModelScope extends StatefulWidget {
   /// using `context.vm<T>(scope: 'name')`.
   final String? name;
 
+  /// Creates a [ViewModelScope] with factories that don't require context.
   const ViewModelScope({
     super.key,
     required this.child,
-    required this.create,
-  }) : name = null;
+    required List<ViewModel Function()> create,
+    this.name,
+  })  : _create = create,
+        _createWithContext = null;
 
-  /// Creates a named scope that can be accessed by name from descendants.
+  /// Creates a [ViewModelScope] with access to [BuildContext] for dependency injection.
   ///
-  /// Example:
-  /// ```dart
-  /// ViewModelScope.named(
-  ///   name: 'checkout',
-  ///   create: [() => CheckoutViewModel()],
-  ///   child: CheckoutFlow(),
-  /// )
-  ///
-  /// // Access by name:
-  /// final vm = context.vm<CheckoutViewModel>(scope: 'checkout');
-  /// ```
-  const ViewModelScope.named({
+  /// Use this when you need to read dependencies from the widget tree.
+  const ViewModelScope.withContext({
     super.key,
-    required this.name,
+    required List<ViewModel Function(BuildContext)> create,
     required this.child,
-    required this.create,
-  });
-
-  /// Creates a ViewModelScope with access to BuildContext for dependency injection.
-  ///
-  /// Use this when you need access to the BuildContext to create your ViewModels,
-  /// for example to read dependencies from the widget tree.
-  ///
-  /// Example:
-  /// ```dart
-  /// ViewModelScope.builder(
-  ///   create: (context) => [
-  ///     AuthViewModel(context.read<AuthRepository>()),
-  ///     TodosViewModel(context.read<TodoRepository>()),
-  ///   ],
-  ///   child: MyApp(),
-  /// )
-  /// ```
-  static Widget builder({
-    Key? key,
-    required List<ViewModel> Function(BuildContext context) create,
-    required Widget child,
-  }) {
-    return _ViewModelScopeBuilder(
-      key: key,
-      create: create,
-      child: child,
-    );
-  }
-
-  /// Creates a named ViewModelScope with access to BuildContext for dependency injection.
-  ///
-  /// Combines the features of [ViewModelScope.named] and [ViewModelScope.builder].
-  ///
-  /// Example:
-  /// ```dart
-  /// ViewModelScope.namedBuilder(
-  ///   name: 'checkout',
-  ///   create: (context) => [
-  ///     CheckoutViewModel(context.read<CartRepository>()),
-  ///   ],
-  ///   child: CheckoutFlow(),
-  /// )
-  /// ```
-  static Widget namedBuilder({
-    Key? key,
-    required String name,
-    required List<ViewModel> Function(BuildContext context) create,
-    required Widget child,
-  }) {
-    return _ViewModelScopeBuilder(
-      key: key,
-      name: name,
-      create: create,
-      child: child,
-    );
-  }
+    this.name,
+  })  : _create = null,
+        _createWithContext = create;
 
   @override
   State<ViewModelScope> createState() => _ViewModelScopeState();
 }
 
-class _ViewModelScopeBuilder extends StatelessWidget {
-  final List<ViewModel> Function(BuildContext context) create;
-  final Widget child;
-  final String? name;
-
-  const _ViewModelScopeBuilder({
-    super.key,
-    required this.create,
-    required this.child,
-    this.name,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final viewModels = create(context);
-    if (name != null) {
-      return ViewModelScope.named(
-        name: name!,
-        create: viewModels.map((vm) => () => vm).toList(),
-        child: child,
-      );
-    }
-    return ViewModelScope(
-      create: viewModels.map((vm) => () => vm).toList(),
-      child: child,
-    );
-  }
-}
-
 class _ViewModelScopeState extends State<ViewModelScope> {
   final Map<Type, ViewModel> _instances = {};
+  bool _initialized = false;
 
   String? get name => widget.name;
 
   @override
-  void initState() {
-    super.initState();
-    for (final factory in widget.create) {
-      final instance = factory();
-      _instances[instance.runtimeType] = instance;
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initialized) {
+      _initialized = true;
+      _createViewModels();
+    }
+  }
+
+  void _createViewModels() {
+    if (widget._create != null) {
+      for (final factory in widget._create!) {
+        final instance = factory();
+        _instances[instance.runtimeType] = instance;
+      }
+    } else if (widget._createWithContext != null) {
+      for (final factory in widget._createWithContext!) {
+        final instance = factory(context);
+        _instances[instance.runtimeType] = instance;
+      }
     }
   }
 
@@ -369,7 +289,7 @@ extension ViewModelContext on BuildContext {
       if (scope != null) {
         throw FlutterError(
           'No $T found in scope "$scope".\n'
-          'Make sure a ViewModelScope.named(name: "$scope") ancestor provides $T.',
+          'Make sure a ViewModelScope(name: "$scope") ancestor provides $T.',
         );
       }
       throw FlutterError(
