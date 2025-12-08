@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'piper_notifier.dart';
 
 /// Synchronous state container wrapping [ValueNotifier].
 ///
@@ -12,10 +12,10 @@ import 'package:flutter/foundation.dart';
 /// counter.update((current) => current + 1);
 /// ```
 class StateHolder<T> {
-  final ValueNotifier<T> _notifier;
+  final PiperNotifier<T> _notifier;
 
   /// Creates a [StateHolder] with the given initial value.
-  StateHolder(T initial) : _notifier = ValueNotifier(initial);
+  StateHolder(T initial) : _notifier = PiperNotifier(initial);
 
   /// The current value.
   T get value => _notifier.value;
@@ -31,10 +31,15 @@ class StateHolder<T> {
   }
 
   /// The underlying [ValueListenable] for binding to widgets or listeners.
-  ValueListenable<T> get listenable => _notifier;
+  PiperNotifier<T> get notifier => _notifier;
 
   /// Disposes the underlying notifier.
   ///
   /// After calling dispose, this [StateHolder] should not be used.
   void dispose() => _notifier.dispose();
+
+  void addListener(void Function() listener) => _notifier.addListener(listener);
+
+  void removeListener(void Function() listener) =>
+      _notifier.removeListener(listener);
 }

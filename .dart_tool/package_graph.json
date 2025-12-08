@@ -16,10 +16,9 @@
       "name": "piper",
       "version": "0.0.1",
       "dependencies": [
-        "flutter"
+        "meta"
       ],
       "devDependencies": [
-        "flutter_test",
         "lints"
       ]
     },
@@ -91,16 +90,16 @@
       "dependencies": []
     },
     {
+      "name": "meta",
+      "version": "1.16.0",
+      "dependencies": []
+    },
+    {
       "name": "stream_channel",
       "version": "2.1.4",
       "dependencies": [
         "async"
       ]
-    },
-    {
-      "name": "meta",
-      "version": "1.16.0",
-      "dependencies": []
     },
     {
       "name": "collection",

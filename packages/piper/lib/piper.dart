@@ -9,10 +9,6 @@
 /// For Flutter widgets and extensions, use `package:flutter_piper/flutter_piper.dart`.
 library;
 
-// Re-export Flutter's foundation types for convenience
-export 'package:flutter/foundation.dart'
-    show ValueListenable, ValueNotifier, ChangeNotifier;
-
 // State
 export 'src/async_state.dart';
 export 'src/state_holder.dart';

@@ -95,7 +95,7 @@ void main() {
         final holder = AsyncStateHolder<int>();
         var notificationCount = 0;
 
-        holder.listenable.addListener(() => notificationCount++);
+        holder.notifier.addListener(() => notificationCount++);
 
         holder.setLoading();
         expect(notificationCount, 1);
@@ -114,7 +114,7 @@ void main() {
         final holder = AsyncStateHolder<int>.loading();
         var notificationCount = 0;
 
-        holder.listenable.addListener(() => notificationCount++);
+        holder.notifier.addListener(() => notificationCount++);
 
         holder.setLoading();
         // AsyncLoading is a const, so same instance comparison should work

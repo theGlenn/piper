@@ -27,7 +27,7 @@ void main() {
       final holder = StateHolder(0);
       int notificationCount = 0;
 
-      holder.listenable.addListener(() {
+      holder.notifier.addListener(() {
         notificationCount++;
       });
 
@@ -42,7 +42,7 @@ void main() {
       final holder = StateHolder(42);
       int notificationCount = 0;
 
-      holder.listenable.addListener(() {
+      holder.notifier.addListener(() {
         notificationCount++;
       });
 

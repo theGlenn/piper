@@ -39,7 +39,7 @@ class _LoginPageFormState extends State<LoginPageForm> {
           ),
           const SizedBox(height: 32),
           const Text(
-            'Rivolo Todo',
+            'Piper Todo',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
           ),

@@ -6,15 +6,11 @@ homepage:
 
 environment:
   sdk: ^3.9.2
-  flutter: ">=3.10.0"
 
 resolution: workspace
 
 dependencies:
-  flutter:
-    sdk: flutter
+  meta: ^1.16.0
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
   lints: ^5.0.0

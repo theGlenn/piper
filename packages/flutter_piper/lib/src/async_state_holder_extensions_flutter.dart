@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:piper/piper.dart';
-
-import 'state_holder_extensions.dart';
-import 'state_listener.dart';
+import 'package:flutter_piper/flutter_piper.dart';
 
 /// Flutter widget extensions for [AsyncStateHolder].
 extension AsyncStateHolderFlutter<T> on AsyncStateHolder<T> {
