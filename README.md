@@ -87,9 +87,15 @@ dependencies:
 
 ## Learn more
 
-- [Examples](examples/) — Counter, Auth, Todos, Search with cancellation
+- [Examples](examples/) — Counter, Auth, Todos, Search, Form validation, Navigation
 - [Core Concepts](docs/concepts.md) — StateHolder, AsyncState, ViewModel, Task
 - [Comparison](docs/comparison.md) — vs. Riverpod, vs. Bloc
+
+## Roadmap
+
+- [ ] **Derived state** — `select()` API for computed values with automatic dependency tracking
+- [ ] **DevTools extension** — Inspect ViewModels and state in real-time
+- [ ] **Code generation** — Optional codegen for boilerplate reduction
 
 ## License
 

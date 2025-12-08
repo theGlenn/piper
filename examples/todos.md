@@ -10,7 +10,7 @@ class TodosViewModel extends ViewModel {
 
   TodosViewModel(this._todoRepo);
 
-  late final todos = streamToAsync<List<Todo>>(_todoRepo.todosStream);
+  late final todos = bindAsync(_todoRepo.todosStream);
 
   List<Todo> get pending => todos.dataOrNull?.where((t) => !t.completed).toList() ?? [];
   List<Todo> get completed => todos.dataOrNull?.where((t) => t.completed).toList() ?? [];
@@ -55,7 +55,7 @@ class TodoListPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text('Todos')),
-      body: vm.todos.builder(
+      body: vm.todos.build(
         (state) => switch (state) {
           AsyncEmpty() => Center(child: Text('No todos yet')),
           AsyncLoading() => Center(child: CircularProgressIndicator()),
@@ -90,6 +90,6 @@ class TodoListPage extends StatelessWidget {
 
 ## What's happening
 
-1. **`streamToAsync`** — binds stream with automatic loading/error state
+1. **`bindAsync`** — binds stream with automatic loading/error state
 2. **Computed getters** — `pending` and `completed` derived from state
 3. **`launchWith`** — async operations with error handling

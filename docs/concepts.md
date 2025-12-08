@@ -34,7 +34,7 @@ Bind streams directly to state. Subscription auto-cancels on dispose.
 
 ```dart
 // Bind stream to StateHolder
-late final user = streamTo<User?>(_authRepo.userStream, initial: null);
+late final user = bind(_authRepo.userStream, initial: null);
 
 // Bind with transformation
 late final userName = stateFrom<User, String>(
@@ -44,7 +44,7 @@ late final userName = stateFrom<User, String>(
 );
 
 // Bind to AsyncStateHolder (auto loading/error handling)
-late final todos = streamToAsync<List<Todo>>(_todoRepo.watchAll());
+late final todos = bindAsync(_todoRepo.watchAll());
 ```
 
 ## ViewModel
@@ -57,7 +57,7 @@ class AuthViewModel extends ViewModel {
 
   AuthViewModel(this._authRepo);
 
-  late final user = streamTo<User?>(_authRepo.userStream, initial: null);
+  late final user = bind(_authRepo.userStream, initial: null);
   late final loginState = asyncState<void>();
 
   void login(String email, String password) {
@@ -72,7 +72,7 @@ class AuthViewModel extends ViewModel {
 
 **Managed automatically:**
 - `state()` / `asyncState()` — disposed
-- `streamTo()` / `stateFrom()` / `streamToAsync()` — subscriptions cancelled
+- `bind()` / `stateFrom()` / `bindAsync()` — subscriptions cancelled
 - `subscribe()` — cancelled
 - `launch()` / `launchWith()` / `load()` — cancelled
 

@@ -54,7 +54,7 @@ class SearchPage extends StatelessWidget {
           decoration: InputDecoration(hintText: 'Search...'),
         ),
       ),
-      body: vm.results.builder(
+      body: vm.results.build(
         (state) => switch (state) {
           AsyncEmpty() => Center(child: Text('Start typing to search')),
           AsyncLoading() => Center(child: CircularProgressIndicator()),

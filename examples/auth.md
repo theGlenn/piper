@@ -11,7 +11,7 @@ class AuthViewModel extends ViewModel {
   AuthViewModel(this._authRepo);
 
   // Stream bound to state — updates when user changes
-  late final user = streamTo<User?>(_authRepo.userStream, initial: null);
+  late final user = bind(_authRepo.userStream, initial: null);
   late final authState = asyncState<void>();
 
   bool get isLoggedIn => user.value != null;
@@ -78,6 +78,6 @@ class LoginPage extends StatelessWidget {
 
 ## What's happening
 
-1. **`streamTo`** — binds the user stream to a StateHolder, auto-cancels on dispose
+1. **`bind`** — binds the user stream to a StateHolder, auto-cancels on dispose
 2. **`load`** — handles loading/error states automatically
 3. **Reactive UI** — `AuthGate` rebuilds when user changes
