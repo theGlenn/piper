@@ -1,5 +1,5 @@
 name: piper
-description: "A lightweight state management library for Flutter."
+description: "A lightweight, pure Dart state management library."
 version: 0.0.1
 license: MIT
 homepage:
@@ -14,3 +14,4 @@ dependencies:
 
 dev_dependencies:
   lints: ^5.0.0
+  test: ^1.25.0

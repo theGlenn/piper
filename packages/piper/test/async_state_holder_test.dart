@@ -1,4 +1,4 @@
-import 'package:flutter_test/flutter_test.dart';
+import 'package:test/test.dart';
 import 'package:piper/piper.dart';
 
 void main() {
@@ -123,12 +123,20 @@ void main() {
     });
 
     group('dispose', () {
-      test('dispose prevents further updates', () {
+      test('clears listeners on dispose', () {
         final holder = AsyncStateHolder<int>();
+        var notificationCount = 0;
+
+        holder.notifier.addListener(() => notificationCount++);
+        holder.setLoading();
+        expect(notificationCount, 1);
+
         holder.dispose();
 
-        // After dispose, setting value should throw (FlutterError in debug mode)
-        expect(() => holder.setData(42), throwsFlutterError);
+        // After dispose, listeners are cleared
+        // Setting value won't notify (no-op since no listeners)
+        holder.setData(42);
+        expect(notificationCount, 1); // Still 1, no new notification
       });
     });
   });
