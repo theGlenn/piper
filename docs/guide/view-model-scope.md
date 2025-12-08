@@ -150,6 +150,77 @@ Benefits of `Scoped<T>`:
 - Builder receives the ViewModel directly
 - Clear single-responsibility: one widget, one ViewModel
 
+## Named Scopes
+
+Use `ViewModelScope.named` when you need to share ViewModels across multiple routes or access a specific scope by name:
+
+```dart
+// Define a named scope that spans multiple pages
+ViewModelScope.named(
+  name: 'checkout',
+  create: [() => CheckoutViewModel()],
+  child: CheckoutFlow(),  // Contains multiple pages
+)
+```
+
+Access ViewModels from a named scope using the `scope` parameter:
+
+```dart
+// Any descendant can access by name
+final checkoutVm = context.vm<CheckoutViewModel>(scope: 'checkout');
+```
+
+### When to Use Named Scopes
+
+Named scopes are useful when:
+
+- **Multi-step flows**: A checkout or onboarding flow where multiple pages share state
+- **Nested navigators**: When you have nested `Navigator` widgets and need to access parent scopes
+- **Explicit scope targeting**: When shadowing occurs and you need a specific ancestor's ViewModel
+
+```dart
+// Example: Checkout flow with multiple pages
+class CheckoutPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ViewModelScope.named(
+      name: 'checkout',
+      create: [() => CheckoutViewModel()],
+      child: Navigator(
+        onGenerateRoute: (settings) {
+          // All pages in this Navigator share the CheckoutViewModel
+          return MaterialPageRoute(
+            builder: (_) => switch (settings.name) {
+              '/cart' => CartPage(),
+              '/shipping' => ShippingPage(),
+              '/payment' => PaymentPage(),
+              _ => CartPage(),
+            },
+          );
+        },
+      ),
+    );
+  }
+}
+
+// In any checkout page:
+class PaymentPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // Access by name to ensure we get the checkout scope
+    final checkout = context.vm<CheckoutViewModel>(scope: 'checkout');
+    return // ...
+  }
+}
+```
+
+### Named Scope Behavior
+
+- Named scopes can still be accessed without the `scope` parameter (nearest ancestor wins)
+- When `scope` is specified, only named scopes with that name are searched
+- `Scoped<T>` widgets are skipped when searching for a named scope
+- Same-name scopes shadow each other (nearest wins)
+
 ## Without ViewModelScope
 
 You can create ViewModels manually, but you're responsible for disposal:

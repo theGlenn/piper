@@ -40,8 +40,53 @@ class Scoped<T extends ViewModel> extends StatefulWidget {
     required this.builder,
   });
 
+  /// Creates a Scoped with access to BuildContext for dependency injection.
+  ///
+  /// Use this when you need access to the BuildContext to create your ViewModel,
+  /// for example to read dependencies from the widget tree.
+  ///
+  /// Example:
+  /// ```dart
+  /// Scoped.builder<DetailViewModel>(
+  ///   create: (context) => DetailViewModel(
+  ///     repository: context.read<Repository>(),
+  ///   ),
+  ///   builder: (context, vm) => DetailPage(),
+  /// )
+  /// ```
+  static Widget builder<T extends ViewModel>({
+    Key? key,
+    required T Function(BuildContext context) create,
+    required Widget Function(BuildContext context, T viewModel) builder,
+  }) {
+    return _ScopedBuilder<T>(
+      key: key,
+      create: create,
+      builder: builder,
+    );
+  }
+
   @override
   State<Scoped<T>> createState() => _ScopedState<T>();
+}
+
+class _ScopedBuilder<T extends ViewModel> extends StatelessWidget {
+  final T Function(BuildContext context) create;
+  final Widget Function(BuildContext context, T viewModel) builder;
+
+  const _ScopedBuilder({
+    super.key,
+    required this.create,
+    required this.builder,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scoped<T>(
+      create: () => create(context),
+      builder: builder,
+    );
+  }
 }
 
 class _ScopedState<T extends ViewModel> extends State<Scoped<T>> {
@@ -105,6 +150,22 @@ class _InheritedScoped<T extends ViewModel> extends InheritedWidget {
 ///   child: MyApp(),
 /// )
 /// ```
+///
+/// ## Named Scopes
+///
+/// Use [ViewModelScope.named] to create a scope that can be accessed by name,
+/// useful when multiple routes need to share the same ViewModel:
+///
+/// ```dart
+/// ViewModelScope.named(
+///   name: 'checkout',
+///   create: [() => CheckoutViewModel()],
+///   child: CheckoutFlow(),
+/// )
+///
+/// // Any descendant can access by name:
+/// final vm = context.vm<CheckoutViewModel>(scope: 'checkout');
+/// ```
 class ViewModelScope extends StatefulWidget {
   /// The widget below this scope in the tree.
   final Widget child;
@@ -115,18 +176,130 @@ class ViewModelScope extends StatefulWidget {
   /// resulting ViewModels are stored by their runtime type.
   final List<ViewModel Function()> create;
 
+  /// Optional name for this scope.
+  ///
+  /// When provided, ViewModels in this scope can be accessed by name
+  /// using `context.vm<T>(scope: 'name')`.
+  final String? name;
+
   const ViewModelScope({
     super.key,
     required this.child,
     required this.create,
+  }) : name = null;
+
+  /// Creates a named scope that can be accessed by name from descendants.
+  ///
+  /// Example:
+  /// ```dart
+  /// ViewModelScope.named(
+  ///   name: 'checkout',
+  ///   create: [() => CheckoutViewModel()],
+  ///   child: CheckoutFlow(),
+  /// )
+  ///
+  /// // Access by name:
+  /// final vm = context.vm<CheckoutViewModel>(scope: 'checkout');
+  /// ```
+  const ViewModelScope.named({
+    super.key,
+    required this.name,
+    required this.child,
+    required this.create,
   });
+
+  /// Creates a ViewModelScope with access to BuildContext for dependency injection.
+  ///
+  /// Use this when you need access to the BuildContext to create your ViewModels,
+  /// for example to read dependencies from the widget tree.
+  ///
+  /// Example:
+  /// ```dart
+  /// ViewModelScope.builder(
+  ///   create: (context) => [
+  ///     AuthViewModel(context.read<AuthRepository>()),
+  ///     TodosViewModel(context.read<TodoRepository>()),
+  ///   ],
+  ///   child: MyApp(),
+  /// )
+  /// ```
+  static Widget builder({
+    Key? key,
+    required List<ViewModel> Function(BuildContext context) create,
+    required Widget child,
+  }) {
+    return _ViewModelScopeBuilder(
+      key: key,
+      create: create,
+      child: child,
+    );
+  }
+
+  /// Creates a named ViewModelScope with access to BuildContext for dependency injection.
+  ///
+  /// Combines the features of [ViewModelScope.named] and [ViewModelScope.builder].
+  ///
+  /// Example:
+  /// ```dart
+  /// ViewModelScope.namedBuilder(
+  ///   name: 'checkout',
+  ///   create: (context) => [
+  ///     CheckoutViewModel(context.read<CartRepository>()),
+  ///   ],
+  ///   child: CheckoutFlow(),
+  /// )
+  /// ```
+  static Widget namedBuilder({
+    Key? key,
+    required String name,
+    required List<ViewModel> Function(BuildContext context) create,
+    required Widget child,
+  }) {
+    return _ViewModelScopeBuilder(
+      key: key,
+      name: name,
+      create: create,
+      child: child,
+    );
+  }
 
   @override
   State<ViewModelScope> createState() => _ViewModelScopeState();
 }
 
+class _ViewModelScopeBuilder extends StatelessWidget {
+  final List<ViewModel> Function(BuildContext context) create;
+  final Widget child;
+  final String? name;
+
+  const _ViewModelScopeBuilder({
+    super.key,
+    required this.create,
+    required this.child,
+    this.name,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final viewModels = create(context);
+    if (name != null) {
+      return ViewModelScope.named(
+        name: name!,
+        create: viewModels.map((vm) => () => vm).toList(),
+        child: child,
+      );
+    }
+    return ViewModelScope(
+      create: viewModels.map((vm) => () => vm).toList(),
+      child: child,
+    );
+  }
+}
+
 class _ViewModelScopeState extends State<ViewModelScope> {
   final Map<Type, ViewModel> _instances = {};
+
+  String? get name => widget.name;
 
   @override
   void initState() {
@@ -165,6 +338,8 @@ class _InheritedViewModelScope extends InheritedWidget {
     required super.child,
   });
 
+  String? get name => state.name;
+
   @override
   bool updateShouldNotify(covariant _InheritedViewModelScope oldWidget) => false;
 }
@@ -179,13 +354,24 @@ extension ViewModelContext on BuildContext {
   /// Uses shadowing behavior: if the same ViewModel type exists in
   /// multiple ancestor scopes, the nearest scope wins.
   ///
+  /// If [scope] is provided, only searches within the named scope.
+  ///
   /// Example:
   /// ```dart
   /// final authVm = context.vm<AuthViewModel>();
+  ///
+  /// // Or from a named scope:
+  /// final checkoutVm = context.vm<CheckoutViewModel>(scope: 'checkout');
   /// ```
-  T vm<T extends ViewModel>() {
-    final instance = _findViewModel<T>();
+  T vm<T extends ViewModel>({String? scope}) {
+    final instance = _findViewModel<T>(scope: scope);
     if (instance == null) {
+      if (scope != null) {
+        throw FlutterError(
+          'No $T found in scope "$scope".\n'
+          'Make sure a ViewModelScope.named(name: "$scope") ancestor provides $T.',
+        );
+      }
       throw FlutterError(
         'No $T found in scope hierarchy.\n'
         'Make sure a ViewModelScope or Scoped<$T> ancestor provides $T.',
@@ -198,7 +384,10 @@ extension ViewModelContext on BuildContext {
   ///
   /// Searches both [ViewModelScope] and [Scoped] widgets.
   /// Use this when the ViewModel may not be available.
-  T? maybeVm<T extends ViewModel>() => _findViewModel<T>();
+  ///
+  /// If [scope] is provided, only searches within the named scope.
+  T? maybeVm<T extends ViewModel>({String? scope}) =>
+      _findViewModel<T>(scope: scope);
 
   /// Alias for [vm] that makes the [Scoped] usage more explicit.
   ///
@@ -214,18 +403,35 @@ extension ViewModelContext on BuildContext {
   /// ```
   T scoped<T extends ViewModel>() => vm<T>();
 
-  T? _findViewModel<T extends ViewModel>() {
+  T? _findViewModel<T extends ViewModel>({String? scope}) {
     T? result;
 
     visitAncestorElements((element) {
       final widget = element.widget;
       if (widget is _InheritedViewModelScope) {
+        // If scope is specified, only match named scopes with that name
+        if (scope != null) {
+          if (widget.name == scope) {
+            final instance = widget.state.get<T>();
+            if (instance != null) {
+              result = instance;
+              return false; // Stop visiting
+            }
+          }
+          // Continue looking for the named scope
+          return true;
+        }
+        // No scope specified, match any scope
         final instance = widget.state.get<T>();
         if (instance != null) {
           result = instance;
           return false; // Stop visiting
         }
       } else if (widget is _InheritedScoped) {
+        // Scoped widgets don't have names, skip if searching for named scope
+        if (scope != null) {
+          return true; // Continue looking
+        }
         final instance = widget.state.get<T>();
         if (instance != null) {
           result = instance;

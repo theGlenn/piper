@@ -45,6 +45,21 @@ final vm = context.vm<DetailViewModel>();
 final vm = context.scoped<DetailViewModel>();
 ```
 
+### Named Scopes
+
+Share ViewModels across multiple routes with named scopes:
+
+```dart
+ViewModelScope.named(
+  name: 'checkout',
+  create: [() => CheckoutViewModel()],
+  child: CheckoutFlow(),
+)
+
+// Access by name from any descendant:
+final vm = context.vm<CheckoutViewModel>(scope: 'checkout');
+```
+
 ### StateBuilder
 
 Rebuilds when state changes:
