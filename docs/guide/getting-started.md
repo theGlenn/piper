@@ -1,8 +1,8 @@
 # Getting Started
 
-## Installation
+Install Piper and create your first ViewModel in under 5 minutes.
 
-Add Piper to your `pubspec.yaml`:
+## Installation
 
 ```yaml
 dependencies:
@@ -11,11 +11,9 @@ dependencies:
 ```
 
 - **piper** — Core library (ViewModel, StateHolder, Task). No Flutter dependency.
-- **flutter_piper** — Flutter widgets (ViewModelScope, builders). Depends on piper.
+- **flutter_piper** — Flutter widgets (ViewModelScope, builders).
 
 ## Your First ViewModel
-
-Create a simple counter:
 
 ```dart
 import 'package:piper/piper.dart';
@@ -28,11 +26,7 @@ class CounterViewModel extends ViewModel {
 }
 ```
 
-That's it. `state(0)` creates a `StateHolder<int>` with initial value `0`.
-
 ## Provide to Widget Tree
-
-Wrap your app (or a subtree) with `ViewModelScope`:
 
 ```dart
 import 'package:flutter_piper/flutter_piper.dart';
@@ -48,8 +42,6 @@ void main() {
 ```
 
 ## Use in Widgets
-
-Access the ViewModel and build UI:
 
 ```dart
 class CounterPage extends StatelessWidget {
@@ -70,12 +62,10 @@ class CounterPage extends StatelessWidget {
 }
 ```
 
-- `context.vm<T>()` retrieves the ViewModel from the nearest `ViewModelScope`
-- `.build()` creates a widget that rebuilds when state changes
+- `context.vm<T>()` — retrieves ViewModel from nearest scope
+- `.build()` — rebuilds widget when state changes
 
-## Adding Async Operations
-
-Most apps need async operations. Here's how to fetch data:
+## Async Operations
 
 ```dart
 class UserViewModel extends ViewModel {
@@ -85,16 +75,14 @@ class UserViewModel extends ViewModel {
 
   late final user = asyncState<User>();
 
-  void loadUser(String id) {
-    load(user, () => _repo.getUser(id));
-  }
+  void loadUser(String id) => load(user, () => _repo.getUser(id));
 }
 ```
 
-- `asyncState<T>()` creates an `AsyncStateHolder` that tracks loading/error/data
-- `load()` sets loading state, runs the async work, then sets data or error
+- `asyncState<T>()` — tracks loading/error/data
+- `load()` — sets loading, runs async, sets data or error
 
-In your widget:
+In widgets:
 
 ```dart
 vm.user.build(
@@ -103,29 +91,22 @@ vm.user.build(
     AsyncError(:final message) => Text('Error: $message'),
     _ => CircularProgressIndicator(),
   },
-);
+)
 ```
 
-## Binding Streams
-
-If your repository exposes streams, bind them directly:
+## Stream Bindings
 
 ```dart
 class AuthViewModel extends ViewModel {
-  final AuthRepository _auth;
-
-  AuthViewModel(this._auth);
-
-  // Updates automatically when stream emits
-  late final user = bind(_auth.userStream, initial: null);
+  late final user = bind(repo.userStream, initial: null);
 }
 ```
 
-The subscription is automatically cancelled when the ViewModel disposes.
+Subscription auto-cancels when ViewModel disposes.
 
 ## Next Steps
 
-- [StateHolder](/guide/state-holder) — Synchronous state management
-- [AsyncStateHolder](/guide/async-state-holder) — Loading, error, and data states
-- [Stream Bindings](/guide/stream-bindings) — Binding streams to state
-- [Examples](/examples/counter) — Complete working examples
+- [StateHolder](/guide/state-holder) — Sync state
+- [AsyncStateHolder](/guide/async-state-holder) — Async state
+- [Stream Bindings](/guide/stream-bindings) — Stream handling
+- [Examples](/examples/counter) — Complete examples

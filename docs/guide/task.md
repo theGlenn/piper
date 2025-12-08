@@ -1,149 +1,129 @@
 # Task
 
-`Task<T>` is a handle to async work that supports cancellation using the "ignore-on-cancel" pattern.
-
-## The Problem
-
-In Flutter, async operations often complete after a widget disposes:
+Handle to async work with cancellation. Cancelled tasks don't update state.
 
 ```dart
-// Without Piper: manual mounted checks
-void loadData() async {
-  final data = await _repo.getData();
-  if (mounted) {  // Tedious and error-prone
-    setState(() => _data = data);
-  }
+Task<void>? _task;
+
+void search(String query) {
+  _task?.cancel();
+  _task = launch(() async {
+    await Future.delayed(Duration(milliseconds: 300));
+    results.setData(await repo.search(query));  // Won't run if cancelled
+  });
 }
 ```
 
-## The Solution
+## Why Tasks?
+
+Without Piper, async operations need manual `mounted` checks:
+
+```dart
+void loadData() async {
+  final data = await repo.getData();
+  if (mounted) setState(() => _data = data);  // Tedious
+}
+```
 
 With Piper, cancelled tasks simply don't update state:
 
 ```dart
-void loadData() {
-  load(data, () => _repo.getData());
-  // If ViewModel disposes, the callback won't run
+void loadData() => load(data, () => repo.getData());
+```
+
+## How It Works
+
+Tasks use "ignore-on-cancel":
+- The Future runs to completion (can't stop a Future)
+- If cancelled, results are discarded
+- Callbacks don't fire, state doesn't update
+
+## launch()
+
+Returns a `Task` handle for manual control:
+
+```dart
+Task<void>? _task;
+
+void search(String query) {
+  _task?.cancel();
+  _task = launch(() async {
+    await Future.delayed(Duration(milliseconds: 300));
+    results.setData(await repo.search(query));
+  });
 }
 ```
 
-## How Tasks Work
+## launchWith()
 
-Tasks use the "ignore-on-cancel" pattern:
-- The underlying `Future` runs to completion (can't stop a Future)
-- But if cancelled, the result is discarded
-- Callbacks don't fire, state doesn't update
-
-## Using launch()
-
-Get a `Task` handle for manual control:
+Inline success/error callbacks:
 
 ```dart
-Task<void>? _searchTask;
-
-void search(String query) {
-  // Cancel previous search
-  _searchTask?.cancel();
-
-  _searchTask = launch(() async {
-    // Debounce
-    await Future.delayed(Duration(milliseconds: 300));
-
-    final results = await _repo.search(query);
-    searchResults.setData(results);  // Won't run if cancelled
-  });
-}
+launchWith(
+  () => repo.save(data),
+  onSuccess: (_) => isSaved.value = true,
+  onError: (e) => error.value = e.toString(),
+);
 ```
 
 ## Task Properties
 
 ```dart
-task.isCancelled  // true if cancel() was called
-task.isCompleted  // true if Future completed
-task.isActive     // true if running and not cancelled
+task.isCancelled  // cancel() was called
+task.isCompleted  // Future completed
+task.isActive     // running and not cancelled
 ```
 
-## Awaiting Results
-
-Get the result (or null if cancelled):
+## Await Results
 
 ```dart
 final task = launch(() => fetchData());
 final result = await task.result;  // T? - null if cancelled
 ```
 
-## Using launchWith()
-
-For inline callbacks:
-
-```dart
-void save() {
-  launchWith(
-    () => _repo.save(data),
-    onSuccess: (result) {
-      isSaved.value = true;
-      // Won't run if ViewModel disposed
-    },
-    onError: (error) {
-      this.error.value = error.toString();
-      // Won't run if ViewModel disposed
-    },
-  );
-}
-```
-
 ## TaskScope
 
-`TaskScope` manages multiple tasks:
+Manage multiple tasks:
 
 ```dart
 final scope = TaskScope();
-
 scope.launch(() => fetchUsers());
 scope.launch(() => fetchPosts());
-
-scope.cancelAll();  // Cancel all tasks
-scope.dispose();    // Cancel and prevent new launches
+scope.cancelAll();
+scope.dispose();
 ```
 
-ViewModels have a built-in TaskScope accessible via `taskScope`.
+ViewModels have a built-in `taskScope`.
 
-## Common Patterns
+## Patterns
 
 ### Debounced Search
 
 ```dart
-Task<void>? _searchTask;
+Task<void>? _task;
 
 void onQueryChanged(String query) {
-  _searchTask?.cancel();
-
-  if (query.isEmpty) {
-    results.setEmpty();
-    return;
-  }
+  _task?.cancel();
+  if (query.isEmpty) return results.setEmpty();
 
   results.setLoading();
-
-  _searchTask = launch(() async {
+  _task = launch(() async {
     await Future.delayed(Duration(milliseconds: 300));
-    final data = await _repo.search(query);
-    results.setData(data);
+    results.setData(await repo.search(query));
   });
 }
 ```
 
-### Cancel Previous Request
+### Cancel Previous
 
 ```dart
-Task<void>? _loadTask;
+Task<void>? _task;
 
 void loadCategory(String id) {
-  _loadTask?.cancel();  // Cancel if user switches quickly
-  _loadTask = launch(() async {
+  _task?.cancel();
+  _task = launch(() async {
     items.setLoading();
-    final data = await _repo.getItems(id);
-    items.setData(data);
+    items.setData(await repo.getItems(id));
   });
 }
 ```
@@ -153,14 +133,11 @@ void loadCategory(String id) {
 ```dart
 void checkout() {
   launch(() async {
-    checkoutState.setLoading();
-
-    await _cartRepo.validateCart();
-    await _paymentService.processPayment();
-    await _orderRepo.createOrder();
-
-    checkoutState.setData(null);
-    // None of this runs if user leaves the page
+    state.setLoading();
+    await cartRepo.validateCart();
+    await paymentService.processPayment();
+    await orderRepo.createOrder();
+    state.setData(null);  // Won't run if user leaves
   });
 }
 ```

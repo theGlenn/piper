@@ -1,19 +1,19 @@
 # Comparison
 
-How Piper compares to other Flutter state management solutions.
+Side-by-side comparison with other Flutter state management solutions.
 
 ## vs. Riverpod
 
 | Aspect | Riverpod | Piper |
 |--------|----------|-------|
-| Dependencies | `ref.watch`, `ref.read` | Constructor injection |
-| Learning curve | Provider types, modifiers, scoping rules | Plain Dart classes |
-| State declaration | Providers with annotations | `state()` in ViewModel |
-| Async state | `AsyncValue`, `.when()` | `AsyncState`, `.when()` |
-| Code generation | Optional but common | None |
-| Testing | `ProviderContainer` | Plain unit tests |
+| Dependencies | `ref.watch`, `ref.read` | Constructor |
+| Learning curve | Provider types, modifiers, scoping | Plain Dart |
+| State | Providers with annotations | `state()` |
+| Async | `AsyncValue` | `AsyncState` |
+| Code generation | Common | None |
+| Testing | `ProviderContainer` | Plain tests |
 
-### Riverpod Example
+### Riverpod
 
 ```dart
 @riverpod
@@ -24,8 +24,7 @@ Future<User> user(Ref ref) async {
 class UserPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(userProvider);
-    return user.when(
+    return ref.watch(userProvider).when(
       data: (user) => Text(user.name),
       loading: () => CircularProgressIndicator(),
       error: (e, _) => Text('Error: $e'),
@@ -34,7 +33,7 @@ class UserPage extends ConsumerWidget {
 }
 ```
 
-### Piper Equivalent
+### Piper
 
 ```dart
 class UserViewModel extends ViewModel {
@@ -42,7 +41,6 @@ class UserViewModel extends ViewModel {
   final UserRepository _repo;
 
   late final user = asyncState<User>();
-
   void loadUser() => load(user, () => _repo.getUser());
 }
 
@@ -67,19 +65,17 @@ class UserPage extends StatelessWidget {
 | Aspect | Bloc | Piper |
 |--------|------|-------|
 | State changes | Events → Bloc → States | Methods → State |
-| Boilerplate | Event classes, State classes | Just methods |
-| Async handling | `emit()` in event handlers | `launch()`, `load()` |
-| Testing | `blocTest()` | Plain unit tests |
+| Boilerplate | Event + State classes | Methods |
+| Async | `emit()` in handlers | `launch()`, `load()` |
+| Testing | `blocTest()` | Plain tests |
 
-### Bloc Example
+### Bloc
 
 ```dart
-// Events
 abstract class CounterEvent {}
 class Increment extends CounterEvent {}
 class Decrement extends CounterEvent {}
 
-// Bloc
 class CounterBloc extends Bloc<CounterEvent, int> {
   CounterBloc() : super(0) {
     on<Increment>((event, emit) => emit(state + 1));
@@ -87,23 +83,20 @@ class CounterBloc extends Bloc<CounterEvent, int> {
   }
 }
 
-// Widget
 BlocBuilder<CounterBloc, int>(
   builder: (context, count) => Text('$count'),
 )
 ```
 
-### Piper Equivalent
+### Piper
 
 ```dart
 class CounterViewModel extends ViewModel {
   late final count = state(0);
-
   void increment() => count.update((c) => c + 1);
   void decrement() => count.update((c) => c - 1);
 }
 
-// Widget
 vm.count.build((count) => Text('$count'))
 ```
 
@@ -111,34 +104,31 @@ vm.count.build((count) => Text('$count'))
 
 | Aspect | Provider | Piper |
 |--------|----------|-------|
-| State container | ChangeNotifier | StateHolder |
-| Lifecycle | Manual or ProxyProvider | Automatic in ViewModel |
-| Async support | Manual | Built-in AsyncState |
-| Stream handling | StreamProvider | `bind()`, `subscribe()` |
+| State | ChangeNotifier | StateHolder |
+| Lifecycle | Manual/ProxyProvider | Automatic |
+| Async | Manual | Built-in |
+| Streams | StreamProvider | `bind()` |
 
-## When to Choose Piper
+## When to Choose
 
-Choose Piper if you:
+### Choose Piper if you:
+- Prefer constructor injection
+- Want minimal boilerplate
+- Like plain Dart / testable ViewModels
+- Are coming from Android/iOS
+- Want incremental adoption
 
-- **Prefer explicit dependencies** — Constructor injection makes dependencies obvious
-- **Want minimal boilerplate** — No event classes, no code generation
-- **Like plain Dart** — ViewModels are testable without framework utilities
-- **Are coming from Android/iOS** — Familiar ViewModel patterns
-- **Want incremental adoption** — Works alongside existing solutions
-
-## When to Choose Alternatives
-
-Choose **Riverpod** if you:
+### Choose Riverpod if you:
 - Need fine-grained provider scoping
 - Want compile-time dependency verification
-- Prefer functional/declarative style
+- Prefer functional style
 
-Choose **Bloc** if you:
-- Want strict separation of events and state
-- Need detailed event logging/replay
-- Prefer the event-driven pattern
+### Choose Bloc if you:
+- Want strict event/state separation
+- Need event logging/replay
+- Prefer event-driven architecture
 
-Choose **Provider** if you:
-- Need the simplest possible solution
-- Are working on a small app
+### Choose Provider if you:
+- Need the simplest solution
+- Have a small app
 - Want minimal dependencies

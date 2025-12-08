@@ -1,8 +1,17 @@
 # ViewModel
 
-`ViewModel` is the base class for your business logic. It manages state, subscriptions, and async tasks with automatic lifecycle handling.
+Base class for business logic with automatic lifecycle management.
 
-## Basic Structure
+```dart
+class CounterViewModel extends ViewModel {
+  late final count = state(0);
+  void increment() => count.update((c) => c + 1);
+}
+```
+
+When disposed: state holders dispose, subscriptions cancel, async tasks stop.
+
+## Structure
 
 ```dart
 class ProfileViewModel extends ViewModel {
@@ -10,169 +19,88 @@ class ProfileViewModel extends ViewModel {
 
   ProfileViewModel(this._repo);
 
-  // State
   late final profile = asyncState<Profile>();
   late final isEditing = state(false);
 
-  // Methods
-  void loadProfile(String id) {
-    load(profile, () => _repo.getProfile(id));
-  }
-
-  void toggleEdit() {
-    isEditing.update((v) => !v);
-  }
+  void loadProfile(String id) => load(profile, () => _repo.getProfile(id));
+  void toggleEdit() => isEditing.update((v) => !v);
 }
 ```
 
-## Dependency Injection
+## Dependencies
 
-Pass dependencies through the constructor:
+Pass through constructor for explicit, testable dependencies:
 
 ```dart
 class OrderViewModel extends ViewModel {
-  final OrderRepository _orderRepo;
-  final PaymentService _paymentService;
-  final AnalyticsService _analytics;
+  final OrderRepository _repo;
+  final PaymentService _payment;
 
-  OrderViewModel(
-    this._orderRepo,
-    this._paymentService,
-    this._analytics,
-  );
+  OrderViewModel(this._repo, this._payment);
 }
 ```
 
-This makes dependencies explicit and testable.
-
-## State Management
-
-Create state holders with `state()` and `asyncState()`:
+## State
 
 ```dart
-// Synchronous state
+// Sync state
 late final count = state(0);
 late final name = state('');
-late final isEnabled = state(true);
 
-// Async state (loading/error/data)
+// Async state
 late final user = asyncState<User>();
 late final items = asyncState<List<Item>>();
 ```
 
-## Stream Subscriptions
-
-Subscribe to streams with automatic cleanup:
+## Streams
 
 ```dart
-class ChatViewModel extends ViewModel {
-  ChatViewModel(ChatRepository repo) {
-    subscribe(repo.messagesStream, (messages) {
-      this.messages.value = messages;
-    });
-  }
+// Bind directly
+late final user = bind(repo.userStream, initial: null);
 
-  late final messages = state<List<Message>>([]);
+// Or subscribe manually
+ChatViewModel(ChatRepository repo) {
+  subscribe(repo.messagesStream, (msgs) => messages.value = msgs);
 }
-```
-
-Or bind directly to a StateHolder:
-
-```dart
-late final user = bind(_auth.userStream, initial: null);
 ```
 
 ## Async Operations
 
-### launch()
-
-For async work where you handle the result yourself:
-
 ```dart
-Task<void>? _saveTask;
+// launch() — returns Task for cancellation
+_task = launch(() async {
+  await _repo.save(data);
+  isSaved.value = true;
+});
 
-void save() {
-  _saveTask?.cancel();
-  _saveTask = launch(() async {
-    await _repo.save(data);
-    isSaved.value = true;
-  });
-}
+// launchWith() — callbacks
+launchWith(
+  () => _repo.delete(id),
+  onSuccess: (_) => isDeleted.value = true,
+  onError: (e) => error.value = e.toString(),
+);
+
+// load() — updates AsyncStateHolder
+load(user, () => _repo.getUser(id));
 ```
 
-### launchWith()
+All cancel on dispose. See [Task](/guide/task) for debouncing patterns.
 
-For async work with success/error callbacks:
-
-```dart
-void delete(String id) {
-  launchWith(
-    () => _repo.delete(id),
-    onSuccess: (_) => isDeleted.value = true,
-    onError: (e) => error.value = e.toString(),
-  );
-}
-```
-
-### load()
-
-For async work that updates an AsyncStateHolder:
-
-```dart
-void loadUser(String id) {
-  load(user, () => _repo.getUser(id));
-}
-```
-
-## Lifecycle
-
-Override `dispose()` for additional cleanup (always call `super.dispose()`):
+## Custom Cleanup
 
 ```dart
 @override
 void dispose() {
-  // Custom cleanup
-  _customController.dispose();
+  _controller.dispose();
   super.dispose();
 }
 ```
 
-## What's Managed Automatically
+## Automatic Cleanup
 
-When the ViewModel disposes:
-
-| Resource | Cleanup |
-|----------|---------|
+| Resource | On Dispose |
+|----------|------------|
 | `state()` / `asyncState()` | Disposed |
-| `bind()` / `bindAsync()` | Subscription cancelled, holder disposed |
+| `bind()` / `bindAsync()` | Cancelled, disposed |
 | `subscribe()` | Cancelled |
-| `launch()` / `launchWith()` / `load()` | Cancelled |
-
-## Testing
-
-ViewModels are plain Dart classes:
-
-```dart
-void main() {
-  late TestScope scope;
-  late MockRepo mockRepo;
-  late MyViewModel vm;
-
-  setUp(() {
-    scope = TestScope();
-    mockRepo = MockRepo();
-    vm = scope.create(() => MyViewModel(mockRepo));
-  });
-
-  tearDown(() => scope.dispose());
-
-  test('loads data', () async {
-    when(() => mockRepo.getData()).thenAnswer((_) async => data);
-
-    vm.loadData();
-    await Future.delayed(Duration.zero);
-
-    expect(vm.data.hasData, isTrue);
-  });
-}
-```
+| `launch()` / `load()` | Cancelled |

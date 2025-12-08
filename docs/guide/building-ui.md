@@ -1,25 +1,25 @@
 # Building UI
 
-Piper provides several ways to connect state to your Flutter widgets.
-
-## The build() Method
-
-The primary way to bind state to UI:
+Connect state to widgets with `.build()`, `.displayWhen()`, and `.listen()`.
 
 ```dart
 vm.count.build((count) => Text('$count'))
 ```
 
-This creates a widget that rebuilds whenever `count` changes.
+## build()
 
-## Pattern Matching with AsyncState
+Rebuild widget when state changes:
 
-For async state, use Dart's pattern matching:
+```dart
+vm.count.build((count) => Text('$count'))
+```
+
+## Pattern Matching (AsyncState)
 
 ```dart
 vm.user.build(
   (state) => switch (state) {
-    AsyncEmpty() => Text('No user loaded'),
+    AsyncEmpty() => Text('No user'),
     AsyncLoading() => CircularProgressIndicator(),
     AsyncError(:final message) => Text('Error: $message'),
     AsyncData(:final data) => Text('Hello, ${data.name}'),
@@ -27,16 +27,16 @@ vm.user.build(
 )
 ```
 
-## displayWhen Helper
+## displayWhen()
 
-For common patterns with sensible defaults:
+Handle async states with sensible defaults:
 
 ```dart
 vm.user.displayWhen(
   data: (user) => UserProfile(user),
-  // loading: defaults to CircularProgressIndicator
-  // error: defaults to red error text
-  // empty: defaults to SizedBox.shrink()
+  // loading: CircularProgressIndicator (default)
+  // error: red error text (default)
+  // empty: SizedBox.shrink() (default)
 )
 ```
 
@@ -46,40 +46,39 @@ Override specific states:
 vm.user.displayWhen(
   data: (user) => UserProfile(user),
   loading: () => Shimmer(),
-  error: (msg) => ErrorWidget(msg, onRetry: vm.loadUser),
+  error: (msg) => RetryButton(msg, onRetry: vm.load),
 )
 ```
 
-## buildWithChild
+## buildWithChild()
 
-Optimize with a static child:
+Optimize with static child:
 
 ```dart
 vm.isLoading.buildWithChild(
-  builder: (isLoading, child) => Stack(
-    children: [
-      child!,
-      if (isLoading) LoadingOverlay(),
-    ],
+  builder: (loading, child) => Stack(
+    children: [child!, if (loading) LoadingOverlay()],
   ),
   child: ExpensiveWidget(),  // Not rebuilt
 )
 ```
 
-## Listening for Side Effects
+## listen()
 
-Use `.listen()` for side effects without rebuilding:
+Side effects without rebuilding:
 
 ```dart
 vm.isDeleted.listen(
-  onChange: (previous, current) {
-    if (current) Navigator.of(context).pop();
+  onChange: (prev, curr) {
+    if (curr) Navigator.of(context).pop();
   },
-  child: DeleteButton(onPressed: vm.delete),
+  child: DeleteButton(),
 )
 ```
 
-For async state side effects:
+## listenAsync()
+
+Side effects for async state:
 
 ```dart
 vm.saveResult.listenAsync(
@@ -87,100 +86,42 @@ vm.saveResult.listenAsync(
   onError: (msg) => ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(content: Text(msg)),
   ),
-  child: SaveButton(onPressed: vm.save),
+  child: SaveButton(),
 )
 ```
 
-## Multiple State Sources
+## Multiple States
 
-### StateBuilder Widget
-
-For multiple state holders:
+### StateBuilder2/3/4
 
 ```dart
 StateBuilder2(
   stateHolder1: vm.user,
   stateHolder2: vm.settings,
-  builder: (context, user, settings) => // ...
+  builder: (context, user, settings) => ...,
 )
 ```
 
 ### Nested Builders
 
-Build widgets from multiple states:
-
 ```dart
 vm.user.build((user) =>
-  vm.posts.build((postsState) =>
-    postsState.when(
-      data: (posts) => UserWithPosts(user, posts),
-      loading: () => UserWithPostsSkeleton(user),
-      error: (msg) => UserWithError(user, msg),
-      empty: () => UserWithNoPosts(user),
-    ),
-  ),
+  vm.posts.build((state) => state.when(
+    data: (posts) => UserWithPosts(user, posts),
+    loading: () => Skeleton(user),
+    error: (msg) => Error(msg),
+    empty: () => Empty(),
+  )),
 )
 ```
 
-## Complete Example
+## API Summary
 
-```dart
-class TodoListPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final vm = context.vm<TodosViewModel>();
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Todos'),
-        actions: [
-          vm.isSyncing.build(
-            (syncing) => syncing
-              ? Padding(
-                  padding: EdgeInsets.all(16),
-                  child: SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  ),
-                )
-              : IconButton(
-                  icon: Icon(Icons.sync),
-                  onPressed: vm.sync,
-                ),
-          ),
-        ],
-      ),
-      body: vm.todos.build(
-        (state) => switch (state) {
-          AsyncEmpty() => Center(child: Text('No todos yet')),
-          AsyncLoading() => Center(child: CircularProgressIndicator()),
-          AsyncError(:final message) => Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text('Error: $message'),
-                ElevatedButton(
-                  onPressed: vm.loadTodos,
-                  child: Text('Retry'),
-                ),
-              ],
-            ),
-          ),
-          AsyncData(:final data) => ListView.builder(
-            itemCount: data.length,
-            itemBuilder: (context, i) => TodoTile(
-              todo: data[i],
-              onToggle: () => vm.toggle(data[i].id),
-            ),
-          ),
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _showAddDialog(context, vm),
-        child: Icon(Icons.add),
-      ),
-    );
-  }
-}
-```
+| Method | Purpose |
+|--------|---------|
+| `build()` | Rebuild on change |
+| `displayWhen()` | Async state with defaults |
+| `buildWithChild()` | Static child optimization |
+| `listen()` | Side effects (sync) |
+| `listenAsync()` | Side effects (async) |
+| `StateBuilder2/3/4` | Multiple state sources |

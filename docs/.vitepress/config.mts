@@ -5,6 +5,8 @@ export default defineConfig({
   description: 'State management that gets out of your way',
 
   themeConfig: {
+    outline: [2, 3],
+
     nav: [
       { text: 'Guide', link: '/guide/what-is-piper' },
       { text: 'Examples', link: '/examples/counter' }
@@ -33,7 +35,8 @@ export default defineConfig({
           text: 'Flutter Integration',
           items: [
             { text: 'ViewModelScope', link: '/guide/view-model-scope' },
-            { text: 'Building UI', link: '/guide/building-ui' }
+            { text: 'Building UI', link: '/guide/building-ui' },
+            { text: 'Dependency Injection', link: '/guide/dependency-injection' }
           ]
         },
         {

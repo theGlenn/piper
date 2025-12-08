@@ -1,10 +1,16 @@
 # StateHolder
 
-`StateHolder<T>` is a synchronous state container with change notification support. It's a pure Dart class with no Flutter dependency.
+Synchronous state container with change notification. Pure Dart, no Flutter dependency.
+
+```dart
+late final count = state(0);
+
+count.value = 10;               // Set
+count.update((c) => c + 1);     // Transform
+count.build((v) => Text('$v'))  // Rebuild on change
+```
 
 ## Creating State
-
-Inside a ViewModel, use `state()` to create a managed StateHolder:
 
 ```dart
 class CounterViewModel extends ViewModel {
@@ -14,81 +20,58 @@ class CounterViewModel extends ViewModel {
 }
 ```
 
-The StateHolder is automatically disposed when the ViewModel disposes.
+Automatically disposed when the ViewModel disposes.
 
-## Reading State
-
-Access the current value with `.value`:
+## Reading and Writing
 
 ```dart
-int currentCount = vm.count.value;
-String currentName = vm.name.value;
-```
+// Read
+int current = vm.count.value;
 
-## Writing State
-
-Set a new value directly:
-
-```dart
+// Write directly
 vm.count.value = 10;
-vm.name.value = 'Alice';
-```
 
-Or update based on the current value:
-
-```dart
-vm.count.update((current) => current + 1);
-vm.items.update((list) => [...list, 'new item']);
+// Transform current value
+vm.count.update((c) => c + 1);
+vm.items.update((list) => [...list, 'new']);
 ```
 
 ## Building UI
 
-Use `.build()` to create a widget that rebuilds on state changes:
-
 ```dart
-vm.count.build((count) => Text('Count: $count'))
+vm.count.build((count) => Text('$count'))
 ```
 
-Under the hood, `flutter_piper` adapts the StateHolder to Flutter's `ValueListenableBuilder`.
+See [Building UI](/guide/building-ui) for `buildWithChild()` and other patterns.
 
-## Listening Without Rebuilding
+## Side Effects
 
-For side effects (navigation, snackbars), use `.listen()`:
+For navigation, snackbars, or other effects without rebuilding:
 
 ```dart
 vm.isDeleted.listen(
-  onChange: (previous, current) {
-    if (current) Navigator.of(context).pop();
+  onChange: (prev, curr) {
+    if (curr) Navigator.of(context).pop();
   },
-  child: // rest of UI
+  child: DeleteButton(),
 )
 ```
 
-## Adding Listeners
+## Standalone Usage
 
-Add listeners directly for custom integrations:
-
-```dart
-vm.count.addListener(() => print('Count changed: ${vm.count.value}'));
-```
-
-## Outside ViewModels
-
-You can create standalone StateHolders, but you're responsible for disposal:
+Outside ViewModels, manage disposal manually:
 
 ```dart
 final counter = StateHolder(0);
-// ... use it ...
+// ...
 counter.dispose();
 ```
 
-Inside ViewModels, always use `state()` for automatic lifecycle management.
-
-## Summary
+## API Summary
 
 | Operation | Code |
 |-----------|------|
-| Create | `late final count = state(0);` |
+| Create | `late final count = state(0)` |
 | Read | `count.value` |
 | Write | `count.value = 10` |
 | Update | `count.update((c) => c + 1)` |
