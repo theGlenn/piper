@@ -7,23 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  # Pure Dart package tests
-  piper:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dart-lang/setup-dart@v1
-        with:
-          sdk: stable
-      - run: dart pub get
-        working-directory: packages/piper
-      - run: dart analyze --fatal-infos
-        working-directory: packages/piper
-      - run: dart test
-        working-directory: packages/piper
-
-  # Flutter package tests
-  flutter_piper:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -31,8 +15,22 @@ jobs:
         with:
           flutter-version: '3.x'
           channel: stable
+
+      # Get dependencies for the workspace
       - run: flutter pub get
-      - run: flutter analyze --fatal-infos
+
+      # piper package (pure Dart)
+      - name: Analyze piper
+        run: dart analyze --fatal-infos
+        working-directory: packages/piper
+      - name: Test piper
+        run: dart test
+        working-directory: packages/piper
+
+      # flutter_piper package
+      - name: Analyze flutter_piper
+        run: flutter analyze --fatal-infos
         working-directory: packages/flutter_piper
-      - run: flutter test
+      - name: Test flutter_piper
+        run: flutter test
         working-directory: packages/flutter_piper
