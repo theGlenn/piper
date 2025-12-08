@@ -2,14 +2,14 @@
 
 ## StateHolder
 
-Synchronous state container. Wraps `ValueNotifier` with a cleaner API.
+Synchronous state container with change notification. Pure Dart, no Flutter dependency.
 
 ```dart
 late final count = state(0);
 
 count.value = 1;                      // Set directly
 count.update((c) => c + 1);           // Transform
-count.listenable                      // Bind to widgets
+count.addListener(() => ...);         // Add listeners
 ```
 
 ## AsyncStateHolder

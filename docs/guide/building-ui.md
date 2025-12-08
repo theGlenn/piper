@@ -95,12 +95,12 @@ vm.saveResult.listenAsync(
 
 ### StateBuilder Widget
 
-For multiple listenables:
+For multiple state holders:
 
 ```dart
 StateBuilder2(
-  listenable1: vm.user.listenable,
-  listenable2: vm.settings.listenable,
+  stateHolder1: vm.user,
+  stateHolder2: vm.settings,
   builder: (context, user, settings) => // ...
 )
 ```

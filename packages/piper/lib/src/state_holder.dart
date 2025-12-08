@@ -1,9 +1,9 @@
 import 'piper_notifier.dart';
 
-/// Synchronous state container wrapping [ValueNotifier].
+/// Synchronous state container with change notification support.
 ///
-/// Provides a simple interface for managing UI-local state with
-/// change notification support.
+/// Wraps [PiperNotifier] to provide a simple interface for managing
+/// state with automatic listener notification.
 ///
 /// Example:
 /// ```dart
@@ -30,7 +30,7 @@ class StateHolder<T> {
     _notifier.value = updater(_notifier.value);
   }
 
-  /// The underlying [ValueListenable] for binding to widgets or listeners.
+  /// The underlying [PiperNotifier] for adding listeners.
   PiperNotifier<T> get notifier => _notifier;
 
   /// Disposes the underlying notifier.
