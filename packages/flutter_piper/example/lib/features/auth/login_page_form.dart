@@ -26,7 +26,24 @@ class _LoginPageFormState extends State<LoginPageForm> {
   Widget build(BuildContext context) {
     final authVm = context.vm<AuthViewModel>();
 
-    return Form(
+    // Show snackbar on login error using StateListener
+    return authVm.loginState.listen(
+      onChange: (previous, current) {
+        if (current is AsyncError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(current.message),
+              backgroundColor: Colors.red,
+              action: SnackBarAction(
+                label: 'Dismiss',
+                textColor: Colors.white,
+                onPressed: () => authVm.clearError(),
+              ),
+            ),
+          );
+        }
+      },
+      child: Form(
       key: _formKey,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -132,6 +149,7 @@ class _LoginPageFormState extends State<LoginPageForm> {
             },
           ),
         ],
+      ),
       ),
     );
   }

@@ -51,14 +51,16 @@ export default defineConfig({
             { text: 'Counter', link: '/examples/counter' },
             { text: 'Authentication', link: '/examples/auth' },
             { text: 'Todo List', link: '/examples/todos' },
-            { text: 'Search', link: '/examples/search' }
+            { text: 'Search', link: '/examples/search' },
+            { text: 'Form Validation', link: '/examples/form' },
+            { text: 'Navigation', link: '/examples/navigation' }
           ]
         }
       ]
     },
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/piper-flutter/piper' }
+      { icon: 'github', link: 'https://github.com/glennsonna/piper' }
     ]
   }
 })
