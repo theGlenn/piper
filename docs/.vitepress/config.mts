@@ -2,19 +2,44 @@ import { defineConfig } from 'vitepress'
 
 export default defineConfig({
   title: 'Piper',
-  description: 'State management that gets out of your way',
+  description: 'Simple Flutter state management with lifecycle-aware ViewModels. Automatic cleanup, explicit dependencies, no boilerplate.',
   base: '/piper/',
+  lang: 'en-US',
+  cleanUrls: true,
+  lastUpdated: true,
+
+  sitemap: {
+    hostname: 'https://theglenn.github.io/piper'
+  },
 
   head: [
-    ['link', { rel: 'icon', href: '/favicon.ico' }],
-    ['link', { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32x32.png' }],
-    ['link', { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/favicon-16x16.png' }],
-    ['link', { rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.png' }]
+    ['link', { rel: 'icon', href: '/piper/favicon.ico' }],
+    ['link', { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/piper/favicon-32x32.png' }],
+    ['link', { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/piper/favicon-16x16.png' }],
+    ['link', { rel: 'apple-touch-icon', sizes: '180x180', href: '/piper/apple-touch-icon.png' }],
+    ['link', { rel: 'canonical', href: 'https://theglenn.github.io/piper/' }],
+    ['meta', { name: 'theme-color', content: '#3c82f6' }],
+    ['meta', { name: 'author', content: 'theGlenn' }],
+    ['meta', { name: 'keywords', content: 'flutter, dart, state management, viewmodel, mvvm, architecture, piper' }],
+    ['meta', { property: 'og:type', content: 'website' }],
+    ['meta', { property: 'og:title', content: 'Piper - Flutter State Management' }],
+    ['meta', { property: 'og:description', content: 'Simple Flutter state management with lifecycle-aware ViewModels. Automatic cleanup, explicit dependencies, no boilerplate.' }],
+    ['meta', { property: 'og:url', content: 'https://theglenn.github.io/piper/' }],
+    ['meta', { property: 'og:image', content: 'https://theglenn.github.io/piper/og-image.png' }],
+    ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
+    ['meta', { name: 'twitter:title', content: 'Piper - Flutter State Management' }],
+    ['meta', { name: 'twitter:description', content: 'Simple Flutter state management with lifecycle-aware ViewModels. Automatic cleanup, explicit dependencies, no boilerplate.' }],
+    ['meta', { name: 'twitter:image', content: 'https://theglenn.github.io/piper/og-image.png' }]
   ],
 
   themeConfig: {
     logo: '/logo.png',
     outline: [2, 3],
+
+    search: {
+      provider: 'local'
+    },
+
     nav: [
       { text: 'Guide', link: '/guide/what-is-piper' },
       { text: 'Examples', link: '/examples/counter' }
@@ -71,7 +96,17 @@ export default defineConfig({
     },
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/theglenn/piper' }
-    ]
+      { icon: 'github', link: 'https://github.com/theGlenn/piper' }
+    ],
+
+    footer: {
+      message: 'Released under the MIT License.',
+      copyright: 'Copyright © 2024-present theGlenn'
+    },
+
+    editLink: {
+      pattern: 'https://github.com/theGlenn/piper/edit/main/docs/:path',
+      text: 'Edit this page on GitHub'
+    }
   }
 })

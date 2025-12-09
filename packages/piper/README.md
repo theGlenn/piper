@@ -1,72 +1,73 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/theGlenn/piper/main/docs/public/logo.png" alt="Piper" width="100" />
+</p>
+
 # Piper State
 
-State management that gets out of your way.
+[![pub package](https://img.shields.io/pub/v/piper_state.svg)](https://pub.dev/packages/piper_state)
+[![likes](https://img.shields.io/pub/likes/piper_state)](https://pub.dev/packages/piper_state/score)
+[![popularity](https://img.shields.io/pub/popularity/piper_state)](https://pub.dev/packages/piper_state/score)
+[![pub points](https://img.shields.io/pub/points/piper_state)](https://pub.dev/packages/piper_state/score)
+[![CI](https://github.com/theGlenn/piper/actions/workflows/ci.yml/badge.svg)](https://github.com/theGlenn/piper/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Dart](https://img.shields.io/badge/Dart-3.5+-0175C2?logo=dart)](https://dart.dev)
+[![style: lints](https://img.shields.io/badge/style-flutter__lints-4BC0F5.svg)](https://pub.dev/packages/lints)
 
-Lifecycle-aware ViewModels, explicit dependencies, automatic cleanup. Patterns that have worked for years, now in Flutter.
+**Flutter state management with lifecycle-aware ViewModels.**
 
-## Features
+- ✅ Automatic cleanup — streams cancel, tasks abort
+- ✅ Explicit dependencies — constructor injection
+- ✅ Zero boilerplate — no code generation
+- ✅ Testable — plain Dart classes
 
-- **StateHolder** — Reactive state containers with automatic widget rebuilds
-- **AsyncState** — Built-in loading/error/data states for async operations
-- **Stream bindings** — Bind streams to state with automatic subscription management
-- **ViewModel** — Lifecycle-aware base class with automatic resource cleanup
-- **Plain Dart** — Core library has no Flutter dependency, test without widgets
-
-## Getting started
-
+## Installation
 ```yaml
 dependencies:
   piper_state: ^0.0.2
-  flutter_piper: ^0.0.2  # For Flutter widgets
+  flutter_piper: ^0.0.2  # Flutter widgets
 ```
 
-## Usage
-
-### Basic state
-
+## Quick Example
 ```dart
 class CounterViewModel extends ViewModel {
   late final count = state(0);
 
   void increment() => count.update((c) => c + 1);
 }
+
+// In your widget
+vm.count.build((count) => Text('$count'));
 ```
 
-### Stream binding
-
-State updates automatically, subscription auto-cancels on dispose:
-
+## Stream Binding
 ```dart
 class AuthViewModel extends ViewModel {
-  AuthViewModel(AuthRepository auth);
+  final AuthRepository _auth;
+
+  AuthViewModel(this._auth);
 
   late final user = bind(_auth.userStream, initial: null);
-
-  bool get isLoggedIn => user.value != null;
 }
 ```
 
-### Async operations
-
-Loading/error/data handled automatically:
-
+## Async Operations
 ```dart
 late final profile = asyncState<Profile>();
 
-void loadProfile() => load(profile, () => _repo.fetchProfile());
+void load() => load(profile, () => _repo.fetchProfile());
 ```
 
 ## Why Piper?
 
-- **Explicit dependencies** — Constructor injection, not magic
-- **Automatic lifecycle** — No `if (mounted)` checks
-- **Plain Dart** — Test without Flutter
-- **Incremental** — Adopt one feature at a time
+| | Piper | Riverpod | Bloc |
+|---|:---:|:---:|:---:|
+| No codegen | ✅ | ❌ | ✅ |
+| Constructor injection | ✅ | ❌ | ✅ |
+| Auto lifecycle | ✅ | ✅ | ❌ |
 
-## Additional information
+## Documentation
 
-- [GitHub Repository](https://github.com/theGlenn/piper)
-- [flutter_piper](https://pub.dev/packages/flutter_piper) — Flutter widgets for Piper State
+📖 **[Full docs](https://theglenn.github.io/piper)** · [GitHub](https://github.com/theGlenn/piper) · [flutter_piper](https://pub.dev/packages/flutter_piper)
 
 ## License
 

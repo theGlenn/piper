@@ -2,51 +2,30 @@
   <img src="docs/public/logo.png" alt="Piper" width="120" />
 </p>
 
-# Piper 🚰
+<h1 align="center">Piper</h1>
 
-State management that gets out of your way.
+<p align="center">
+  <strong>Flutter state management, simplified.</strong><br>
+  ViewModels with automatic lifecycle. Just Dart.
+</p>
 
-Lifecycle-aware ViewModels, explicit dependencies, automatic cleanup. Patterns that have worked for years, now in Flutter.
+<p align="center">
+  <a href="https://pub.dev/packages/piper_state"><img src="https://img.shields.io/pub/v/piper_state.svg" alt="pub package"></a>
+  <a href="https://pub.dev/packages/piper_state/score"><img src="https://img.shields.io/pub/likes/piper_state" alt="likes"></a>
+  <a href="https://pub.dev/packages/piper_state/score"><img src="https://img.shields.io/pub/points/piper_state" alt="pub points"></a>
+  <a href="https://github.com/theGlenn/piper/actions/workflows/ci.yml"><img src="https://github.com/theGlenn/piper/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
+  <a href="https://flutter.dev"><img src="https://img.shields.io/badge/Flutter-3.24+-02569B?logo=flutter" alt="Flutter"></a>
+</p>
 
-## In a nutshell
+---
 
-**Bind a stream** — state updates automatically, subscription auto-cancels on dispose:
+- ✅ **Automatic cleanup** — streams cancel, tasks abort on dispose
+- ✅ **Explicit dependencies** — constructor injection, no magic
+- ✅ **Zero boilerplate** — no code generation required
+- ✅ **Testable** — plain Dart classes
 
-```dart
-class AuthViewModel extends ViewModel {
-  AuthViewModel(AuthRepository auth);
-
-  late final user = bind(_auth.userStream, initial: null);
-
-  bool get isLoggedIn => user.value != null;
-}
-```
-
-```dart
-// In your widget
-vm.user.build((user) => Text('Hello, ${user?.name ?? "Guest"}'));
-```
-
-**Async operations** — loading/error/data handled automatically:
-
-```dart
-late final profile = asyncState<Profile>();
-
-void loadProfile() => load(profile, () => _repo.fetchProfile());
-```
-
-```dart
-vm.profile.build(
-  (state) => switch (state) {
-    AsyncData(:final data) => Text(data.name),
-    AsyncError(:final message) => Text('Error: $message'),
-    _ => const CircularProgressIndicator(),
-  },
-);
-```
-
-## "Just show me a counter"
-
+## Quick Start
 ```dart
 class CounterViewModel extends ViewModel {
   late final count = state(0);
@@ -54,7 +33,6 @@ class CounterViewModel extends ViewModel {
   void increment() => count.update((c) => c + 1);
 }
 ```
-
 ```dart
 class CounterPage extends StatelessWidget {
   @override
@@ -74,32 +52,54 @@ class CounterPage extends StatelessWidget {
 }
 ```
 
-## Why Piper?
+## Stream Binding
 
-- **Explicit dependencies** — Constructor injection, not magic
-- **Automatic lifecycle** — No `if (mounted)` checks
-- **Plain Dart** — Test without Flutter
-- **Incremental** — Adopt one feature at a time
+Subscriptions auto-cancel on dispose:
+```dart
+class AuthViewModel extends ViewModel {
+  final AuthRepository _auth;
+
+  AuthViewModel(this._auth);
+
+  late final user = bind(_auth.userStream, initial: null);
+}
+```
+
+## Async Operations
+
+Loading, error, and data states handled automatically:
+```dart
+late final profile = asyncState<Profile>();
+
+void load() => load(profile, () => _repo.fetchProfile());
+```
+```dart
+vm.profile.build(
+(state) => switch (state) {
+AsyncData(:final data) => Text(data.name),
+AsyncError(:final message) => Text('Error: $message'),
+_ => CircularProgressIndicator(),
+},
+);
+```
 
 ## Installation
-
 ```yaml
 dependencies:
   piper_state: ^0.0.2
   flutter_piper: ^0.0.2
 ```
 
-## Learn more
+## Documentation
 
-- [Examples](examples/) — Counter, Auth, Todos, Search, Form validation, Navigation
-- [Core Concepts](docs/concepts.md) — StateHolder, AsyncState, ViewModel, Task
-- [Comparison](docs/comparison.md) — vs. Riverpod, vs. Bloc
+📖 **[Full Documentation](https://theglenn.github.io/piper)**
 
-## Roadmap
+## Packages
 
-- [ ] **Derived state** — `select()` API for computed values with automatic dependency tracking
-- [ ] **DevTools extension** — Inspect ViewModels and state in real-time
-- [ ] **Code generation** — Optional codegen for boilerplate reduction
+| Package | pub.dev |
+|---------|---------|
+| [piper_state](packages/piper) | [![pub](https://img.shields.io/pub/v/piper_state.svg)](https://pub.dev/packages/piper_state) |
+| [flutter_piper](packages/flutter_piper) | [![pub](https://img.shields.io/pub/v/flutter_piper.svg)](https://pub.dev/packages/flutter_piper) |
 
 ## License
 

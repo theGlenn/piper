@@ -1,21 +1,45 @@
-# flutter_piper
+<p align="center">
+  <img src="https://raw.githubusercontent.com/theGlenn/piper/main/docs/public/logo.png" alt="Piper" width="100" />
+</p>
 
-Flutter widgets for [Piper State](https://pub.dev/packages/piper_state) state management.
+# Flutter Piper
+
+[![pub package](https://img.shields.io/pub/v/flutter_piper.svg)](https://pub.dev/packages/flutter_piper)
+[![likes](https://img.shields.io/pub/likes/flutter_piper)](https://pub.dev/packages/flutter_piper/score)
+[![popularity](https://img.shields.io/pub/popularity/flutter_piper)](https://pub.dev/packages/flutter_piper/score)
+[![pub points](https://img.shields.io/pub/points/flutter_piper)](https://pub.dev/packages/flutter_piper/score)
+[![CI](https://github.com/theGlenn/piper/actions/workflows/ci.yml/badge.svg)](https://github.com/theGlenn/piper/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Flutter](https://img.shields.io/badge/Flutter-3.24+-02569B?logo=flutter)](https://flutter.dev)
+[![style: flutter lints](https://img.shields.io/badge/style-flutter__lints-4BC0F5.svg)](https://pub.dev/packages/flutter_lints)
+
+**Flutter widgets for [Piper State](https://pub.dev/packages/piper_state).**
 
 ## Installation
-
 ```yaml
 dependencies:
   piper_state: ^0.0.2
   flutter_piper: ^0.0.2
 ```
 
+## Quick Example
+```dart
+// Provide ViewModels
+ViewModelScope(
+  create: [() => CounterViewModel()],
+  child: MyApp(),
+)
+
+// Access and build UI
+final vm = context.vm<CounterViewModel>();
+vm.count.build((count) => Text('$count'));
+```
+
 ## Widgets
 
 ### ViewModelScope
 
-Provides multiple ViewModels to the widget tree:
-
+Provides ViewModels to the widget tree:
 ```dart
 ViewModelScope(
   create: [
@@ -24,31 +48,21 @@ ViewModelScope(
   ],
   child: MyApp(),
 )
-
-// Access anywhere below:
-final vm = context.vm<AuthViewModel>();
 ```
 
-### Scoped&lt;T&gt;
+### Scoped\<T\>
 
-Scopes a single typed ViewModel with a builder pattern:
-
+Single typed ViewModel with builder:
 ```dart
 Scoped<DetailViewModel>(
   create: () => DetailViewModel(id),
   builder: (context, vm) => DetailPage(),
 )
-
-// Access via context:
-final vm = context.vm<DetailViewModel>();
-// Or use the semantic alias:
-final vm = context.scoped<DetailViewModel>();
 ```
 
 ### Named Scopes
 
-Share ViewModels across multiple routes with named scopes:
-
+Share ViewModels across routes:
 ```dart
 ViewModelScope.named(
   name: 'checkout',
@@ -56,45 +70,28 @@ ViewModelScope.named(
   child: CheckoutFlow(),
 )
 
-// Access by name from any descendant:
-final vm = context.vm<CheckoutViewModel>(scope: 'checkout');
+// Access by name
+context.vm<CheckoutViewModel>(scope: 'checkout');
 ```
 
-### StateBuilder
-
-Rebuilds when state changes:
-
+### Building UI
 ```dart
+// Rebuild on change
 vm.count.build((count) => Text('$count'))
-```
 
-### StateListener
-
-Side effects without rebuilding:
-
-```dart
+// Side effects
 vm.isDeleted.listen(
   onChange: (prev, curr) {
     if (curr) Navigator.of(context).pop();
   },
-  child: // your UI
+  child: MyWidget(),
 )
 ```
 
-### StateEffect
+## Documentation
 
-Post-frame side effects with conditions:
+📖 **[Full docs](https://theglenn.github.io/piper)** · [GitHub](https://github.com/theGlenn/piper) · [piper_state](https://pub.dev/packages/piper_state)
 
-```dart
-StateEffect<bool>(
-  listenable: vm.isLoggedIn.listenable,
-  when: (prev, curr) => !prev && curr,
-  effect: (_, ctx) => Navigator.of(ctx).pushReplacement(...),
-  child: // your UI
-)
-```
+## License
 
-## Learn More
-
-- [Piper Documentation](https://github.com/theGlenn/piper)
-- [Examples](https://github.com/theGlenn/piper/tree/main/examples)
+MIT

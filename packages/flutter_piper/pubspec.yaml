@@ -1,10 +1,20 @@
 name: flutter_piper
-description: "Lifecycle-aware state management for Flutter. ViewModels, async state, stream bindings, and task cancellation."
+description: >
+  Flutter widgets for Piper state management. ViewModelScope, Scoped widgets,
+  StateBuilder, and reactive extensions for lifecycle-aware ViewModels.
 version: 0.0.2
 license: MIT
-homepage: https://github.com/theGlenn/piper
-repository: https://github.com/theGlenn/piper/
+homepage: https://theglenn.github.io/piper
+repository: https://github.com/theGlenn/piper
 issue_tracker: https://github.com/theGlenn/piper/issues
+documentation: https://theglenn.github.io/piper/guide/getting-started
+
+topics:
+  - state-management
+  - viewmodel
+  - flutter
+  - widgets
+  - architecture
 
 environment:
   sdk: ^3.5.0
