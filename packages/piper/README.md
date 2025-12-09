@@ -1,39 +1,73 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# Piper
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/tools/pub/writing-package-pages).
+State management that gets out of your way.
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/to/develop-packages).
--->
-
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+Lifecycle-aware ViewModels, explicit dependencies, automatic cleanup. Patterns that have worked for years, now in Flutter.
 
 ## Features
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+- **StateHolder** — Reactive state containers with automatic widget rebuilds
+- **AsyncState** — Built-in loading/error/data states for async operations
+- **Stream bindings** — Bind streams to state with automatic subscription management
+- **ViewModel** — Lifecycle-aware base class with automatic resource cleanup
+- **Plain Dart** — Core library has no Flutter dependency, test without widgets
 
 ## Getting started
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+```yaml
+dependencies:
+  piper: ^0.0.2
+  flutter_piper: ^0.0.2  # For Flutter widgets
+```
 
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
+### Basic state
 
 ```dart
-const like = 'sample';
+class CounterViewModel extends ViewModel {
+  late final count = state(0);
+
+  void increment() => count.update((c) => c + 1);
+}
 ```
+
+### Stream binding
+
+State updates automatically, subscription auto-cancels on dispose:
+
+```dart
+class AuthViewModel extends ViewModel {
+  AuthViewModel(AuthRepository auth);
+
+  late final user = bind(_auth.userStream, initial: null);
+
+  bool get isLoggedIn => user.value != null;
+}
+```
+
+### Async operations
+
+Loading/error/data handled automatically:
+
+```dart
+late final profile = asyncState<Profile>();
+
+void loadProfile() => load(profile, () => _repo.fetchProfile());
+```
+
+## Why Piper?
+
+- **Explicit dependencies** — Constructor injection, not magic
+- **Automatic lifecycle** — No `if (mounted)` checks
+- **Plain Dart** — Test without Flutter
+- **Incremental** — Adopt one feature at a time
 
 ## Additional information
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+- [GitHub Repository](https://github.com/glennsonna/piper)
+- [flutter_piper](https://pub.dev/packages/flutter_piper) — Flutter widgets for Piper
+
+## License
+
+MIT
