@@ -85,8 +85,8 @@ class CounterPage extends StatelessWidget {
 
 ```yaml
 dependencies:
-  piper: ^0.0.1
-  flutter_piper: ^0.0.1
+  piper_state: ^0.0.2
+  flutter_piper: ^0.0.2
 ```
 
 ## Learn more

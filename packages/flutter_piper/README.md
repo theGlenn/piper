@@ -1,13 +1,13 @@
 # flutter_piper
 
-Flutter widgets for [Piper](https://pub.dev/packages/piper) state management.
+Flutter widgets for [Piper State](https://pub.dev/packages/piper_state) state management.
 
 ## Installation
 
 ```yaml
 dependencies:
-  piper: ^0.0.1
-  flutter_piper: ^0.0.1
+  piper_state: ^0.0.2
+  flutter_piper: ^0.0.2
 ```
 
 ## Widgets
