@@ -11,6 +11,13 @@ test:
 # Run tests with coverage
 test-coverage:
     flutter test --coverage
+    @echo "Coverage report generated at coverage/lcov.info"
+
+# Run tests with coverage and open HTML report (requires lcov)
+test-coverage-html: test-coverage
+    genhtml coverage/lcov.info -o coverage/html
+    @echo "HTML report generated at coverage/html/index.html"
+    open coverage/html/index.html || xdg-open coverage/html/index.html || echo "Open coverage/html/index.html in your browser"
 
 # Analyze code for issues
 analyze:

@@ -9,6 +9,7 @@
 [![popularity](https://img.shields.io/pub/popularity/flutter_piper)](https://pub.dev/packages/flutter_piper/score)
 [![pub points](https://img.shields.io/pub/points/flutter_piper)](https://pub.dev/packages/flutter_piper/score)
 [![CI](https://github.com/theGlenn/piper/actions/workflows/ci.yml/badge.svg)](https://github.com/theGlenn/piper/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/theGlenn/piper/branch/main/graph/badge.svg)](https://codecov.io/gh/theGlenn/piper)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Flutter](https://img.shields.io/badge/Flutter-3.24+-02569B?logo=flutter)](https://flutter.dev)
 [![style: flutter lints](https://img.shields.io/badge/style-flutter__lints-4BC0F5.svg)](https://pub.dev/packages/flutter_lints)

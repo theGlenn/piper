@@ -23,14 +23,28 @@ jobs:
       - name: Analyze piper
         run: dart analyze --fatal-infos
         working-directory: packages/piper
-      - name: Test piper
-        run: dart test
+      - name: Test piper with coverage
+        run: dart test --coverage=coverage
+        working-directory: packages/piper
+      - name: Convert piper coverage to LCOV
+        run: dart pub global activate coverage && dart pub global run coverage:format_coverage --lcov --in=coverage --out=coverage/lcov.info --report-on=lib
         working-directory: packages/piper
 
       # flutter_piper package
       - name: Analyze flutter_piper
         run: flutter analyze --fatal-infos
         working-directory: packages/flutter_piper
-      - name: Test flutter_piper
-        run: flutter test
+      - name: Test flutter_piper with coverage
+        run: flutter test --coverage
         working-directory: packages/flutter_piper
+
+      # Upload coverage to Codecov
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: packages/piper/coverage/lcov.info,packages/flutter_piper/coverage/lcov.info
+          flags: unittests
+          fail_ci_if_error: false
+          verbose: true
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

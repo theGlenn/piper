@@ -24,6 +24,19 @@ test-coverage:
     just piper::test-coverage
     just flutter_piper::test-coverage
 
+# Run all tests with coverage and open combined HTML report (requires lcov)
+test-coverage-html:
+    just piper::test-coverage
+    just flutter_piper::test-coverage
+    mkdir -p coverage
+    # Fix paths in lcov files to be relative to repo root
+    sed 's|SF:lib/|SF:packages/piper/lib/|g' packages/piper/coverage/lcov.info > coverage/piper.lcov.info
+    sed 's|SF:lib/|SF:packages/flutter_piper/lib/|g' packages/flutter_piper/coverage/lcov.info > coverage/flutter_piper.lcov.info
+    lcov -a coverage/piper.lcov.info -a coverage/flutter_piper.lcov.info -o coverage/lcov.info
+    genhtml coverage/lcov.info -o coverage/html
+    @echo "Combined HTML report generated at coverage/html/index.html"
+    open coverage/html/index.html || xdg-open coverage/html/index.html || echo "Open coverage/html/index.html in your browser"
+
 # Analyze code for issues across all packages
 analyze:
     just piper::analyze
