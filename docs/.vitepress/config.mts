@@ -3,6 +3,7 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: 'Piper',
   description: 'State management that gets out of your way',
+  base: '/piper/',
 
   head: [
     ['link', { rel: 'icon', href: '/favicon.ico' }],
