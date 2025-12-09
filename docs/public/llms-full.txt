@@ -15,8 +15,8 @@ Piper is a Flutter state management library that provides lifecycle-aware ViewMo
 
 ```yaml
 dependencies:
-  piper: ^0.1.0        # Core library (ViewModel, StateHolder, Task). No Flutter dependency.
-  flutter_piper: ^0.1.0 # Flutter widgets (ViewModelScope, builders).
+  piper_state: ^0.0.3   # Core library (ViewModel, StateHolder, Task). No Flutter dependency.
+  flutter_piper: ^0.0.3 # Flutter widgets (ViewModelScope, builders).
 ```
 
 ---

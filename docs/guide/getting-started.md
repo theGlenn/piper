@@ -6,11 +6,11 @@ Install Piper and create your first ViewModel in under 5 minutes.
 
 ```yaml
 dependencies:
-  piper: ^0.1.0
-  flutter_piper: ^0.1.0
+  piper_state: ^0.0.3
+  flutter_piper: ^0.0.3
 ```
 
-- **piper** — Core library (ViewModel, StateHolder, Task). No Flutter dependency.
+- **piper_state** — Core library (ViewModel, StateHolder, Task). No Flutter dependency.
 - **flutter_piper** — Flutter widgets (ViewModelScope, builders).
 
 ## Your First ViewModel
