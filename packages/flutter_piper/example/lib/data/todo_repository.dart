@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:example/domain/todo.dart';
 
-
 class TodoRepository {
   final _todosController = StreamController<List<Todo>>.broadcast();
   final List<Todo> _todos = [

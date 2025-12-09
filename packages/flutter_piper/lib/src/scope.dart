@@ -74,8 +74,7 @@ class _ScopedState<T extends ViewModel> extends State<Scoped<T>> {
     super.didChangeDependencies();
     if (!_initialized) {
       _initialized = true;
-      _instance =
-          widget._create?.call() ?? widget._createWithContext!(context);
+      _instance = widget._create?.call() ?? widget._createWithContext!(context);
     }
   }
 
@@ -261,7 +260,8 @@ class _InheritedViewModelScope extends InheritedWidget {
   String? get name => state.name;
 
   @override
-  bool updateShouldNotify(covariant _InheritedViewModelScope oldWidget) => false;
+  bool updateShouldNotify(covariant _InheritedViewModelScope oldWidget) =>
+      false;
 }
 
 /// Extension for retrieving ViewModels from the widget tree.

@@ -1,28 +1,25 @@
 name: piper_state
-description: >
-  Simple Flutter state management with lifecycle-aware ViewModels. 
-  Automatic cleanup, explicit dependencies, no boilerplate.
-version: 0.0.2
-license: MIT
+description: Simple Flutter state management with lifecycle-aware ViewModels. Automatic cleanup, explicit dependencies, no boilerplate.
+version: 0.0.3
+repository: https://github.com/theGlenn/piper
 homepage: https://theglenn.github.io/piper
-repository: https://github.com/theglenn/piper
-issue_tracker: https://github.com/theglenn/piper/issues
+issue_tracker: https://github.com/theGlenn/piper/issues
 documentation: https://theglenn.github.io/piper/guide/getting-started
 
 topics:
   - state-management
   - viewmodel
-  - flutter
-  - dart
   - architecture
+  - dart
+  - flutter
 
 environment:
-  sdk: ^3.5.0
+  sdk: ^3.6.0
 
 resolution: workspace
 
 dependencies:
-  meta: ^1.9.0
+  meta: ^1.11.0
 
 dev_dependencies:
   lints: ^5.0.0

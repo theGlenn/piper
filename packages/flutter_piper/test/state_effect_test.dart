@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_piper/flutter_piper.dart';
@@ -74,7 +73,8 @@ void main() {
       expect(whenCalls, [(0, 1), (1, 5)]);
     });
 
-    testWidgets('when condition can prevent effect from firing', (tester) async {
+    testWidgets('when condition can prevent effect from firing',
+        (tester) async {
       final notifier = ValueNotifier(0);
       var effectFired = false;
 

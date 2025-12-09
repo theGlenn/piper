@@ -38,8 +38,10 @@ class StateHolder<T> {
   /// After calling dispose, this [StateHolder] should not be used.
   void dispose() => _notifier.dispose();
 
+  /// Adds a listener that will be called when the value changes.
   void addListener(void Function() listener) => _notifier.addListener(listener);
 
+  /// Removes a previously added listener.
   void removeListener(void Function() listener) =>
       _notifier.removeListener(listener);
 }

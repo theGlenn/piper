@@ -26,6 +26,10 @@ abstract class ViewModel {
   final List<StateHolder<dynamic>> _holders = [];
   final TaskScope _taskScope = TaskScope();
 
+  /// The [TaskScope] for this ViewModel.
+  ///
+  /// Use this to launch async tasks that should be cancelled when the
+  /// ViewModel is disposed.
   TaskScope get taskScope => _taskScope;
 
   /// Creates a [StateHolder] registered for automatic disposal.

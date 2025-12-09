@@ -38,26 +38,26 @@ sealed class AsyncState<T> {
 
   /// Returns the data if available, otherwise null.
   T? get dataOrNull => switch (this) {
-    AsyncData(data: var d) => d,
-    _ => null,
-  };
+        AsyncData(data: var d) => d,
+        _ => null,
+      };
 
   /// Returns the error message if available, otherwise null.
   String? get errorOrNull => switch (this) {
-    AsyncError(message: var m) => m,
-    _ => null,
-  };
+        AsyncError(message: var m) => m,
+        _ => null,
+      };
 
   /// Transform data if present.
   ///
   /// Returns a new [AsyncState] with the transformed data, or the same
   /// state type (empty/loading/error) if there's no data.
   AsyncState<R> map<R>(R Function(T data) transform) => switch (this) {
-    AsyncEmpty() => AsyncEmpty<R>(),
-    AsyncLoading() => AsyncLoading<R>(),
-    AsyncError(message: var m, error: var e) => AsyncError<R>(m, error: e),
-    AsyncData(data: var d) => AsyncData(transform(d)),
-  };
+        AsyncEmpty() => AsyncEmpty<R>(),
+        AsyncLoading() => AsyncLoading<R>(),
+        AsyncError(message: var m, error: var e) => AsyncError<R>(m, error: e),
+        AsyncData(data: var d) => AsyncData(transform(d)),
+      };
 
   /// Handle all cases exhaustively.
   ///
@@ -67,24 +67,29 @@ sealed class AsyncState<T> {
     required R Function() loading,
     required R Function(String message) error,
     required R Function(T data) data,
-  }) => switch (this) {
-    AsyncEmpty() => empty(),
-    AsyncLoading() => loading(),
-    AsyncError(message: var m) => error(m),
-    AsyncData(data: var d) => data(d),
-  };
+  }) =>
+      switch (this) {
+        AsyncEmpty() => empty(),
+        AsyncLoading() => loading(),
+        AsyncError(message: var m) => error(m),
+        AsyncData(data: var d) => data(d),
+      };
 
+  /// Alias for [when] that lifts each state into a common return type.
+  ///
+  /// All callbacks are required, ensuring you handle every state.
   R lift<R>({
     required R Function() empty,
     required R Function() loading,
     required R Function(String message) error,
     required R Function(T data) data,
-  }) => switch (this) {
-    AsyncEmpty() => empty(),
-    AsyncLoading() => loading(),
-    AsyncError(message: var m) => error(m),
-    AsyncData(data: var d) => data(d),
-  };
+  }) =>
+      switch (this) {
+        AsyncEmpty() => empty(),
+        AsyncLoading() => loading(),
+        AsyncError(message: var m) => error(m),
+        AsyncData(data: var d) => data(d),
+      };
 
   /// Handle cases with optional callbacks and a required fallback.
   ///
@@ -95,12 +100,13 @@ sealed class AsyncState<T> {
     R Function(String message)? error,
     R Function(T data)? data,
     required R Function() orElse,
-  }) => switch (this) {
-    AsyncEmpty() => empty?.call() ?? orElse(),
-    AsyncLoading() => loading?.call() ?? orElse(),
-    AsyncError(message: var m) => error?.call(m) ?? orElse(),
-    AsyncData(data: var d) => data?.call(d) ?? orElse(),
-  };
+  }) =>
+      switch (this) {
+        AsyncEmpty() => empty?.call() ?? orElse(),
+        AsyncLoading() => loading?.call() ?? orElse(),
+        AsyncError(message: var m) => error?.call(m) ?? orElse(),
+        AsyncData(data: var d) => data?.call(d) ?? orElse(),
+      };
 }
 
 /// Represents an empty state before any data has been loaded.

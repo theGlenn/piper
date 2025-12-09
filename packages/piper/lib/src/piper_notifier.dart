@@ -15,10 +15,13 @@ class PiperNotifier<T> {
   final List<void Function()> _listeners = [];
   T _value;
 
+  /// Creates a [PiperNotifier] with the given initial value.
   PiperNotifier(this._value);
 
+  /// The current value.
   T get value => _value;
 
+  /// Sets a new value and notifies listeners if it changed.
   set value(T newValue) {
     if (_value != newValue) {
       _value = newValue;
@@ -28,9 +31,12 @@ class PiperNotifier<T> {
     }
   }
 
+  /// Adds a listener that will be called when the value changes.
   void addListener(void Function() listener) => _listeners.add(listener);
 
+  /// Removes a previously added listener.
   void removeListener(void Function() listener) => _listeners.remove(listener);
 
+  /// Disposes this notifier by clearing all listeners.
   void dispose() => _listeners.clear();
 }

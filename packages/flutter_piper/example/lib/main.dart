@@ -21,10 +21,7 @@ void main() {
       todoRepo: todoRepo,
       // ViewModelScope provides ViewModels to descendants
       child: ViewModelScope(
-        create: [
-          () => AuthViewModel(authRepo),
-          () => TodosViewModel(todoRepo),
-        ],
+        create: [() => AuthViewModel(authRepo), () => TodosViewModel(todoRepo)],
         child: const MyApp(),
       ),
     ),

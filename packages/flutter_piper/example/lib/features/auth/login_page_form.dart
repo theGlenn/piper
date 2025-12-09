@@ -44,88 +44,91 @@ class _LoginPageFormState extends State<LoginPageForm> {
         }
       },
       child: Form(
-      key: _formKey,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const Icon(
-            Icons.check_circle_outline,
-            size: 80,
-            color: Colors.deepPurple,
-          ),
-          const SizedBox(height: 32),
-          const Text(
-            'Piper Todo',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'State management made simple',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.grey),
-          ),
-          const SizedBox(height: 48),
-          _TextField.email(
-            controller: _emailController,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter your email';
-              }
-              if (!value.contains('@')) {
-                return 'Please enter a valid email';
-              }
-              return null;
-            },
-          ),
-          const SizedBox(height: 16),
-          _TextField.password(
-            controller: _passwordController,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter your password';
-              }
-              if (value.length < 4) {
-                return 'Password must be at least 4 characters';
-              }
-              return null;
-            },
-          ),
-          const SizedBox(height: 8),
-          // Error message and submit button
-          StateBuilder<AsyncState<void>>(
-            listenable: authVm.loginState.listenable,
-            builder: (context, state, _) {
-              void onSubmit() {
-                if (_formKey.currentState!.validate()) {
-                  authVm.login(_emailController.text, _passwordController.text);
+        key: _formKey,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Icon(
+              Icons.check_circle_outline,
+              size: 80,
+              color: Colors.deepPurple,
+            ),
+            const SizedBox(height: 32),
+            const Text(
+              'Piper Todo',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'State management made simple',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.grey),
+            ),
+            const SizedBox(height: 48),
+            _TextField.email(
+              controller: _emailController,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your email';
                 }
-              }
+                if (!value.contains('@')) {
+                  return 'Please enter a valid email';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+            _TextField.password(
+              controller: _passwordController,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your password';
+                }
+                if (value.length < 4) {
+                  return 'Password must be at least 4 characters';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 8),
+            // Error message and submit button
+            StateBuilder<AsyncState<void>>(
+              listenable: authVm.loginState.listenable,
+              builder: (context, state, _) {
+                void onSubmit() {
+                  if (_formKey.currentState!.validate()) {
+                    authVm.login(
+                      _emailController.text,
+                      _passwordController.text,
+                    );
+                  }
+                }
 
-              return state.when(
-                empty: () => _SubmitButton(onPressed: onSubmit),
-                data: (_) => _SubmitButton(onPressed: onSubmit),
-                loading: () =>
-                    const _SubmitButton(onPressed: null, isLoading: true),
-                error: (message) => Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8),
-                      child: Text(
-                        message,
-                        style: const TextStyle(color: Colors.red),
-                        textAlign: TextAlign.center,
+                return state.when(
+                  empty: () => _SubmitButton(onPressed: onSubmit),
+                  data: (_) => _SubmitButton(onPressed: onSubmit),
+                  loading: () =>
+                      const _SubmitButton(onPressed: null, isLoading: true),
+                  error: (message) => Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text(
+                          message,
+                          style: const TextStyle(color: Colors.red),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 24),
-                    _SubmitButton(onPressed: onSubmit),
-                  ],
-                ),
-              );
+                      const SizedBox(height: 24),
+                      _SubmitButton(onPressed: onSubmit),
+                    ],
+                  ),
+                );
 
-              /* OR
+                /* OR
               return switch (state) {
                 AsyncEmpty<void>() ||
                 AsyncData<void>() => _SubmitButton(onPressed: onSubmit),
@@ -146,10 +149,10 @@ class _LoginPageFormState extends State<LoginPageForm> {
                   ],
                 ),
               };*/
-            },
-          ),
-        ],
-      ),
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

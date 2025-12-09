@@ -11,11 +11,7 @@ class Todo {
     this.completed = false,
   });
 
-  Todo copyWith({
-    String? title,
-    String? description,
-    bool? completed,
-  }) {
+  Todo copyWith({String? title, String? description, bool? completed}) {
     return Todo(
       id: id,
       title: title ?? this.title,

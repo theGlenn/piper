@@ -46,10 +46,8 @@ class _TodoListPageState extends State<TodoListPage> {
           return state.when(
             empty: () => const Center(child: CircularProgressIndicator()),
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (message) => _ErrorView(
-              error: message,
-              onRetry: todosVm.loadTodos,
-            ),
+            error: (message) =>
+                _ErrorView(error: message, onRetry: todosVm.loadTodos),
             data: (todos) => _TodoList(todosVm: todosVm),
           );
         },
@@ -214,9 +212,9 @@ class _SectionHeader extends StatelessWidget {
       child: Text(
         title,
         style: Theme.of(context).textTheme.titleSmall?.copyWith(
-              color: Colors.grey[600],
-              fontWeight: FontWeight.bold,
-            ),
+          color: Colors.grey[600],
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }
@@ -248,10 +246,7 @@ class _TodoTile extends StatelessWidget {
         child: const Icon(Icons.delete, color: Colors.white),
       ),
       child: ListTile(
-        leading: Checkbox(
-          value: todo.completed,
-          onChanged: (_) => onToggle(),
-        ),
+        leading: Checkbox(value: todo.completed, onChanged: (_) => onToggle()),
         title: Text(
           todo.title,
           style: TextStyle(

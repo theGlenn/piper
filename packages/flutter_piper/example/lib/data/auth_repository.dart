@@ -23,11 +23,7 @@ class AuthRepository {
     }
 
     // Simulate successful login
-    _currentUser = User(
-      id: '1',
-      name: email.split('@').first,
-      email: email,
-    );
+    _currentUser = User(id: '1', name: email.split('@').first, email: email);
     _userController.add(_currentUser);
   }
 

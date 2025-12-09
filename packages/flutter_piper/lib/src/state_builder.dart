@@ -86,10 +86,29 @@ class StateBuilder2<A, B> extends StatelessWidget {
 }
 
 /// Rebuilds when any of three [ValueListenable]s change.
+///
+/// Convenience widget for combining three listenables.
+///
+/// Example:
+/// ```dart
+/// StateBuilder3<String, bool, int>(
+///   first: viewModel.name.listenable,
+///   second: viewModel.isLoading.listenable,
+///   third: viewModel.count.listenable,
+///   builder: (context, name, isLoading, count) => Text('$name: $count'),
+/// )
+/// ```
 class StateBuilder3<A, B, C> extends StatelessWidget {
+  /// The first listenable to observe.
   final ValueListenable<A> first;
+
+  /// The second listenable to observe.
   final ValueListenable<B> second;
+
+  /// The third listenable to observe.
   final ValueListenable<C> third;
+
+  /// Called when any of the three listenables changes.
   final Widget Function(BuildContext context, A a, B b, C c) builder;
 
   const StateBuilder3({
