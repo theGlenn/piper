@@ -65,7 +65,7 @@ void loadProfile() => load(profile, () => _repo.fetchProfile());
 
 ## Additional information
 
-- [GitHub Repository](https://github.com/glennsonna/piper)
+- [GitHub Repository](https://github.com/theGlenn/piper)
 - [flutter_piper](https://pub.dev/packages/flutter_piper) — Flutter widgets for Piper State
 
 ## License

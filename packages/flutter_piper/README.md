@@ -96,5 +96,5 @@ StateEffect<bool>(
 
 ## Learn More
 
-- [Piper Documentation](https://github.com/glennsonna/piper)
-- [Examples](https://github.com/glennsonna/piper/tree/main/examples)
+- [Piper Documentation](https://github.com/theGlenn/piper)
+- [Examples](https://github.com/theGlenn/piper/tree/main/examples)
