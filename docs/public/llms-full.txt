@@ -1,0 +1,1260 @@
+# Piper - Complete API Reference
+
+> Lifecycle-aware ViewModels for Flutter with automatic cleanup.
+
+Piper is a Flutter state management library that provides lifecycle-aware ViewModels with automatic cleanup. No "mounted" checks, no stream subscriptions to manage, no manual disposal.
+
+## Documentation
+
+- Documentation: https://theglenn.github.io/piper/
+- GitHub: https://github.com/theGlenn/piper
+
+---
+
+## Installation
+
+```yaml
+dependencies:
+  piper: ^0.1.0        # Core library (ViewModel, StateHolder, Task). No Flutter dependency.
+  flutter_piper: ^0.1.0 # Flutter widgets (ViewModelScope, builders).
+```
+
+---
+
+## Core Principles
+
+### Explicit over Magic
+Dependencies are constructor parameters:
+```dart
+final vm = AuthViewModel(authRepository);
+```
+
+### Lifecycle-Aware
+When the ViewModel disposes, everything cleans up:
+```dart
+class AuthViewModel extends ViewModel {
+  late final user = bind(repo.userStream, initial: null);
+  void logout() => load(logoutState, () => repo.logout());
+}
+```
+
+### Plain Dart
+Test without Flutter:
+```dart
+test('search', () async {
+  final vm = SearchViewModel(mockRepo);
+  vm.search('flutter');
+  await Future.delayed(Duration(milliseconds: 300));
+  expect(vm.results.hasData, isTrue);
+});
+```
+
+---
+
+## ViewModel
+
+Base class for business logic with automatic lifecycle management.
+
+```dart
+class CounterViewModel extends ViewModel {
+  late final count = state(0);
+  void increment() => count.update((c) => c + 1);
+}
+```
+
+When disposed: state holders dispose, subscriptions cancel, async tasks stop.
+
+### Structure
+
+```dart
+class ProfileViewModel extends ViewModel {
+  final ProfileRepository _repo;
+
+  ProfileViewModel(this._repo);
+
+  late final profile = asyncState<Profile>();
+  late final isEditing = state(false);
+
+  void loadProfile(String id) => load(profile, () => _repo.getProfile(id));
+  void toggleEdit() => isEditing.update((v) => !v);
+}
+```
+
+### Dependencies
+
+Pass through constructor for explicit, testable dependencies:
+```dart
+class OrderViewModel extends ViewModel {
+  final OrderRepository _repo;
+  final PaymentService _payment;
+
+  OrderViewModel(this._repo, this._payment);
+}
+```
+
+### State Creation
+
+```dart
+// Sync state
+late final count = state(0);
+late final name = state('');
+
+// Async state
+late final user = asyncState<User>();
+late final items = asyncState<List<Item>>();
+```
+
+### Streams
+
+```dart
+// Bind directly
+late final user = bind(repo.userStream, initial: null);
+
+// Or subscribe manually
+ChatViewModel(ChatRepository repo) {
+  subscribe(repo.messagesStream, (msgs) => messages.value = msgs);
+}
+```
+
+### Async Operations
+
+```dart
+// launch() — returns Task for cancellation
+_task = launch(() async {
+  await _repo.save(data);
+  isSaved.value = true;
+});
+
+// launchWith() — callbacks
+launchWith(
+  () => _repo.delete(id),
+  onSuccess: (_) => isDeleted.value = true,
+  onError: (e) => error.value = e.toString(),
+);
+
+// load() — updates AsyncStateHolder
+load(user, () => _repo.getUser(id));
+```
+
+All cancel on dispose.
+
+### Custom Cleanup
+
+```dart
+@override
+void dispose() {
+  _controller.dispose();
+  super.dispose();
+}
+```
+
+### Automatic Cleanup Table
+
+| Resource | On Dispose |
+|----------|------------|
+| `state()` / `asyncState()` | Disposed |
+| `bind()` / `bindAsync()` | Cancelled, disposed |
+| `subscribe()` | Cancelled |
+| `launch()` / `load()` | Cancelled |
+
+---
+
+## StateHolder
+
+Synchronous state container with change notification. Pure Dart, no Flutter dependency.
+
+```dart
+late final count = state(0);
+
+count.value = 10;               // Set
+count.update((c) => c + 1);     // Transform
+count.build((v) => Text('$v'))  // Rebuild on change
+```
+
+### Creating State
+
+```dart
+class CounterViewModel extends ViewModel {
+  late final count = state(0);
+  late final name = state('');
+  late final items = state<List<String>>([]);
+}
+```
+
+Automatically disposed when the ViewModel disposes.
+
+### Reading and Writing
+
+```dart
+// Read
+int current = vm.count.value;
+
+// Write directly
+vm.count.value = 10;
+
+// Transform current value
+vm.count.update((c) => c + 1);
+vm.items.update((list) => [...list, 'new']);
+```
+
+### Building UI
+
+```dart
+vm.count.build((count) => Text('$count'))
+```
+
+### Side Effects
+
+For navigation, snackbars, or other effects without rebuilding:
+```dart
+vm.isDeleted.listen(
+  onChange: (prev, curr) {
+    if (curr) Navigator.of(context).pop();
+  },
+  child: DeleteButton(),
+)
+```
+
+### Standalone Usage
+
+Outside ViewModels, manage disposal manually:
+```dart
+final counter = StateHolder(0);
+// ...
+counter.dispose();
+```
+
+### API Summary
+
+| Operation | Code |
+|-----------|------|
+| Create | `late final count = state(0)` |
+| Read | `count.value` |
+| Write | `count.value = 10` |
+| Update | `count.update((c) => c + 1)` |
+| Build UI | `count.build((v) => Text('$v'))` |
+| Listen | `count.listen(onChange: ..., child: ...)` |
+
+---
+
+## AsyncStateHolder
+
+State container for async operations with loading, error, and data states.
+
+```dart
+late final user = asyncState<User>();
+
+load(user, () => repo.getUser(id));  // Sets loading → data or error
+user.hasData      // Check state
+user.dataOrNull   // Access data
+```
+
+### Creating Async State
+
+```dart
+class UserViewModel extends ViewModel {
+  late final user = asyncState<User>();
+  late final posts = asyncState<List<Post>>();
+}
+```
+
+### The Four States
+
+```dart
+sealed class AsyncState<T> {
+  AsyncEmpty()
+  AsyncLoading()
+  AsyncError(String message, {Object? error})
+  AsyncData(T data)
+}
+```
+
+### Loading Data
+
+The `load()` helper manages the full lifecycle:
+```dart
+void loadUser(String id) {
+  load(user, () => repo.getUser(id));
+}
+```
+
+1. Sets `AsyncLoading`
+2. Runs async work
+3. Sets `AsyncData` on success, `AsyncError` on failure
+4. Cancels if ViewModel disposes
+
+### Manual State Control
+
+```dart
+user.setLoading();
+user.setData(fetchedUser);
+user.setError('Failed to load');
+user.setEmpty();
+```
+
+### Checking State
+
+```dart
+user.isLoading   // true if AsyncLoading
+user.hasData     // true if AsyncData
+user.hasError    // true if AsyncError
+user.isEmpty     // true if AsyncEmpty
+
+user.dataOrNull  // T?
+user.errorOrNull // String?
+```
+
+### Building UI
+
+```dart
+vm.user.build(
+  (state) => switch (state) {
+    AsyncEmpty() => Text('No user'),
+    AsyncLoading() => CircularProgressIndicator(),
+    AsyncError(:final message) => Text('Error: $message'),
+    AsyncData(:final data) => Text('Hello, ${data.name}'),
+  },
+)
+```
+
+### API Summary
+
+| Operation | Code |
+|-----------|------|
+| Create | `late final user = asyncState<User>()` |
+| Load | `load(user, () => repo.getUser(id))` |
+| Set loading | `user.setLoading()` |
+| Set data | `user.setData(data)` |
+| Set error | `user.setError('message')` |
+| Check | `user.isLoading`, `user.hasData` |
+| Get data | `user.dataOrNull` |
+| Build UI | `user.build((state) => ...)` |
+
+---
+
+## Stream Bindings
+
+Bind streams to state holders with automatic subscription management.
+
+```dart
+late final user = bind(repo.userStream, initial: null);
+// Subscription auto-cancels on ViewModel dispose
+```
+
+### bind()
+
+Bind a stream directly to a `StateHolder`:
+```dart
+class AuthViewModel extends ViewModel {
+  late final user = bind(repo.userStream, initial: null);
+}
+```
+
+When the stream emits, `user.value` updates automatically.
+
+#### With Transform
+
+```dart
+late final user = bind(
+  repo.userStream,
+  initial: null,
+  transform: (u) => u?.copyWith(name: u.name.toUpperCase()),
+);
+```
+
+### stateFrom()
+
+Bind with type transformation:
+```dart
+late final isLoggedIn = stateFrom<User?, bool>(
+  repo.userStream,
+  initial: false,
+  transform: (user) => user != null,
+);
+```
+
+Creates `StateHolder<bool>` from `Stream<User?>`.
+
+### bindAsync()
+
+Bind to `AsyncStateHolder` with loading/error handling:
+```dart
+late final todos = bindAsync(repo.watchAll());
+```
+
+- Starts in `AsyncLoading`
+- Transitions to `AsyncData` on emit
+- Transitions to `AsyncError` on error
+
+### subscribe()
+
+For custom handling:
+```dart
+class ChatViewModel extends ViewModel {
+  late final messages = state<List<Message>>([]);
+  late final unreadCount = state(0);
+
+  ChatViewModel(ChatRepository repo) {
+    subscribe(
+      repo.messagesStream,
+      (msgs) {
+        messages.value = msgs;
+        unreadCount.value = msgs.where((m) => !m.read).length;
+      },
+      onError: (e) => error.value = e.toString(),
+    );
+  }
+}
+```
+
+### API Summary
+
+| Method | Output | Use Case |
+|--------|--------|----------|
+| `bind()` | `StateHolder<T>` | Direct binding |
+| `stateFrom()` | `StateHolder<R>` | Type transform |
+| `bindAsync()` | `AsyncStateHolder<T>` | With loading/error |
+| `subscribe()` | void | Custom handling |
+
+---
+
+## Task
+
+Handle to async work with cancellation. Cancelled tasks don't update state.
+
+```dart
+Task<void>? _task;
+
+void search(String query) {
+  _task?.cancel();
+  _task = launch(() async {
+    await Future.delayed(Duration(milliseconds: 300));
+    results.setData(await repo.search(query));  // Won't run if cancelled
+  });
+}
+```
+
+### Why Tasks?
+
+Without Piper, async operations need manual `mounted` checks:
+```dart
+void loadData() async {
+  final data = await repo.getData();
+  if (mounted) setState(() => _data = data);  // Tedious
+}
+```
+
+With Piper, cancelled tasks simply don't update state:
+```dart
+void loadData() => load(data, () => repo.getData());
+```
+
+### How It Works
+
+Tasks use "ignore-on-cancel":
+- The Future runs to completion (can't stop a Future)
+- If cancelled, results are discarded
+- Callbacks don't fire, state doesn't update
+
+### launch()
+
+Returns a `Task` handle for manual control:
+```dart
+Task<void>? _task;
+
+void search(String query) {
+  _task?.cancel();
+  _task = launch(() async {
+    await Future.delayed(Duration(milliseconds: 300));
+    results.setData(await repo.search(query));
+  });
+}
+```
+
+### launchWith()
+
+Inline success/error callbacks:
+```dart
+launchWith(
+  () => repo.save(data),
+  onSuccess: (_) => isSaved.value = true,
+  onError: (e) => error.value = e.toString(),
+);
+```
+
+### Task Properties
+
+```dart
+task.isCancelled  // cancel() was called
+task.isCompleted  // Future completed
+task.isActive     // running and not cancelled
+```
+
+### Await Results
+
+```dart
+final task = launch(() => fetchData());
+final result = await task.result;  // T? - null if cancelled
+```
+
+### TaskScope
+
+Manage multiple tasks:
+```dart
+final scope = TaskScope();
+scope.launch(() => fetchUsers());
+scope.launch(() => fetchPosts());
+scope.cancelAll();
+scope.dispose();
+```
+
+ViewModels have a built-in `taskScope`.
+
+### Patterns
+
+#### Debounced Search
+
+```dart
+Task<void>? _task;
+
+void onQueryChanged(String query) {
+  _task?.cancel();
+  if (query.isEmpty) return results.setEmpty();
+
+  results.setLoading();
+  _task = launch(() async {
+    await Future.delayed(Duration(milliseconds: 300));
+    results.setData(await repo.search(query));
+  });
+}
+```
+
+#### Cancel Previous
+
+```dart
+Task<void>? _task;
+
+void loadCategory(String id) {
+  _task?.cancel();
+  _task = launch(() async {
+    items.setLoading();
+    items.setData(await repo.getItems(id));
+  });
+}
+```
+
+#### Sequential Operations
+
+```dart
+void checkout() {
+  launch(() async {
+    state.setLoading();
+    await cartRepo.validateCart();
+    await paymentService.processPayment();
+    await orderRepo.createOrder();
+    state.setData(null);  // Won't run if user leaves
+  });
+}
+```
+
+---
+
+## ViewModelScope & Scoped
+
+Provide ViewModels to the widget tree with automatic lifecycle management.
+
+```dart
+ViewModelScope(
+  create: [() => AuthViewModel(repo)],
+  child: MyApp(),
+)
+
+// Access anywhere below
+final vm = context.vm<AuthViewModel>();
+```
+
+Two options:
+- **`ViewModelScope`** — Multiple ViewModels, app/feature level
+- **`Scoped<T>`** — Single ViewModel with builder, page level
+
+### ViewModelScope
+
+```dart
+ViewModelScope(
+  create: [
+    () => AuthViewModel(authRepo),
+    () => SettingsViewModel(settingsRepo),
+  ],
+  child: MyApp(),
+)
+```
+
+#### With BuildContext
+
+```dart
+ViewModelScope.withContext(
+  create: [
+    (context) => AuthViewModel(context.read<AuthRepository>()),
+  ],
+  child: MyApp(),
+)
+```
+
+### Scoped<T>
+
+Single ViewModel with type-safe builder:
+```dart
+Scoped<DetailViewModel>(
+  create: () => DetailViewModel(id),
+  builder: (context, vm) => DetailPage(),
+)
+```
+
+#### With BuildContext
+
+```dart
+Scoped<DetailViewModel>.withContext(
+  create: (context) => DetailViewModel(context.read<Repository>()),
+  builder: (context, vm) => DetailPage(),
+)
+```
+
+### Accessing ViewModels
+
+```dart
+final vm = context.vm<AuthViewModel>();
+final vm = context.maybeVm<AuthViewModel>();  // nullable
+final vm = context.scoped<DetailViewModel>(); // alias for vm<T>()
+```
+
+### Lifecycle
+
+- Created once when scope builds
+- Disposed when scope leaves tree
+
+### Nested Scopes
+
+```dart
+ViewModelScope(
+  create: [() => AuthViewModel(repo)],
+  child: MaterialApp(
+    home: ViewModelScope(
+      create: [() => TodosViewModel(repo)],
+      child: TodoListPage(),
+    ),
+  ),
+)
+```
+
+### Shadowing
+
+Same type in nested scope shadows parent:
+```dart
+ViewModelScope(
+  create: [() => ThemeViewModel(light)],
+  child: ViewModelScope(
+    create: [() => ThemeViewModel(dark)],  // Shadows
+    child: DarkSection(),
+  ),
+)
+```
+
+`context.vm<ThemeViewModel>()` returns nearest ancestor.
+
+### Named Scopes
+
+Share ViewModels across routes in multi-step flows:
+```dart
+ViewModelScope(
+  name: 'checkout',
+  create: [() => CheckoutViewModel()],
+  child: CheckoutFlow(),
+)
+
+// Access by name
+final vm = context.vm<CheckoutViewModel>(scope: 'checkout');
+```
+
+Use cases:
+- Multi-step flows (checkout, onboarding)
+- Nested navigators
+- Explicit scope targeting when shadowing
+
+### Manual Creation
+
+Without scope, manage disposal yourself:
+```dart
+class _MyPageState extends State<MyPage> {
+  late final _vm = MyViewModel(repo);
+
+  @override
+  void dispose() {
+    _vm.dispose();
+    super.dispose();
+  }
+}
+```
+
+### API Summary
+
+#### ViewModelScope
+
+| Constructor | Use |
+|-------------|-----|
+| `ViewModelScope(create: [...])` | Without context |
+| `ViewModelScope.withContext(create: [...])` | With context |
+
+Both support optional `name` parameter.
+
+#### Scoped<T>
+
+| Constructor | Use |
+|-------------|-----|
+| `Scoped<T>(create: ...)` | Without context |
+| `Scoped<T>.withContext(create: ...)` | With context |
+
+#### Context Extensions
+
+| Method | Returns |
+|--------|---------|
+| `context.vm<T>()` | T (throws if not found) |
+| `context.vm<T>(scope: 'name')` | T from named scope |
+| `context.maybeVm<T>()` | T? (null if not found) |
+| `context.scoped<T>()` | Alias for `vm<T>()` |
+
+---
+
+## Building UI
+
+Connect state to widgets with `.build()`, `.displayWhen()`, and `.listen()`.
+
+```dart
+vm.count.build((count) => Text('$count'))
+```
+
+### build()
+
+Rebuild widget when state changes:
+```dart
+vm.count.build((count) => Text('$count'))
+```
+
+### Pattern Matching (AsyncState)
+
+```dart
+vm.user.build(
+  (state) => switch (state) {
+    AsyncEmpty() => Text('No user'),
+    AsyncLoading() => CircularProgressIndicator(),
+    AsyncError(:final message) => Text('Error: $message'),
+    AsyncData(:final data) => Text('Hello, ${data.name}'),
+  },
+)
+```
+
+### displayWhen()
+
+Handle async states with sensible defaults:
+```dart
+vm.user.displayWhen(
+  data: (user) => UserProfile(user),
+  // loading: CircularProgressIndicator (default)
+  // error: red error text (default)
+  // empty: SizedBox.shrink() (default)
+)
+```
+
+Override specific states:
+```dart
+vm.user.displayWhen(
+  data: (user) => UserProfile(user),
+  loading: () => Shimmer(),
+  error: (msg) => RetryButton(msg, onRetry: vm.load),
+)
+```
+
+### buildWithChild()
+
+Optimize with static child:
+```dart
+vm.isLoading.buildWithChild(
+  builder: (loading, child) => Stack(
+    children: [child!, if (loading) LoadingOverlay()],
+  ),
+  child: ExpensiveWidget(),  // Not rebuilt
+)
+```
+
+### listen()
+
+Side effects without rebuilding:
+```dart
+vm.isDeleted.listen(
+  onChange: (prev, curr) {
+    if (curr) Navigator.of(context).pop();
+  },
+  child: DeleteButton(),
+)
+```
+
+### listenAsync()
+
+Side effects for async state:
+```dart
+vm.saveResult.listenAsync(
+  onData: (_) => Navigator.of(context).pop(),
+  onError: (msg) => ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text(msg)),
+  ),
+  child: SaveButton(),
+)
+```
+
+### Multiple States
+
+#### StateBuilder2/3/4
+
+```dart
+StateBuilder2(
+  stateHolder1: vm.user,
+  stateHolder2: vm.settings,
+  builder: (context, user, settings) => ...,
+)
+```
+
+#### Nested Builders
+
+```dart
+vm.user.build((user) =>
+  vm.posts.build((state) => state.when(
+    data: (posts) => UserWithPosts(user, posts),
+    loading: () => Skeleton(user),
+    error: (msg) => Error(msg),
+    empty: () => Empty(),
+  )),
+)
+```
+
+### API Summary
+
+| Method | Purpose |
+|--------|---------|
+| `build()` | Rebuild on change |
+| `displayWhen()` | Async state with defaults |
+| `buildWithChild()` | Static child optimization |
+| `listen()` | Side effects (sync) |
+| `listenAsync()` | Side effects (async) |
+| `StateBuilder2/3/4` | Multiple state sources |
+
+---
+
+## Testing
+
+Test ViewModels as plain Dart classes, without Flutter.
+
+```dart
+final scope = TestScope();
+final vm = scope.create(() => CounterViewModel());
+
+vm.increment();
+expect(vm.count.value, 1);
+
+scope.dispose();
+```
+
+### TestScope
+
+```dart
+late TestScope scope;
+
+setUp(() => scope = TestScope());
+tearDown(() => scope.dispose());
+
+test('counter increments', () {
+  final vm = scope.create(() => CounterViewModel());
+  expect(vm.count.value, 0);
+  vm.increment();
+  expect(vm.count.value, 1);
+});
+```
+
+### Mocking Dependencies
+
+```dart
+class MockUserRepo extends Mock implements UserRepository {}
+
+late MockUserRepo repo;
+late UserViewModel vm;
+
+setUp(() {
+  scope = TestScope();
+  repo = MockUserRepo();
+  vm = scope.create(() => UserViewModel(repo));
+});
+
+test('loads user', () async {
+  when(() => repo.getUser('1')).thenAnswer((_) async => user);
+
+  vm.loadUser('1');
+  await Future.delayed(Duration.zero);
+
+  expect(vm.user.hasData, isTrue);
+  expect(vm.user.dataOrNull, user);
+});
+```
+
+### Async State Transitions
+
+```dart
+test('loading then data', () async {
+  when(() => repo.getData()).thenAnswer((_) async => data);
+
+  expect(vm.items.isEmpty, isTrue);
+  vm.loadItems();
+  expect(vm.items.isLoading, isTrue);
+  await Future.delayed(Duration.zero);
+  expect(vm.items.hasData, isTrue);
+});
+
+test('error on failure', () async {
+  when(() => repo.getData()).thenThrow(Exception('Network'));
+
+  vm.loadItems();
+  await Future.delayed(Duration.zero);
+
+  expect(vm.items.hasError, isTrue);
+});
+```
+
+### Stream Bindings
+
+```dart
+test('updates on emit', () async {
+  final controller = StreamController<User>();
+  when(() => repo.userStream).thenAnswer((_) => controller.stream);
+
+  final vm = scope.create(() => AuthViewModel(repo));
+  expect(vm.user.value, isNull);
+
+  controller.add(User(name: 'Alice'));
+  await Future.delayed(Duration.zero);
+
+  expect(vm.user.value?.name, 'Alice');
+  controller.close();
+});
+```
+
+### Task Cancellation
+
+```dart
+test('cancels previous search', () async {
+  var calls = 0;
+  when(() => repo.search(any())).thenAnswer((_) async {
+    calls++;
+    await Future.delayed(Duration(milliseconds: 100));
+    return ['result'];
+  });
+
+  vm.search('a');
+  vm.search('ab');   // Cancels first
+  vm.search('abc');  // Cancels second
+
+  await Future.delayed(Duration(milliseconds: 150));
+
+  expect(vm.results.dataOrNull, ['result']);
+  expect(calls, 3);  // All called, only last updates state
+});
+```
+
+### Widget Tests
+
+```dart
+testWidgets('shows user name', (tester) async {
+  final repo = MockUserRepo();
+  when(() => repo.userStream).thenAnswer((_) => Stream.value(User(name: 'Alice')));
+
+  await tester.pumpWidget(
+    ViewModelScope(
+      create: [() => AuthViewModel(repo)],
+      child: MaterialApp(home: ProfilePage()),
+    ),
+  );
+  await tester.pumpAndSettle();
+
+  expect(find.text('Alice'), findsOneWidget);
+});
+```
+
+### Testing Tips
+
+| Tip | Why |
+|-----|-----|
+| Use `TestScope` | Ensures disposal in `tearDown` |
+| Mock repositories | Not ViewModels |
+| `Future.delayed(Duration.zero)` | Lets async complete |
+| Test state, not implementation | Check `hasData`, not internals |
+
+---
+
+## Dependency Injection
+
+Wire dependencies to ViewModels however you prefer. Piper doesn't impose a DI solution.
+
+```dart
+ViewModelScope(
+  create: [() => AuthViewModel(getIt<AuthRepository>())],
+  child: MyApp(),
+)
+```
+
+### Quick Reference
+
+| Approach | Context | ViewModelScope |
+|----------|---------|----------------|
+| InheritedWidget | Yes | `.withContext` |
+| get_it | No | Regular |
+| injectable | No | Regular |
+| Provider | Yes | `.withContext` |
+
+### InheritedWidget
+
+No external packages:
+```dart
+class AppDependencies extends InheritedWidget {
+  final AuthRepository authRepo;
+  final TodoRepository todoRepo;
+
+  const AppDependencies({
+    required this.authRepo,
+    required this.todoRepo,
+    required super.child,
+  });
+
+  static AppDependencies of(BuildContext context) =>
+    context.dependOnInheritedWidgetOfExactType<AppDependencies>()!;
+
+  @override
+  bool updateShouldNotify(AppDependencies old) => false;
+}
+```
+
+```dart
+runApp(
+  AppDependencies(
+    authRepo: AuthRepository(ApiClient()),
+    todoRepo: TodoRepository(Database()),
+    child: ViewModelScope.withContext(
+      create: [(context) => AuthViewModel(AppDependencies.of(context).authRepo)],
+      child: MyApp(),
+    ),
+  ),
+);
+```
+
+### get_it
+
+Service locator without context:
+```dart
+final getIt = GetIt.instance;
+
+void setup() {
+  getIt.registerSingleton<AuthRepository>(AuthRepository(ApiClient()));
+  getIt.registerSingleton<TodoRepository>(TodoRepository(Database()));
+}
+
+void main() {
+  setup();
+  runApp(
+    ViewModelScope(
+      create: [
+        () => AuthViewModel(getIt<AuthRepository>()),
+        () => TodosViewModel(getIt<TodoRepository>()),
+      ],
+      child: MyApp(),
+    ),
+  );
+}
+```
+
+#### With injectable
+
+```dart
+@singleton
+class AuthRepository {
+  AuthRepository(this._api);
+  final ApiClient _api;
+}
+
+// dart run build_runner build
+@InjectableInit()
+void configureDependencies() => getIt.init();
+```
+
+### Provider
+
+Widget tree integration:
+```dart
+runApp(
+  MultiProvider(
+    providers: [
+      Provider(create: (_) => AuthRepository(ApiClient())),
+      Provider(create: (_) => TodoRepository(Database())),
+    ],
+    child: ViewModelScope.withContext(
+      create: [(context) => AuthViewModel(context.read<AuthRepository>())],
+      child: MyApp(),
+    ),
+  ),
+);
+```
+
+### Comparison
+
+| Approach | Pros | Cons |
+|----------|------|------|
+| InheritedWidget | No deps, built-in | Boilerplate |
+| get_it | Simple, no context | Global state |
+| injectable | Auto-registration | Build step |
+| Provider | Widget tree integration | Requires context |
+
+**Recommendations:**
+- Small apps → InheritedWidget
+- Medium apps → Provider
+- Large apps → injectable + get_it
+
+---
+
+## Examples
+
+### Counter Example
+
+```dart
+// ViewModel
+class CounterViewModel extends ViewModel {
+  late final count = state(0);
+
+  void increment() => count.update((c) => c + 1);
+  void decrement() => count.update((c) => c - 1);
+  void reset() => count.value = 0;
+}
+
+// Widget
+class CounterPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final vm = context.vm<CounterViewModel>();
+
+    return Scaffold(
+      body: Center(
+        child: vm.count.build(
+          (count) => Text('$count'),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: vm.increment,
+        child: Icon(Icons.add),
+      ),
+    );
+  }
+}
+
+// Setup
+void main() {
+  runApp(
+    ViewModelScope(
+      create: [() => CounterViewModel()],
+      child: MaterialApp(home: CounterPage()),
+    ),
+  );
+}
+```
+
+### Authentication Example
+
+```dart
+// ViewModel
+class AuthViewModel extends ViewModel {
+  final AuthRepository _auth;
+
+  AuthViewModel(this._auth);
+
+  // Bind user stream — updates automatically
+  late final user = bind(_auth.userStream, initial: null);
+
+  // Async state for login operation
+  late final loginState = asyncState<void>();
+
+  bool get isLoggedIn => user.value != null;
+
+  void login(String email, String password) {
+    load(loginState, () => _auth.login(email, password));
+  }
+
+  void logout() {
+    load(loginState, () => _auth.logout());
+  }
+}
+
+// Auth Gate Widget
+class AuthGate extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final vm = context.vm<AuthViewModel>();
+
+    return vm.user.build((user) {
+      if (user == null) {
+        return LoginPage();
+      }
+      return HomePage(user: user);
+    });
+  }
+}
+```
+
+### Search with Debouncing Example
+
+```dart
+class SearchViewModel extends ViewModel {
+  final SearchRepository _repo;
+
+  SearchViewModel(this._repo);
+
+  late final results = asyncState<List<Result>>();
+  Task<void>? _task;
+
+  void search(String query) {
+    _task?.cancel();
+
+    if (query.isEmpty) {
+      results.setEmpty();
+      return;
+    }
+
+    results.setLoading();
+    _task = launch(() async {
+      await Future.delayed(Duration(milliseconds: 300)); // Debounce
+      results.setData(await _repo.search(query));
+    });
+  }
+}
+```
+
+---
+
+## Good Fit If You:
+
+- Prefer constructor injection
+- Want lifecycle management without ceremony
+- Come from Android/iOS (familiar ViewModel patterns)
+- Want testable business logic
+- Are adopting incrementally
+
+---
+
+## Links
+
+- Documentation: https://theglenn.github.io/piper/
+- Guide: https://theglenn.github.io/piper/guide/what-is-piper
+- Getting Started: https://theglenn.github.io/piper/guide/getting-started
+- Examples: https://theglenn.github.io/piper/examples/counter
+- GitHub: https://github.com/theGlenn/piper

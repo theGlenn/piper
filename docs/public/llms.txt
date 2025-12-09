@@ -1,0 +1,88 @@
+# Piper
+
+> Lifecycle-aware ViewModels for Flutter with automatic cleanup.
+
+Piper is a Flutter state management library that provides lifecycle-aware ViewModels with automatic cleanup. No "mounted" checks, no stream subscriptions to manage, no manual disposal.
+
+## Documentation
+
+- Documentation: https://theglenn.github.io/piper/
+- GitHub: https://github.com/theGlenn/piper
+
+## Quick Start
+
+Install:
+```yaml
+dependencies:
+  piper: ^0.1.0
+  flutter_piper: ^0.1.0
+```
+
+Basic ViewModel:
+```dart
+class CounterViewModel extends ViewModel {
+  late final count = state(0);
+  void increment() => count.update((c) => c + 1);
+}
+```
+
+Use in widgets:
+```dart
+ViewModelScope(
+  create: [() => CounterViewModel()],
+  child: MyApp(),
+)
+
+// Access in widgets
+final vm = context.vm<CounterViewModel>();
+vm.count.build((count) => Text('$count'))
+```
+
+## Core Concepts
+
+### StateHolder
+Synchronous state container:
+- `state(initialValue)` - Create state
+- `value` - Read/write
+- `update((v) => newV)` - Transform
+- `build((v) => Widget)` - Reactive UI
+
+### AsyncStateHolder
+Async state with loading/error/data:
+- `asyncState<T>()` - Create
+- `load(state, () => Future)` - Load with lifecycle
+- States: `AsyncEmpty`, `AsyncLoading`, `AsyncError`, `AsyncData`
+- Helpers: `isLoading`, `hasData`, `hasError`, `dataOrNull`
+
+### Stream Bindings
+- `bind(stream, initial: value)` - Bind stream to StateHolder
+- `bindAsync(stream)` - Bind to AsyncStateHolder
+- `stateFrom(stream, initial: v, transform: fn)` - Transform types
+- `subscribe(stream, callback)` - Manual handling
+
+### Task
+Cancellable async operations:
+- `launch(() => Future)` - Returns Task handle
+- `launchWith(() => Future, onSuccess: fn, onError: fn)` - With callbacks
+- `task.cancel()` - Cancel (results discarded)
+- Auto-cancels on ViewModel dispose
+
+### ViewModelScope
+Widget tree integration:
+- `ViewModelScope(create: [...], child: Widget)` - Multiple VMs
+- `Scoped<T>(create: () => VM, builder: (ctx, vm) => Widget)` - Single VM
+- `context.vm<T>()` - Access ViewModel
+- Named scopes for multi-step flows
+
+## Key Features
+
+- **Explicit Dependencies**: Constructor injection, testable
+- **Automatic Lifecycle**: Subscriptions cancel, tasks stop, state disposes
+- **Plain Dart**: ViewModels are Dart classes, test without Flutter
+- **Incremental**: Works alongside existing solutions
+
+## Links
+
+- Guide: https://theglenn.github.io/piper/guide/what-is-piper
+- Examples: https://theglenn.github.io/piper/examples/counter
+- API Reference: https://theglenn.github.io/piper/llms-full.txt

@@ -13,6 +13,23 @@ export default defineConfig({
   },
 
   head: [
+    ['link', { rel: 'alternate', type: 'text/plain', href: '/piper/llms.txt', title: 'LLM Summary' }],
+    ['link', { rel: 'alternate', type: 'text/plain', href: '/piper/llms-full.txt', title: 'LLM Full Reference' }],
+    ['script', { type: 'application/ld+json' }, JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "SoftwareSourceCode",
+      "name": "Piper",
+      "description": "Flutter state management with lifecycle-aware ViewModels. Automatic cleanup, explicit dependencies, no boilerplate.",
+      "codeRepository": "https://github.com/theGlenn/piper",
+      "programmingLanguage": ["Dart", "Flutter"],
+      "runtimePlatform": "Flutter",
+      "license": "https://opensource.org/licenses/MIT",
+      "author": {
+        "@type": "Person",
+        "name": "theGlenn"
+      },
+      "url": "https://theglenn.github.io/piper/"
+    })],
     ['link', { rel: 'icon', href: '/piper/favicon.ico' }],
     ['link', { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/piper/favicon-32x32.png' }],
     ['link', { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/piper/favicon-16x16.png' }],
