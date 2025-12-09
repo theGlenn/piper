@@ -15,7 +15,7 @@ resolution: workspace
 dependencies:
   flutter:
     sdk: flutter
-  piper: ^0.0.2
+  piper_state: ^0.0.2
 
 dev_dependencies:
   flutter_test:

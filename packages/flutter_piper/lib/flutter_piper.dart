@@ -10,7 +10,7 @@
 library;
 
 // Re-export everything from piper
-export 'package:piper/piper.dart';
+export 'package:piper_state/piper_state.dart';
 
 // Flutter Widgets
 export 'src/state_builder.dart';

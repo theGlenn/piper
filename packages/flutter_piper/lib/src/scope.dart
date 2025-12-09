@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:piper/piper.dart';
+import 'package:piper_state/piper_state.dart';
 
 /// A widget that scopes a single ViewModel of type [T] and provides it to descendants.
 ///

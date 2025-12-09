@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:test/test.dart';
-import 'package:piper/piper.dart';
+import 'package:piper_state/piper_state.dart';
 
 class TestViewModel extends ViewModel {
   late final counter = state(0);

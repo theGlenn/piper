@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:piper/piper.dart';
+import 'package:piper_state/piper_state.dart';
 
 import 'state_listener.dart';
 

@@ -1,4 +1,4 @@
-name: piper
+name: piper_state
 description: "Lifecycle-aware state management for Dart. ViewModels, async state, stream bindings, and task cancellation."
 version: 0.0.2
 license: MIT

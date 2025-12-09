@@ -12,7 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_piper:
-  piper:
+  piper_state:
 
 dev_dependencies:
   flutter_test:

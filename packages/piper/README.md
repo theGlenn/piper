@@ -1,4 +1,4 @@
-# Piper
+# Piper State
 
 State management that gets out of your way.
 
@@ -16,7 +16,7 @@ Lifecycle-aware ViewModels, explicit dependencies, automatic cleanup. Patterns t
 
 ```yaml
 dependencies:
-  piper: ^0.0.2
+  piper_state: ^0.0.2
   flutter_piper: ^0.0.2  # For Flutter widgets
 ```
 
@@ -66,7 +66,7 @@ void loadProfile() => load(profile, () => _repo.fetchProfile());
 ## Additional information
 
 - [GitHub Repository](https://github.com/glennsonna/piper)
-- [flutter_piper](https://pub.dev/packages/flutter_piper) — Flutter widgets for Piper
+- [flutter_piper](https://pub.dev/packages/flutter_piper) — Flutter widgets for Piper State
 
 ## License
 
