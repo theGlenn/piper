@@ -24,8 +24,8 @@
 ## Installation
 ```yaml
 dependencies:
-  piper_state: ^0.0.2
-  flutter_piper: ^0.0.2  # Flutter widgets
+  piper_state: ^0.0.3
+  flutter_piper: ^0.0.3  # Flutter widgets
 ```
 
 ## Quick Example

@@ -87,8 +87,8 @@ _ => CircularProgressIndicator(),
 ## Installation
 ```yaml
 dependencies:
-  piper_state: ^0.0.2
-  flutter_piper: ^0.0.2
+  piper_state: ^0.0.3
+  flutter_piper: ^0.0.3
 ```
 
 ## Documentation
