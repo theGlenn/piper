@@ -104,3 +104,21 @@ void dispose() {
 | `bind()` / `bindAsync()` | Cancelled, disposed |
 | `subscribe()` | Cancelled |
 | `launch()` / `load()` | Cancelled |
+
+## ViewModel Granularity
+
+Prefer one ViewModel per screen or feature:
+
+```dart
+// ✅ Good: Focused ViewModels
+class TodoListViewModel extends ViewModel { ... }
+class TodoDetailViewModel extends ViewModel { ... }
+class TodoSearchViewModel extends ViewModel { ... }
+
+// ❌ Avoid: God ViewModel
+class TodosViewModel extends ViewModel {
+  // list state, detail state, search state, settings...
+}
+```
+
+Focused ViewModels are easier to test, reuse, and maintain. They also benefit from cleaner lifecycle management—each ViewModel disposes only when its specific feature is no longer needed.
