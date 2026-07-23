@@ -44,6 +44,64 @@ void main() {
       expect(plusOne.value, 21);
     });
 
+    test('notifies only settled values across a diamond dependency graph', () {
+      final source = StateHolder(1);
+      final doubled = computed(() => source.value * 2);
+      final total = computed(() {
+        final direct = source.value;
+        return direct + doubled.value;
+      });
+      final observed = <int>[];
+      total.addListener(() => observed.add(total.value));
+
+      source.value = 2;
+
+      expect(total.value, 6);
+      expect(observed, [6]);
+    });
+
+    test('retries after a recomputation throws instead of returning stale data',
+        () {
+      final source = StateHolder(2);
+      final reciprocal = computed(() => 10 ~/ source.value);
+      var notifications = 0;
+      reciprocal.addListener(() => notifications++);
+
+      expect(reciprocal.value, 5);
+      expect(
+        () => source.value = 0,
+        throwsA(isA<UnsupportedError>()),
+      );
+      expect(
+        () => reciprocal.value,
+        throwsA(isA<UnsupportedError>()),
+      );
+
+      source.value = 5;
+      expect(reciprocal.value, 2);
+      expect(notifications, 1);
+    });
+
+    test('continues settling queued computeds when one recomputation throws',
+        () {
+      final source = StateHolder(2);
+      final reciprocal = computed(() => 10 ~/ source.value);
+      final doubled = computed(() => source.value * 2);
+      var doubledNotifications = 0;
+      reciprocal.addListener(() {});
+      doubled.addListener(() => doubledNotifications++);
+
+      expect(
+        () => source.value = 0,
+        throwsA(isA<UnsupportedError>()),
+      );
+      expect(doubled.value, 0);
+
+      source.value = 3;
+      expect(doubled.value, 6);
+      expect(doubledNotifications, 2);
+    });
+
     test('configurable equals suppresses notification for equal new lists', () {
       bool listEquals(List<int> a, List<int> b) {
         if (a.length != b.length) return false;
@@ -56,7 +114,10 @@ void main() {
       final source = StateHolder(0);
       // Allocates a fresh list every run; default == would notify every time.
       final evens = computed(
-        () => [for (var i = 0; i <= source.value; i++) if (i.isEven) i],
+        () => [
+          for (var i = 0; i <= source.value; i++)
+            if (i.isEven) i
+        ],
         equals: listEquals,
       );
       var notifications = 0;

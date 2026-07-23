@@ -1,3 +1,4 @@
+import 'notification_batch.dart';
 import 'tracking.dart';
 
 /// Derived state that recomputes automatically when its dependencies change.
@@ -24,6 +25,7 @@ class Computed<T> implements Trackable {
   late T _value;
   bool _stale = true;
   bool _computing = false;
+  bool _notificationPending = false;
 
   /// Creates a [Computed] from a derivation function.
   ///
@@ -48,6 +50,7 @@ class Computed<T> implements Trackable {
         'Cyclic dependency detected: a computed() read itself while computing.',
       );
     }
+    _stale = true;
     _computing = true;
     try {
       for (final dep in _dependencies) {
@@ -66,19 +69,20 @@ class Computed<T> implements Trackable {
   }
 
   void _onDependencyChanged() {
-    // With no listeners, defer recomputation until the value is next read.
-    if (_listeners.isEmpty) {
-      _stale = true;
-      return;
-    }
+    _stale = true;
+    if (_listeners.isEmpty || _notificationPending) return;
+    _notificationPending = true;
     final previous = _value;
-    _recompute();
+    PiperNotificationBatch.schedule(() => _notifyIfChanged(previous));
+  }
+
+  void _notifyIfChanged(T previous) {
+    _notificationPending = false;
+    if (_listeners.isEmpty) return;
+    if (_stale) _recompute();
     final unchanged = _equals?.call(previous, _value) ?? (previous == _value);
-    if (!unchanged) {
-      for (final listener in List.of(_listeners)) {
-        listener();
-      }
-    }
+    if (unchanged) return;
+    PiperNotificationBatch.notify(_listeners);
   }
 
   @override
@@ -98,6 +102,7 @@ class Computed<T> implements Trackable {
     }
     _dependencies.clear();
     _listeners.clear();
+    _notificationPending = false;
   }
 }
 

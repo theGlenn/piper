@@ -1,3 +1,4 @@
+import 'notification_batch.dart';
 import 'tracking.dart';
 
 /// A lightweight change notifier for reactive state management.
@@ -41,10 +42,7 @@ class PiperNotifier<T> {
     final unchanged = _equals?.call(_value, newValue) ?? (_value == newValue);
     if (unchanged) return;
     _value = newValue;
-    // Copy so listeners that add/remove during notification are safe.
-    for (final listener in List.of(_listeners)) {
-      listener();
-    }
+    PiperNotificationBatch.notify(_listeners);
   }
 
   /// Adds a listener that will be called when the value changes.
