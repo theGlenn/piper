@@ -1,0 +1,23 @@
+docs/guide/building-ui.md
+  s_ed4b57db73c544::t_792878951aa18c 95-109
+docs/guide/reactive.md
+  s_ed4b57db73c544::t_66795333a82213 1-109
+docs/.vitepress/config.mts
+  s_ed4b57db73c544::t_cd2006d4341ee5 89
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "143f4580e7094c016add7e43f55df44cdfb6c046",
+  "prompts": {},
+  "sessions": {
+    "s_ed4b57db73c544": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d5d6855b-2c29-4587-966e-22410cc7e35b",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Glenn Sonna <kenpachi.os@gmail.com>"
+    }
+  }
+}
