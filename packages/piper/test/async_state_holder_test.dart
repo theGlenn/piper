@@ -47,6 +47,18 @@ void main() {
         expect(holder.errorOrNull, 'Something went wrong');
       });
 
+      test('setErrorFrom preserves the error object and derives the message', () {
+        final holder = AsyncStateHolder<String>();
+        final failure = Exception('boom');
+        holder.setErrorFrom(failure, stackTrace: StackTrace.current);
+
+        expect(holder.hasError, true);
+        final state = holder.value as AsyncError<String>;
+        expect(state.error, same(failure));
+        expect(state.message, failure.toString());
+        expect(state.stackTrace, isNotNull);
+      });
+
       test('setEmpty transitions to empty state', () {
         final holder = AsyncStateHolder<int>.data(42);
         holder.setEmpty();

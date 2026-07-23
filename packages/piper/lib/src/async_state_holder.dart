@@ -52,8 +52,15 @@ class AsyncStateHolder<T> extends StateHolder<AsyncState<T>> {
   void setData(T data) => value = AsyncData(data);
 
   /// Transitions to the error state with a message and optional error object.
-  void setError(String message, {Object? error}) =>
-      value = AsyncError(message, error: error);
+  void setError(String message, {Object? error, StackTrace? stackTrace}) =>
+      value = AsyncError(message, error: error, stackTrace: stackTrace);
+
+  /// Transitions to the error state from an error object.
+  ///
+  /// The message is derived from `error.toString()`; the original object and
+  /// [stackTrace] are preserved on the [AsyncError] for typed handling.
+  void setErrorFrom(Object error, {StackTrace? stackTrace}) =>
+      value = AsyncError.from(error, stackTrace: stackTrace);
 
   /// Transitions to the empty state.
   void setEmpty() => value = const AsyncEmpty();

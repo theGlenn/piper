@@ -1,4 +1,5 @@
 import 'piper_notifier.dart';
+import 'tracking.dart';
 
 /// Synchronous state container with change notification support.
 ///
@@ -11,14 +12,23 @@ import 'piper_notifier.dart';
 /// counter.value = 1;
 /// counter.update((current) => current + 1);
 /// ```
-class StateHolder<T> {
+class StateHolder<T> implements Trackable {
   final PiperNotifier<T> _notifier;
 
   /// Creates a [StateHolder] with the given initial value.
-  StateHolder(T initial) : _notifier = PiperNotifier(initial);
+  ///
+  /// [equals] customizes change detection (defaults to `==`).
+  StateHolder(T initial, {bool Function(T a, T b)? equals})
+      : _notifier = PiperNotifier(initial, equals: equals);
 
   /// The current value.
-  T get value => _notifier.value;
+  ///
+  /// Reading this inside a `Watch` or [Computed] automatically subscribes
+  /// the reader to future changes.
+  T get value {
+    PiperTracker.reportRead(this);
+    return _notifier.value;
+  }
 
   /// Sets a new value, notifying listeners if it changed.
   set value(T val) => _notifier.value = val;
@@ -39,9 +49,11 @@ class StateHolder<T> {
   void dispose() => _notifier.dispose();
 
   /// Adds a listener that will be called when the value changes.
+  @override
   void addListener(void Function() listener) => _notifier.addListener(listener);
 
   /// Removes a previously added listener.
+  @override
   void removeListener(void Function() listener) =>
       _notifier.removeListener(listener);
 }

@@ -112,6 +112,23 @@ void main() {
       scope.dispose();
     });
 
+    test('launchWith calls onSuccess for a void/null future', () async {
+      final scope = TaskScope();
+      var called = false;
+
+      // Regression: a Future<void> must still fire onSuccess. Previously the
+      // null result was treated as "cancelled" and onSuccess was dropped.
+      scope.launchWith<void>(
+        () async {},
+        onSuccess: (_) => called = true,
+      );
+
+      await Future.delayed(const Duration(milliseconds: 10));
+      expect(called, true);
+
+      scope.dispose();
+    });
+
     test('launchWith calls onError', () async {
       final scope = TaskScope();
       Object? error;

@@ -1,5 +1,6 @@
 import 'package:example/data/todo_repository.dart';
 import 'package:example/domain/todo.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_piper/flutter_piper.dart';
 
 class TodosViewModel extends ViewModel {
@@ -9,10 +10,17 @@ class TodosViewModel extends ViewModel {
 
   late final todos = bindAsync<List<Todo>>(_todoRepo.todosStream);
 
-  List<Todo> get pendingTodos =>
-      todos.dataOrNull?.where((t) => !t.completed).toList() ?? [];
-  List<Todo> get completedTodos =>
-      todos.dataOrNull?.where((t) => t.completed).toList() ?? [];
+  // Derived state: recomputes when `todos` changes, and — because each run
+  // allocates a fresh list — `listEquals` stops it notifying when the filtered
+  // result is unchanged. A `Watch` reading these rebuilds reactively.
+  late final pendingTodos = computed(
+    () => todos.value.dataOrNull?.where((t) => !t.completed).toList() ?? const [],
+    equals: (a, b) => listEquals(a, b),
+  );
+  late final completedTodos = computed(
+    () => todos.value.dataOrNull?.where((t) => t.completed).toList() ?? const [],
+    equals: (a, b) => listEquals(a, b),
+  );
 
   void loadTodos() {
     load(todos, () => _todoRepo.fetchTodos());

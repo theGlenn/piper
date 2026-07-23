@@ -13,6 +13,8 @@ library;
 export 'src/async_state.dart';
 export 'src/state_holder.dart';
 export 'src/async_state_holder.dart';
+export 'src/computed.dart';
+export 'src/tracking.dart';
 
 // Task
 export 'src/task.dart';

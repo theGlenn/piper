@@ -86,6 +86,7 @@ export default defineConfig({
           items: [
             { text: 'ViewModelScope', link: '/guide/view-model-scope' },
             { text: 'Building UI', link: '/guide/building-ui' },
+            { text: 'Watch & Computed', link: '/guide/reactive' },
             { text: 'Dependency Injection', link: '/guide/dependency-injection' }
           ]
         },

@@ -143,53 +143,58 @@ class _TodoList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pending = todosVm.pendingTodos;
-    final completed = todosVm.completedTodos;
+    // One Watch wraps the whole body and reads two derived values. Toggling or
+    // deleting a todo updates `todos`, both computeds recompute, and this
+    // rebuilds — no StateBuilder2, no manual dependency wiring.
+    return Watch((context) {
+      final pending = todosVm.pendingTodos.value;
+      final completed = todosVm.completedTodos.value;
 
-    if (pending.isEmpty && completed.isEmpty) {
-      return const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+      if (pending.isEmpty && completed.isEmpty) {
+        return const Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.inbox, size: 64, color: Colors.grey),
+              SizedBox(height: 16),
+              Text('No todos yet', style: TextStyle(color: Colors.grey)),
+              Text('Tap + to add one', style: TextStyle(color: Colors.grey)),
+            ],
+          ),
+        );
+      }
+
+      return RefreshIndicator(
+        onRefresh: () async => todosVm.refresh(),
+        child: ListView(
+          padding: const EdgeInsets.only(bottom: 80),
           children: [
-            Icon(Icons.inbox, size: 64, color: Colors.grey),
-            SizedBox(height: 16),
-            Text('No todos yet', style: TextStyle(color: Colors.grey)),
-            Text('Tap + to add one', style: TextStyle(color: Colors.grey)),
+            if (pending.isNotEmpty) ...[
+              const _SectionHeader(title: 'To Do'),
+              ...pending.map(
+                (todo) => _TodoTile(
+                  todo: todo,
+                  onToggle: () => todosVm.toggleTodo(todo.id),
+                  onTap: () => _navigateToDetail(context, todo),
+                  onDelete: () => todosVm.deleteTodo(todo.id),
+                ),
+              ),
+            ],
+            if (completed.isNotEmpty) ...[
+              const _SectionHeader(title: 'Completed'),
+              ...completed.map(
+                (todo) => _TodoTile(
+                  todo: todo,
+                  onToggle: () => todosVm.toggleTodo(todo.id),
+                  onTap: () => _navigateToDetail(context, todo),
+                  onDelete: () => todosVm.deleteTodo(todo.id),
+                ),
+              ),
+            ],
           ],
         ),
       );
-    }
-
-    return RefreshIndicator(
-      onRefresh: () async => todosVm.refresh(),
-      child: ListView(
-        padding: const EdgeInsets.only(bottom: 80),
-        children: [
-          if (pending.isNotEmpty) ...[
-            const _SectionHeader(title: 'To Do'),
-            ...pending.map(
-              (todo) => _TodoTile(
-                todo: todo,
-                onToggle: () => todosVm.toggleTodo(todo.id),
-                onTap: () => _navigateToDetail(context, todo),
-                onDelete: () => todosVm.deleteTodo(todo.id),
-              ),
-            ),
-          ],
-          if (completed.isNotEmpty) ...[
-            const _SectionHeader(title: 'Completed'),
-            ...completed.map(
-              (todo) => _TodoTile(
-                todo: todo,
-                onToggle: () => todosVm.toggleTodo(todo.id),
-                onTap: () => _navigateToDetail(context, todo),
-                onDelete: () => todosVm.deleteTodo(todo.id),
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
+    });
   }
 
   void _navigateToDetail(BuildContext context, Todo todo) {

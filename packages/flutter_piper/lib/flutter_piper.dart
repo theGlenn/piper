@@ -13,6 +13,7 @@ library;
 export 'package:piper_state/piper_state.dart';
 
 // Flutter Widgets
+export 'src/watch.dart';
 export 'src/state_builder.dart';
 export 'src/state_listener.dart';
 export 'src/state_effect.dart';

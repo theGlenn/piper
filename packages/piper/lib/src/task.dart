@@ -86,16 +86,14 @@ class TaskScope {
     void Function(Object error)? onError,
   }) {
     final task = launch(work);
-    task.result.then(
+    // Gate on cancellation, not on a null result: a Future<void> (or any
+    // future that legitimately resolves to null) must still fire onSuccess.
+    task._future.then(
       (value) {
-        if (value != null && !task.isCancelled) {
-          onSuccess(value);
-        }
+        if (!task.isCancelled) onSuccess(value);
       },
-      onError: (e) {
-        if (!task.isCancelled) {
-          onError?.call(e);
-        }
+      onError: (Object e) {
+        if (!task.isCancelled) onError?.call(e);
       },
     );
   }
