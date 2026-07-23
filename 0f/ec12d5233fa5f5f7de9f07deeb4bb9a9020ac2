@@ -1,0 +1,26 @@
+packages/piper/CHANGELOG.md
+  s_ed4b57db73c544::t_8d95c1b8a1ddbf 10-23,26-27,31-32,34,36-37
+packages/flutter_piper/CHANGELOG.md
+  s_ed4b57db73c544::t_03ae9c00bcbaea 10-17,20-24
+packages/flutter_piper/pubspec.yaml
+  s_ed4b57db73c544::t_a96ecbaac4b883 33
+  s_ed4b57db73c544::t_c1d26bcb0d8cb3 3
+packages/piper/pubspec.yaml
+  s_ed4b57db73c544::t_68ef425ebed083 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "0fec12d5233fa5f5f7de9f07deeb4bb9a9020ac2",
+  "prompts": {},
+  "sessions": {
+    "s_ed4b57db73c544": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d5d6855b-2c29-4587-966e-22410cc7e35b",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Glenn Sonna <kenpachi.os@gmail.com>"
+    }
+  }
+}
