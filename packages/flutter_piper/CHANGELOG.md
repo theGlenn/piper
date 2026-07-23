@@ -7,10 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-07-23
+
+### Added
+
+- `Watch` — rebuilds from whatever state is read inside its builder
+  (automatic dependency tracking); replaces `StateBuilder2`/`StateBuilder3`
+  and manual dependency lists for multi-value reads.
+
 ### Changed
 
-- Re-export the new cooperative task cancellation API from `piper_state`.
-- Example ViewModels now use cancellation-aware repository waits.
+- Re-export the new `computed()`, dependency-tracking, and cooperative task
+  cancellation APIs from `piper_state`.
+- Bumped `piper_state` dependency to `^0.1.0`.
+- Example ViewModels now use `computed()` for derived state and
+  cancellation-aware repository waits.
 
 ## [0.0.3] - 2025-12-09
 

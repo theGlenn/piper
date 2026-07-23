@@ -1,6 +1,6 @@
 name: flutter_piper
 description: Flutter widgets for Piper State. ViewModelScope, Scoped, StateBuilder for lifecycle-aware state management.
-version: 0.0.3
+version: 0.1.0
 repository: https://github.com/theGlenn/piper
 homepage: https://theglenn.github.io/piper
 issue_tracker: https://github.com/theGlenn/piper/issues
@@ -30,7 +30,7 @@ resolution: workspace
 dependencies:
   flutter:
     sdk: flutter
-  piper_state: ^0.0.3
+  piper_state: ^0.1.0
 
 dev_dependencies:
   flutter_test:
