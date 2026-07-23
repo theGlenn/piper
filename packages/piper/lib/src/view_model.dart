@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:meta/meta.dart';
 
 import 'async_state_holder.dart';
+import 'computed.dart';
 import 'state_holder.dart';
 import 'task.dart';
 
@@ -24,6 +25,7 @@ import 'task.dart';
 abstract class ViewModel {
   final List<StreamSubscription<dynamic>> _subscriptions = [];
   final List<StateHolder<dynamic>> _holders = [];
+  final List<Computed<dynamic>> _computeds = [];
   final TaskScope _taskScope = TaskScope();
 
   /// The [TaskScope] for this ViewModel.
@@ -37,8 +39,8 @@ abstract class ViewModel {
   /// Use this instead of creating [StateHolder] instances directly
   /// to ensure proper cleanup when the ViewModel is disposed.
   @protected
-  StateHolder<T> state<T>(T initial) {
-    final holder = StateHolder(initial);
+  StateHolder<T> state<T>(T initial, {bool Function(T a, T b)? equals}) {
+    final holder = StateHolder(initial, equals: equals);
     _holders.add(holder);
     return holder;
   }
@@ -56,6 +58,27 @@ abstract class ViewModel {
     final holder = AsyncStateHolder<T>();
     _holders.add(holder);
     return holder;
+  }
+
+  /// Creates derived state that recomputes when its dependencies change.
+  ///
+  /// Any state read inside [compute] becomes a dependency automatically.
+  /// The result is registered for disposal with the ViewModel.
+  ///
+  /// Example:
+  /// ```dart
+  /// late final pending = computed(
+  ///   () => todos.value.where((t) => !t.completed).toList(),
+  /// );
+  /// ```
+  @protected
+  Computed<R> computed<R>(
+    R Function() compute, {
+    bool Function(R a, R b)? equals,
+  }) {
+    final derived = Computed<R>(compute, equals: equals);
+    _computeds.add(derived);
+    return derived;
   }
 
   /// Bind a stream directly to a [StateHolder].
@@ -215,6 +238,9 @@ abstract class ViewModel {
     _taskScope.dispose();
     for (final sub in _subscriptions) {
       sub.cancel();
+    }
+    for (final derived in _computeds) {
+      derived.dispose();
     }
     for (final holder in _holders) {
       holder.dispose();
