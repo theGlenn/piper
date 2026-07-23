@@ -77,7 +77,7 @@ class TodoRepository {
 ## ViewModel
 
 ```dart
-import 'package:piper/piper.dart';
+import 'package:piper_state/piper_state.dart';
 
 class TodosViewModel extends ViewModel {
   final TodoRepository _repo;

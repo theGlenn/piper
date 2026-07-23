@@ -15,8 +15,8 @@ Piper is a Flutter state management library that provides lifecycle-aware ViewMo
 
 ```yaml
 dependencies:
-  piper_state: ^0.0.3   # Core library (ViewModel, StateHolder, Task). No Flutter dependency.
-  flutter_piper: ^0.0.3 # Flutter widgets (ViewModelScope, builders).
+  piper_state: ^0.1.0   # Core library (ViewModel, StateHolder, Task). No Flutter dependency.
+  flutter_piper: ^0.1.0 # Flutter widgets (ViewModelScope, builders).
 ```
 
 ---
@@ -102,6 +102,12 @@ late final name = state('');
 // Async state
 late final user = asyncState<User>();
 late final items = asyncState<List<Item>>();
+
+// Derived state — recomputes when dependencies change
+late final pending = computed(
+  () => items.value.where((i) => !i.done).toList(),
+  equals: (a, b) => listEquals(a, b),
+);
 ```
 
 ### Streams
@@ -153,6 +159,7 @@ void dispose() {
 | Resource | On Dispose |
 |----------|------------|
 | `state()` / `asyncState()` | Disposed |
+| `computed()` | Disposed |
 | `bind()` / `bindAsync()` | Cancelled, disposed |
 | `subscribe()` | Cancelled |
 | `launch()` / `load()` | Cancelled |
@@ -289,6 +296,7 @@ void loadUser(String id) {
 user.setLoading();
 user.setData(fetchedUser);
 user.setError('Failed to load');
+user.setErrorFrom(caughtError);  // preserves the error object + stack trace
 user.setEmpty();
 ```
 
@@ -326,6 +334,7 @@ vm.user.build(
 | Set loading | `user.setLoading()` |
 | Set data | `user.setData(data)` |
 | Set error | `user.setError('message')` |
+| Set error from object | `user.setErrorFrom(error)` |
 | Check | `user.isLoading`, `user.hasData` |
 | Get data | `user.dataOrNull` |
 | Build UI | `user.build((state) => ...)` |
@@ -710,7 +719,8 @@ Both support optional `name` parameter.
 
 ## Building UI
 
-Connect state to widgets with `.build()`, `.displayWhen()`, and `.listen()`.
+Connect state to widgets with `Watch`, `.build()`, `.displayWhen()`, and
+`.listen()`.
 
 ```dart
 vm.count.build((count) => Text('$count'))
@@ -796,6 +806,17 @@ vm.saveResult.listenAsync(
 
 ### Multiple States
 
+For a widget that reads two or more values, prefer `Watch` — read the values
+inside the builder and it subscribes to exactly those (see Watch & Computed):
+
+```dart
+Watch((context) => vm.loading.value
+    ? const CircularProgressIndicator()
+    : Text(vm.name.value))
+```
+
+The builders below still work for a fixed, small number of sources.
+
 #### StateBuilder2/3/4
 
 ```dart
@@ -823,12 +844,97 @@ vm.user.build((user) =>
 
 | Method | Purpose |
 |--------|---------|
-| `build()` | Rebuild on change |
+| `Watch()` | Rebuild from any state read in the builder |
+| `build()` | Rebuild a single leaf value on change |
 | `displayWhen()` | Async state with defaults |
 | `buildWithChild()` | Static child optimization |
 | `listen()` | Side effects (sync) |
 | `listenAsync()` | Side effects (async) |
-| `StateBuilder2/3/4` | Multiple state sources |
+| `StateBuilder2/3/4` | Fixed number of state sources |
+
+---
+
+## Watch & Computed
+
+Automatic dependency tracking. `Watch` rebuilds from whatever state is read
+inside its builder; `computed` derives state that recomputes when its
+dependencies change. No manual dependency lists.
+
+### Watch
+
+Tracks every `state.value` read inside the builder and rebuilds when any of
+them changes — subscribing to exactly what was read:
+
+```dart
+Watch((context) => Text('${vm.count.value}'))
+```
+
+Reading multiple values in one `Watch` replaces `StateBuilder2`/`StateBuilder3`
+and nested builders:
+
+```dart
+Watch((context) => vm.loading.value
+    ? const CircularProgressIndicator()
+    : Text(vm.name.value))
+```
+
+Dependencies are re-tracked on every build, so a branch only subscribes to the
+state it actually reads.
+
+### Watch vs build()
+
+`.build()` stays the shorthand for a single leaf value. Reach for `Watch` when a
+widget reads two or more values or has conditional dependencies. Prefer one
+`Watch` around a meaningful subtree over many tiny nested ones.
+
+### computed()
+
+Derives a value from other state. Recomputes when a dependency changes and
+notifies only when the result actually differs. Inside a ViewModel, use the
+`computed()` helper so it is disposed automatically:
+
+```dart
+class TodosViewModel extends ViewModel {
+  late final todos = bindAsync<List<Todo>>(repo.todosStream);
+
+  late final pending = computed(
+    () => todos.value.dataOrNull?.where((t) => !t.done).toList() ?? const [],
+    equals: (a, b) => listEquals(a, b),
+  );
+}
+```
+
+### Equality
+
+A computed compares results with `==` by default. When the derivation allocates
+a new instance every run (a filtered `.toList()`), pass `equals` so an unchanged
+result doesn't notify:
+
+```dart
+final evens = computed(
+  () => numbers.value.where((n) => n.isEven).toList(),
+  equals: (a, b) => listEquals(a, b),
+);
+```
+
+`equals` is also available on `state()` and `StateHolder`.
+
+### Rules
+
+- Reads are tracked, writes are not — writing state inside a `Watch` builder or
+  a `computed` function throws.
+- One `Watch` per subtree; wrap the build body, not every `Text`.
+- Cycles between computeds are detected and throw a `StateError`.
+- Notifications are batched, so derived state settles before listeners fire
+  (glitch-free updates across diamond dependency graphs).
+
+### API Summary
+
+| API | Returns | Use |
+|-----|---------|-----|
+| `Watch((context) => …)` | `Widget` | Rebuild from state read in the builder |
+| `computed(() => …, {equals})` | `Computed<T>` | Derived, auto-recomputing state |
+| `state.build((v) => …)` | `Widget` | Shorthand for a single leaf value |
 
 ---
 

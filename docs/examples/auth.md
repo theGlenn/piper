@@ -31,7 +31,7 @@ class AuthRepository {
 ## ViewModel
 
 ```dart
-import 'package:piper/piper.dart';
+import 'package:piper_state/piper_state.dart';
 
 class AuthViewModel extends ViewModel {
   final AuthRepository _auth;

@@ -14,7 +14,7 @@ Piper is a Flutter state management library that provides lifecycle-aware ViewMo
 Install:
 ```yaml
 dependencies:
-  piper: ^0.1.0
+  piper_state: ^0.1.0
   flutter_piper: ^0.1.0
 ```
 
@@ -53,6 +53,13 @@ Async state with loading/error/data:
 - `load(state, () => Future)` - Load with lifecycle
 - States: `AsyncEmpty`, `AsyncLoading`, `AsyncError`, `AsyncData`
 - Helpers: `isLoading`, `hasData`, `hasError`, `dataOrNull`
+- `setErrorFrom(error)` - Preserve the error object and stack trace
+
+### Watch & Computed
+Automatic dependency tracking:
+- `Watch((context) => Widget)` - Rebuilds from any state read in the builder
+- `computed(() => value, {equals})` - Derived state, recomputes on dependency change
+- Reads are tracked, writes are not; cycles throw; notifications are batched
 
 ### Stream Bindings
 - `bind(stream, initial: value)` - Bind stream to StateHolder
@@ -78,6 +85,7 @@ Widget tree integration:
 
 ## Key Features
 
+- **Automatic Rebuilds**: Read state in a `Watch`, no manual wiring
 - **Explicit Dependencies**: Constructor injection, testable
 - **Automatic Lifecycle**: Subscriptions cancel, tasks stop, state disposes
 - **Plain Dart**: ViewModels are Dart classes, test without Flutter

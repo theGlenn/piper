@@ -6,8 +6,8 @@ Install Piper and create your first ViewModel in under 5 minutes.
 
 ```yaml
 dependencies:
-  piper_state: ^0.0.3
-  flutter_piper: ^0.0.3
+  piper_state: ^0.1.0
+  flutter_piper: ^0.1.0
 ```
 
 - **piper_state** — Core library (ViewModel, StateHolder, Task). No Flutter dependency.
@@ -16,7 +16,7 @@ dependencies:
 ## Your First ViewModel
 
 ```dart
-import 'package:piper/piper.dart';
+import 'package:piper_state/piper_state.dart';
 
 class CounterViewModel extends ViewModel {
   late final count = state(0);
@@ -63,7 +63,19 @@ class CounterPage extends StatelessWidget {
 ```
 
 - `context.vm<T>()` — retrieves ViewModel from nearest scope
-- `.build()` — rebuilds widget when state changes
+- `.build()` — rebuilds widget when a single value changes
+
+For a widget that reads several values, wrap the body in `Watch` — it
+subscribes to whatever state you read inside it:
+
+```dart
+Watch((context) => vm.loading.value
+    ? const CircularProgressIndicator()
+    : Text(vm.name.value))
+```
+
+See [Watch & Computed](/guide/reactive) for derived state and automatic
+dependency tracking.
 
 ## Async Operations
 
@@ -108,5 +120,6 @@ Subscription auto-cancels when ViewModel disposes.
 
 - [StateHolder](/guide/state-holder) — Sync state
 - [AsyncStateHolder](/guide/async-state-holder) — Async state
+- [Watch & Computed](/guide/reactive) — Automatic rebuilds and derived state
 - [Stream Bindings](/guide/stream-bindings) — Stream handling
 - [Examples](/examples/counter) — Complete examples

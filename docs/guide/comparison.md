@@ -9,6 +9,7 @@ Side-by-side comparison with other Flutter state management solutions.
 | Dependencies | `ref.watch`, `ref.read` | Constructor |
 | Learning curve | Provider types, modifiers, scoping | Plain Dart |
 | State | Providers with annotations | `state()` |
+| Reactivity | `ref.watch` auto-tracks | `Watch` / `computed` auto-track |
 | Async | `AsyncValue` | `AsyncState` |
 | Code generation | Common | None |
 | Testing | `ProviderContainer` | Plain tests |
