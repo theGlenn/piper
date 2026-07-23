@@ -1,0 +1,19 @@
+README.md
+  s_568918712abb13::t_9cfbb8725e7f04 16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "91bfc47896404f4ca488de20e2c406a5c0912c7e",
+  "prompts": {},
+  "sessions": {
+    "s_568918712abb13": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "37a8c255-e57d-43f9-a460-19cb08933e8f",
+        "model": "unknown"
+      },
+      "human_author": "Glenn Sonna <kenpachi.os@gmail.com>"
+    }
+  }
+}
