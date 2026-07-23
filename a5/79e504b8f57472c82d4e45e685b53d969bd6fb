@@ -1,0 +1,68 @@
+packages/piper/README.md
+  s_1fe6cf94f74901::t_29ba9840d03973 19,75
+docs/guide/task.md
+  s_1fe6cf94f74901::t_29ba9840d03973 3-5,12-17,22,24-25,27-32,34-36,40,47-49,56,59-60,66-88,92,96,99-102,105-106,113-114,119-120,122,124,127-128,130-131,133,135,140,142-153,158,162,164-167
+docs/guide/what-is-piper.md
+  s_1fe6cf94f74901::t_29ba9840d03973 16-21
+docs/examples/todos.md
+  s_1fe6cf94f74901::t_79c597678eab38 103-104,112,120
+packages/piper/test/task_test.dart
+  s_1fe6cf94f74901::t_e1b335514c81e9 192,196-197,202-203,207-213
+  s_1fe6cf94f74901::t_1d669fa2623cc6 8-34,36-47
+  s_1fe6cf94f74901::t_c1b839bd746382 1-2
+  s_1fe6cf94f74901::t_4bbb66c045cb4e 35
+  s_1fe6cf94f74901::t_71c559951d4098 50,61,76,91,104-105,115,119,137,147,164,179
+packages/piper/lib/src/task.dart
+  s_1fe6cf94f74901::t_f217f012c3c568 91-92,118-119,121-125
+  s_1fe6cf94f74901::t_c1b839bd746382 1-90,93-96,98-100,104-108,110-112,115-117,120,129,131,135,137-143,145,147,150-152,159-161,170,172-174,178-181,183-186,192-195,200-204,207,212-214,219,223
+docs/concepts.md
+  s_1fe6cf94f74901::t_29ba9840d03973 12,39-43,53
+packages/flutter_piper/example/lib/features/todos/todos_view_model.dart
+  s_1fe6cf94f74901::t_56933b7d79e8f1 37,47-48,58
+  s_1fe6cf94f74901::t_dad05516783974 17-18,22-23
+packages/flutter_piper/example/lib/features/todos/todo_detail_view_model.dart
+  s_1fe6cf94f74901::t_56933b7d79e8f1 24,65,80
+packages/piper/CHANGELOG.md
+  s_1fe6cf94f74901::t_29ba9840d03973 8-24
+docs/public/llms.txt
+  s_1fe6cf94f74901::t_79c597678eab38 65-69
+packages/piper/test/view_model_test.dart
+  s_1fe6cf94f74901::t_f217f012c3c568 291,295
+  s_1fe6cf94f74901::t_71c559951d4098 13-16,130,140-143
+packages/piper/lib/src/view_model.dart
+  s_1fe6cf94f74901::t_71c559951d4098 179-182,203-204,207-208,219,221-222
+  s_1fe6cf94f74901::t_79c597678eab38 196
+examples/todos.md
+  s_1fe6cf94f74901::t_79c597678eab38 24-25,33,41
+packages/flutter_piper/CHANGELOG.md
+  s_1fe6cf94f74901::t_e1b335514c81e9 8-14
+docs/examples/search.md
+  s_1fe6cf94f74901::t_29ba9840d03973 76,78-80,83,249,261-262
+packages/flutter_piper/test/scope_test.dart
+  s_1fe6cf94f74901::t_71c559951d4098 12-15
+  s_1fe6cf94f74901::t_f217f012c3c568 116,231,545
+docs/guide/view-model.md
+  s_1fe6cf94f74901::t_29ba9840d03973 71-72,78
+examples/search.md
+  s_1fe6cf94f74901::t_29ba9840d03973 31,33-35,37
+README.md
+  s_1fe6cf94f74901::t_29ba9840d03973 24,107
+docs/public/llms-full.txt
+  s_1fe6cf94f74901::t_40aa5101eb14a1 123-124,130,423,430-435,442-450,460-462,472,482,489-491,500-501,520-525,534,536-539,1218-1223
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "a579e504b8f57472c82d4e45e685b53d969bd6fb",
+  "prompts": {},
+  "sessions": {
+    "s_1fe6cf94f74901": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f9053-1d42-7010-88e6-9173f9c954e9",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Glenn Sonna <kenpachi.os@gmail.com>"
+    }
+  }
+}
