@@ -147,7 +147,7 @@ abstract class ViewModel {
     subscribe(
       stream,
       (data) => holder.setData(transform?.call(data) ?? data),
-      onError: (e) => holder.setError(e.toString(), error: e),
+      onError: (e) => holder.setErrorFrom(e),
     );
     return holder;
   }
@@ -219,16 +219,9 @@ abstract class ViewModel {
     launchWith(
       work,
       onSuccess: (data) => holder.setData(data),
-      onError: (e) => holder.setError(e.toString(), error: e),
+      onError: (e) => holder.setErrorFrom(e),
     );
   }
-
-  /// Reloads async state (convenience for retry patterns).
-  ///
-  /// Identical to [load], provided for semantic clarity.
-  @protected
-  void reload<T>(AsyncStateHolder<T> holder, Future<T> Function() work) =>
-      load(holder, work);
 
   /// Disposes all managed resources.
   ///

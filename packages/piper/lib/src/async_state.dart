@@ -75,22 +75,6 @@ sealed class AsyncState<T> {
         AsyncData(data: var d) => data(d),
       };
 
-  /// Alias for [when] that lifts each state into a common return type.
-  ///
-  /// All callbacks are required, ensuring you handle every state.
-  R lift<R>({
-    required R Function() empty,
-    required R Function() loading,
-    required R Function(String message) error,
-    required R Function(T data) data,
-  }) =>
-      switch (this) {
-        AsyncEmpty() => empty(),
-        AsyncLoading() => loading(),
-        AsyncError(message: var m) => error(m),
-        AsyncData(data: var d) => data(d),
-      };
-
   /// Handle cases with optional callbacks and a required fallback.
   ///
   /// If a callback is not provided, [orElse] is called instead.
@@ -131,6 +115,13 @@ class AsyncError<T> extends AsyncState<T> {
   final StackTrace? stackTrace;
 
   const AsyncError(this.message, {this.error, this.stackTrace});
+
+  /// Creates an error state from an error [error] object.
+  ///
+  /// The [message] is derived from `error.toString()`, while the original
+  /// object and [stackTrace] are preserved for typed handling.
+  factory AsyncError.from(Object error, {StackTrace? stackTrace}) =>
+      AsyncError(error.toString(), error: error, stackTrace: stackTrace);
 }
 
 /// Represents a successful state with data.
