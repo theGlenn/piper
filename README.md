@@ -13,6 +13,7 @@
   <a href="https://pub.dev/packages/piper_state"><img src="https://img.shields.io/pub/v/piper_state.svg" alt="pub package"></a>
   <a href="https://pub.dev/packages/piper_state/score"><img src="https://img.shields.io/pub/likes/piper_state" alt="likes"></a>
   <a href="https://pub.dev/packages/piper_state/score"><img src="https://img.shields.io/pub/points/piper_state" alt="pub points"></a>
+  <a href="https://glennso.dev/piper/"><img src="https://img.shields.io/badge/docs-glennso.dev-blue" alt="Documentation"></a>
   <a href="https://github.com/theGlenn/piper/actions/workflows/ci.yml"><img src="https://github.com/theGlenn/piper/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://codecov.io/gh/theGlenn/piper"><img src="https://codecov.io/gh/theGlenn/piper/branch/main/graph/badge.svg" alt="codecov"></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
