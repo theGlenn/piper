@@ -1,0 +1,31 @@
+docs/public/llms-full.txt
+  s_ed4b57db73c544::t_21de96d422e5c2 162
+  s_ed4b57db73c544::t_aea3f73a40062c 722-723
+  s_ed4b57db73c544::t_e86198131e03e2 105-110
+  s_ed4b57db73c544::t_e6773627e6ec12 847-848,853
+  s_ed4b57db73c544::t_eb5591f8ed9255 299
+  s_ed4b57db73c544::t_bfec071fb59edf 809-819
+  s_ed4b57db73c544::t_a8fd26742f1198 857-937
+  s_ed4b57db73c544::t_9af74f17bdf407 337
+  s_ed4b57db73c544::t_6436c93cf4dccd 854-856
+docs/public/llms.txt
+  s_ed4b57db73c544::t_ce3b124e47079f 17
+  s_ed4b57db73c544::t_529daa81c8ef75 56-62
+  s_ed4b57db73c544::t_92005f5c871f80 88
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "c7f6277c4e15e8e01214d97f64004bf1a9caccd8",
+  "prompts": {},
+  "sessions": {
+    "s_ed4b57db73c544": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d5d6855b-2c29-4587-966e-22410cc7e35b",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Glenn Sonna <kenpachi.os@gmail.com>"
+    }
+  }
+}
