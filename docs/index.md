@@ -20,6 +20,8 @@ hero:
       link: /examples/counter
 
 features:
+  - title: Automatic Rebuilds
+    details: Read state inside a Watch and it subscribes automatically. computed() derives state that recomputes only when its dependencies change.
   - title: Automatic Lifecycle
     details: No more "if (mounted)" checks. Subscriptions cancel, tasks stop, state disposes — all tied to widget lifecycle.
   - title: Plain Dart

@@ -10,6 +10,7 @@ Quick reference for Piper's main components.
 | [ViewModel](/guide/view-model) | Lifecycle-aware business logic | `extends ViewModel` |
 | [ViewModelScope](/guide/view-model-scope) | Provide VMs to widget tree | `context.vm<T>()` |
 | [Task](/guide/task) | Cancellable async work | `launch((cancel) async { ... })` |
+| [Watch & Computed](/guide/reactive) | Automatic rebuilds & derived state | `Watch(...)`, `computed(...)` |
 | [Building UI](/guide/building-ui) | Connect state to widgets | `.build()`, `.displayWhen()` |
 | [Testing](/guide/testing) | Test VMs without Flutter | `TestScope` |
 
@@ -26,6 +27,9 @@ class SearchViewModel extends ViewModel {
 
   // Async state
   late final results = asyncState<List<Result>>();
+
+  // Derived state — recomputes when `results` changes
+  late final hasResults = computed(() => results.value.hasData);
 
   // Stream binding
   late final user = bind(_auth.userStream, initial: null);
