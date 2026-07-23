@@ -1,0 +1,26 @@
+packages/piper/lib/src/async_state.dart
+  s_ed4b57db73c544::t_2c964273a4b580 118-124
+packages/piper/lib/src/view_model.dart
+  s_ed4b57db73c544::t_643ad7743d62af 150
+  s_ed4b57db73c544::t_0f65ee06927949 222
+packages/piper/lib/src/async_state_holder.dart
+  s_ed4b57db73c544::t_3455be5d0f5ff9 55-63
+packages/piper/test/async_state_holder_test.dart
+  s_ed4b57db73c544::t_50976bcb58b83a 50-61
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "442f2f82d79ff48cce958b514b3d16a4499eaea3",
+  "prompts": {},
+  "sessions": {
+    "s_ed4b57db73c544": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d5d6855b-2c29-4587-966e-22410cc7e35b",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Glenn Sonna <kenpachi.os@gmail.com>"
+    }
+  }
+}
