@@ -21,7 +21,7 @@
 
 ---
 
-- ✅ **Automatic cleanup** — streams cancel, tasks abort on dispose
+- ✅ **Automatic cleanup** — streams and cooperative tasks cancel on dispose
 - ✅ **Explicit dependencies** — constructor injection, no magic
 - ✅ **Zero boilerplate** — no code generation required
 - ✅ **Testable** — plain Dart classes

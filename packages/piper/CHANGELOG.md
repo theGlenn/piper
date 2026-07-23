@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- `launch()` and `launchWith()` now receive a `TaskCancellationToken` for
+  cooperative cancellation. This is a breaking callback-signature change.
+- `launchWith()` and `load()` now return their `Task` handles.
+- Cancelled task results settle immediately instead of waiting for the
+  underlying Future to finish.
+
+### Added
+
+- `TaskCancellationToken.wait()` to interrupt task execution at async
+  boundaries.
+- `TaskCancellationToken.onCancel()` to connect underlying abort APIs.
+- `TaskCancellationToken.throwIfCancelled()` for explicit cancellation points.
+
 ## [0.0.3] - 2025-12-09
 
 ### Changed

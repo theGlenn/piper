@@ -9,7 +9,10 @@ class CounterViewModel extends ViewModel {
   void increment() => count.update((c) => c + 1);
 
   // Expose launch for testing
-  Task<T> testLaunch<T>(Future<T> Function() work) => launch(work);
+  Task<T> testLaunch<T>(
+    Future<T> Function(TaskCancellationToken cancellation) work,
+  ) =>
+      launch(work);
 }
 
 class NameViewModel extends ViewModel {
@@ -110,7 +113,7 @@ void main() {
       );
 
       // Launch a task to verify disposal (uses Completer instead of Future.delayed)
-      final task = capturedVm.testLaunch(() => completer.future);
+      final task = capturedVm.testLaunch((_) => completer.future);
 
       // Remove the scope
       await tester.pumpWidget(const SizedBox());
@@ -225,7 +228,7 @@ void main() {
       );
 
       // Launch a task to verify disposal
-      final task = capturedVm.testLaunch(() => completer.future);
+      final task = capturedVm.testLaunch((_) => completer.future);
 
       // Remove the scope
       await tester.pumpWidget(const SizedBox());
@@ -539,7 +542,7 @@ void main() {
         ),
       );
 
-      final task = capturedVm.testLaunch(() => completer.future);
+      final task = capturedVm.testLaunch((_) => completer.future);
 
       await tester.pumpWidget(const SizedBox());
 

@@ -1,11 +1,53 @@
+import 'dart:async';
+
 import 'package:test/test.dart';
 import 'package:piper_state/piper_state.dart';
 
 void main() {
   group('Task', () {
+    test('cancellation stops work after a cancellation-aware wait', () async {
+      final scope = TaskScope();
+      final delayed = Completer<void>();
+      var sideEffectRan = false;
+      final task = scope.launch((cancellation) async {
+        await cancellation.wait(delayed.future);
+        sideEffectRan = true;
+      });
+
+      task.cancel();
+
+      expect(await task.result, isNull);
+      expect(task.isCancelled, isTrue);
+      expect(sideEffectRan, isFalse);
+
+      delayed.complete();
+      await Future<void>.delayed(Duration.zero);
+      expect(sideEffectRan, isFalse);
+
+      scope.dispose();
+    });
+
+    test('cancellation invokes an underlying operation abort hook once',
+        () async {
+      final scope = TaskScope();
+      var abortCount = 0;
+      final task = scope.launch((cancellation) async {
+        cancellation.onCancel(() => abortCount++);
+        await cancellation.wait(Completer<void>().future);
+      });
+
+      task.cancel();
+      task.cancel();
+
+      expect(await task.result, isNull);
+      expect(abortCount, 1);
+
+      scope.dispose();
+    });
+
     test('completes with value', () async {
       final scope = TaskScope();
-      final task = scope.launch(() async => 42);
+      final task = scope.launch((_) async => 42);
 
       expect(task.isActive, true);
       expect(await task.result, 42);
@@ -16,7 +58,7 @@ void main() {
 
     test('returns null when cancelled', () async {
       final scope = TaskScope();
-      final task = scope.launch(() async {
+      final task = scope.launch((_) async {
         await Future.delayed(const Duration(milliseconds: 100));
         return 42;
       });
@@ -31,7 +73,7 @@ void main() {
 
     test('suppresses error when cancelled', () async {
       final scope = TaskScope();
-      final task = scope.launch(() async {
+      final task = scope.launch((_) async {
         await Future.delayed(const Duration(milliseconds: 10));
         throw Exception('test error');
       });
@@ -46,7 +88,7 @@ void main() {
 
     test('rethrows error when not cancelled', () async {
       final scope = TaskScope();
-      final task = scope.launch(() async {
+      final task = scope.launch((_) async {
         throw Exception('test error');
       });
 
@@ -59,8 +101,8 @@ void main() {
   group('TaskScope', () {
     test('launches tasks', () async {
       final scope = TaskScope();
-      final task1 = scope.launch(() async => 1);
-      final task2 = scope.launch(() async => 2);
+      final task1 = scope.launch((_) async => 1);
+      final task2 = scope.launch((_) async => 2);
 
       expect(await task1.result, 1);
       expect(await task2.result, 2);
@@ -70,11 +112,11 @@ void main() {
 
     test('cancelAll cancels all tasks', () async {
       final scope = TaskScope();
-      final task1 = scope.launch(() async {
+      final task1 = scope.launch((_) async {
         await Future.delayed(const Duration(milliseconds: 100));
         return 1;
       });
-      final task2 = scope.launch(() async {
+      final task2 = scope.launch((_) async {
         await Future.delayed(const Duration(milliseconds: 100));
         return 2;
       });
@@ -92,7 +134,7 @@ void main() {
       scope.dispose();
 
       expect(
-        () => scope.launch(() async => 42),
+        () => scope.launch((_) async => 42),
         throwsStateError,
       );
     });
@@ -102,7 +144,7 @@ void main() {
       int? result;
 
       scope.launchWith(
-        () async => 42,
+        (_) async => 42,
         onSuccess: (value) => result = value,
       );
 
@@ -119,7 +161,7 @@ void main() {
       // Regression: a Future<void> must still fire onSuccess. Previously the
       // null result was treated as "cancelled" and onSuccess was dropped.
       scope.launchWith<void>(
-        () async {},
+        (_) async {},
         onSuccess: (_) => called = true,
       );
 
@@ -134,7 +176,7 @@ void main() {
       Object? error;
 
       scope.launchWith(
-        () async => throw Exception('test'),
+        (_) async => throw Exception('test'),
         onSuccess: (_) {},
         onError: (e) => error = e,
       );
@@ -147,23 +189,28 @@ void main() {
 
     test('launchWith does not call callbacks when cancelled', () async {
       final scope = TaskScope();
+      final pending = Completer<int>();
       bool successCalled = false;
       bool errorCalled = false;
 
-      scope.launchWith(
-        () async {
-          await Future.delayed(const Duration(milliseconds: 100));
-          return 42;
-        },
+      final task = scope.launchWith(
+        (cancellation) => cancellation.wait(pending.future),
         onSuccess: (_) => successCalled = true,
         onError: (_) => errorCalled = true,
       );
 
-      scope.dispose();
-      await Future.delayed(const Duration(milliseconds: 150));
+      task.cancel();
+      expect(await task.result, isNull);
 
       expect(successCalled, false);
       expect(errorCalled, false);
+
+      pending.complete(42);
+      await Future<void>.delayed(Duration.zero);
+      expect(successCalled, false);
+      expect(errorCalled, false);
+
+      scope.dispose();
     });
   });
 }

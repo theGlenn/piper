@@ -62,9 +62,11 @@ Async state with loading/error/data:
 
 ### Task
 Cancellable async operations:
-- `launch(() => Future)` - Returns Task handle
-- `launchWith(() => Future, onSuccess: fn, onError: fn)` - With callbacks
-- `task.cancel()` - Cancel (results discarded)
+- `launch((cancellation) => Future)` - Returns Task handle
+- `cancellation.wait(future)` - Stops the task body on cancellation
+- `cancellation.onCancel(abort)` - Connects an underlying abort API
+- `launchWith((cancellation) => Future, ...)` - With callbacks
+- `task.cancel()` - Request cooperative cancellation
 - Auto-cancels on ViewModel dispose
 
 ### ViewModelScope

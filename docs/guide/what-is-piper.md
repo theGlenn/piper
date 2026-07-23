@@ -13,9 +13,12 @@ class SearchViewModel extends ViewModel {
 
   void search(String query) {
     _task?.cancel();
-    _task = launch(() async {
-      await Future.delayed(Duration(milliseconds: 300));
-      results.setData(await _repo.search(query));  // Won't run if disposed
+    _task = launch((cancellation) async {
+      await cancellation.wait(
+        Future<void>.delayed(const Duration(milliseconds: 300)),
+      );
+      final data = await cancellation.wait(_repo.search(query));
+      results.setData(data); // Won't run if cancelled or disposed
     });
   }
 }

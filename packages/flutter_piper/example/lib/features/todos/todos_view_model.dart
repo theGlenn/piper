@@ -14,11 +14,13 @@ class TodosViewModel extends ViewModel {
   // allocates a fresh list — `listEquals` stops it notifying when the filtered
   // result is unchanged. A `Watch` reading these rebuilds reactively.
   late final pendingTodos = computed(
-    () => todos.value.dataOrNull?.where((t) => !t.completed).toList() ?? const [],
+    () =>
+        todos.value.dataOrNull?.where((t) => !t.completed).toList() ?? const [],
     equals: (a, b) => listEquals(a, b),
   );
   late final completedTodos = computed(
-    () => todos.value.dataOrNull?.where((t) => t.completed).toList() ?? const [],
+    () =>
+        todos.value.dataOrNull?.where((t) => t.completed).toList() ?? const [],
     equals: (a, b) => listEquals(a, b),
   );
 
@@ -32,7 +34,7 @@ class TodosViewModel extends ViewModel {
 
   void toggleTodo(String id) {
     launchWith(
-      () => _todoRepo.toggleTodo(id),
+      (cancellation) => cancellation.wait(_todoRepo.toggleTodo(id)),
       onSuccess: (_) {},
       onError: (e) {
         todos.setError('Failed to update todo', error: e);
@@ -42,7 +44,8 @@ class TodosViewModel extends ViewModel {
 
   void addTodo(String title, String description) {
     launchWith(
-      () => _todoRepo.addTodo(title, description),
+      (cancellation) =>
+          cancellation.wait(_todoRepo.addTodo(title, description)),
       onSuccess: (_) {},
       onError: (e) {
         todos.setError('Failed to add todo', error: e);
@@ -52,7 +55,7 @@ class TodosViewModel extends ViewModel {
 
   void deleteTodo(String id) {
     launchWith(
-      () => _todoRepo.deleteTodo(id),
+      (cancellation) => cancellation.wait(_todoRepo.deleteTodo(id)),
       onSuccess: (_) {},
       onError: (e) {
         todos.setError('Failed to delete todo', error: e);

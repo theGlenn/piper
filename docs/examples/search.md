@@ -73,12 +73,14 @@ class SearchViewModel extends ViewModel {
 
     results.setLoading();
 
-    _searchTask = launch(() async {
+    _searchTask = launch((cancellation) async {
       // Debounce: wait before searching
-      await Future.delayed(Duration(milliseconds: 300));
+      await cancellation.wait(
+        Future<void>.delayed(const Duration(milliseconds: 300)),
+      );
 
       // Fetch results
-      final data = await _repo.search(value);
+      final data = await cancellation.wait(_repo.search(value));
 
       // Update state (won't run if cancelled)
       results.setData(data);
@@ -244,7 +246,7 @@ Simple. Just wait before making the request.
 
 ```dart
 _searchTask?.cancel();
-_searchTask = launch(() async { ... });
+_searchTask = launch((cancellation) async { ... });
 ```
 
 Each new search cancels the previous one. If the user types "flutter":
@@ -256,7 +258,8 @@ Each new search cancels the previous one. If the user types "flutter":
 
 ### No Stale Results
 
-When a task is cancelled, its callbacks don't run:
+When a task is cancelled, cancellation-aware waits unwind its body and its
+callbacks don't run:
 
 ```dart
 results.setData(data);  // Won't execute if task was cancelled

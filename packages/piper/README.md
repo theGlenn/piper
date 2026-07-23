@@ -16,7 +16,7 @@
 
 **Flutter state management with lifecycle-aware ViewModels.**
 
-- ✅ Automatic cleanup — streams cancel, tasks abort
+- ✅ Automatic cleanup — streams and cooperative tasks cancel
 - ✅ Explicit dependencies — constructor injection
 - ✅ Zero boilerplate — no code generation
 - ✅ Testable — plain Dart classes

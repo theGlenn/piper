@@ -21,7 +21,7 @@ class TodoDetailViewModel extends ViewModel {
     isLoading.value = true;
 
     launchWith(
-      () => _todoRepo.getTodoById(todoId),
+      (cancellation) => cancellation.wait(_todoRepo.getTodoById(todoId)),
       onSuccess: (loadedTodo) {
         todo.value = loadedTodo;
         isLoading.value = false;
@@ -62,7 +62,7 @@ class TodoDetailViewModel extends ViewModel {
     error.value = null;
 
     launchWith(
-      () => _todoRepo.updateTodo(current),
+      (cancellation) => cancellation.wait(_todoRepo.updateTodo(current)),
       onSuccess: (_) {
         isSaving.value = false;
       },
@@ -77,7 +77,7 @@ class TodoDetailViewModel extends ViewModel {
     isSaving.value = true;
 
     launchWith(
-      () => _todoRepo.deleteTodo(todoId),
+      (cancellation) => cancellation.wait(_todoRepo.deleteTodo(todoId)),
       onSuccess: (_) {
         isSaving.value = false;
         isDeleted.value = true;

@@ -176,7 +176,10 @@ abstract class ViewModel {
   /// or await results. The task is automatically cancelled
   /// when the ViewModel is disposed.
   @protected
-  Task<T> launch<T>(Future<T> Function() work) => _taskScope.launch(work);
+  Task<T> launch<T>(
+    Future<T> Function(TaskCancellationToken cancellation) work,
+  ) =>
+      _taskScope.launch(work);
 
   /// Launches async work with inline result handling.
   ///
@@ -190,20 +193,19 @@ abstract class ViewModel {
   /// ```dart
   /// void save() {
   ///   launchWith(
-  ///     () => repository.save(data),
+  ///     (cancellation) => cancellation.wait(repository.save(data)),
   ///     onSuccess: (_) => saved.value = true,
   ///     onError: (e) => error.value = e.toString(),
   ///   );
   /// }
   /// ```
   @protected
-  void launchWith<T>(
-    Future<T> Function() work, {
+  Task<T> launchWith<T>(
+    Future<T> Function(TaskCancellationToken cancellation) work, {
     required void Function(T) onSuccess,
     void Function(Object error)? onError,
-  }) {
-    _taskScope.launchWith(work, onSuccess: onSuccess, onError: onError);
-  }
+  }) =>
+      _taskScope.launchWith(work, onSuccess: onSuccess, onError: onError);
 
   /// Executes async work with automatic [AsyncStateHolder] management.
   ///
@@ -214,10 +216,10 @@ abstract class ViewModel {
   /// void loadUser() => load(user, () => _repo.getUser());
   /// ```
   @protected
-  void load<T>(AsyncStateHolder<T> holder, Future<T> Function() work) {
+  Task<T> load<T>(AsyncStateHolder<T> holder, Future<T> Function() work) {
     holder.setLoading();
-    launchWith(
-      work,
+    return launchWith(
+      (cancellation) => cancellation.wait(work()),
       onSuccess: (data) => holder.setData(data),
       onError: (e) => holder.setErrorFrom(e),
     );

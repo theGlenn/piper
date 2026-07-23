@@ -120,14 +120,14 @@ ChatViewModel(ChatRepository repo) {
 
 ```dart
 // launch() — returns Task for cancellation
-_task = launch(() async {
-  await _repo.save(data);
+_task = launch((cancellation) async {
+  await cancellation.wait(_repo.save(data));
   isSaved.value = true;
 });
 
 // launchWith() — callbacks
 launchWith(
-  () => _repo.delete(id),
+  (cancellation) => cancellation.wait(_repo.delete(id)),
   onSuccess: (_) => isDeleted.value = true,
   onError: (e) => error.value = e.toString(),
 );
@@ -420,41 +420,34 @@ class ChatViewModel extends ViewModel {
 
 ## Task
 
-Handle to async work with cancellation. Cancelled tasks don't update state.
+Handle async work with cooperative cancellation.
 
 ```dart
 Task<void>? _task;
 
 void search(String query) {
   _task?.cancel();
-  _task = launch(() async {
-    await Future.delayed(Duration(milliseconds: 300));
-    results.setData(await repo.search(query));  // Won't run if cancelled
+  _task = launch((cancellation) async {
+    await cancellation.wait(
+      Future<void>.delayed(const Duration(milliseconds: 300)),
+    );
+    final data = await cancellation.wait(repo.search(query));
+    results.setData(data);
   });
 }
 ```
 
-### Why Tasks?
-
-Without Piper, async operations need manual `mounted` checks:
-```dart
-void loadData() async {
-  final data = await repo.getData();
-  if (mounted) setState(() => _data = data);  // Tedious
-}
-```
-
-With Piper, cancelled tasks simply don't update state:
-```dart
-void loadData() => load(data, () => repo.getData());
-```
-
 ### How It Works
 
-Tasks use "ignore-on-cancel":
-- The Future runs to completion (can't stop a Future)
-- If cancelled, results are discarded
-- Callbacks don't fire, state doesn't update
+Cancellation is cooperative:
+- `task.cancel()` signals the task's token.
+- `cancellation.wait(future)` unwinds the task body on cancellation.
+- `task.result` settles with `null`.
+- `launchWith` callbacks don't run.
+
+Dart cannot forcibly stop an arbitrary Future. Use
+`cancellation.onCancel(abort)` when the underlying operation exposes an abort
+API.
 
 ### launch()
 
@@ -464,9 +457,9 @@ Task<void>? _task;
 
 void search(String query) {
   _task?.cancel();
-  _task = launch(() async {
-    await Future.delayed(Duration(milliseconds: 300));
-    results.setData(await repo.search(query));
+  _task = launch((cancellation) async {
+    final data = await cancellation.wait(repo.search(query));
+    results.setData(data);
   });
 }
 ```
@@ -476,7 +469,7 @@ void search(String query) {
 Inline success/error callbacks:
 ```dart
 launchWith(
-  () => repo.save(data),
+  (cancellation) => cancellation.wait(repo.save(data)),
   onSuccess: (_) => isSaved.value = true,
   onError: (e) => error.value = e.toString(),
 );
@@ -486,14 +479,16 @@ launchWith(
 
 ```dart
 task.isCancelled  // cancel() was called
-task.isCompleted  // Future completed
+task.isCompleted  // completed, failed, or settled through cancellation
 task.isActive     // running and not cancelled
 ```
 
 ### Await Results
 
 ```dart
-final task = launch(() => fetchData());
+final task = launch(
+  (cancellation) => cancellation.wait(fetchData()),
+);
 final result = await task.result;  // T? - null if cancelled
 ```
 
@@ -502,8 +497,8 @@ final result = await task.result;  // T? - null if cancelled
 Manage multiple tasks:
 ```dart
 final scope = TaskScope();
-scope.launch(() => fetchUsers());
-scope.launch(() => fetchPosts());
+scope.launch((cancellation) => cancellation.wait(fetchUsers()));
+scope.launch((cancellation) => cancellation.wait(fetchPosts()));
 scope.cancelAll();
 scope.dispose();
 ```
@@ -522,23 +517,12 @@ void onQueryChanged(String query) {
   if (query.isEmpty) return results.setEmpty();
 
   results.setLoading();
-  _task = launch(() async {
-    await Future.delayed(Duration(milliseconds: 300));
-    results.setData(await repo.search(query));
-  });
-}
-```
-
-#### Cancel Previous
-
-```dart
-Task<void>? _task;
-
-void loadCategory(String id) {
-  _task?.cancel();
-  _task = launch(() async {
-    items.setLoading();
-    items.setData(await repo.getItems(id));
+  _task = launch((cancellation) async {
+    await cancellation.wait(
+      Future<void>.delayed(const Duration(milliseconds: 300)),
+    );
+    final data = await cancellation.wait(repo.search(query));
+    results.setData(data);
   });
 }
 ```
@@ -547,12 +531,12 @@ void loadCategory(String id) {
 
 ```dart
 void checkout() {
-  launch(() async {
+  launch((cancellation) async {
     state.setLoading();
-    await cartRepo.validateCart();
-    await paymentService.processPayment();
-    await orderRepo.createOrder();
-    state.setData(null);  // Won't run if user leaves
+    await cancellation.wait(cartRepo.validateCart());
+    await cancellation.wait(paymentService.processPayment());
+    await cancellation.wait(orderRepo.createOrder());
+    state.setData(null);
   });
 }
 ```
@@ -1231,9 +1215,12 @@ class SearchViewModel extends ViewModel {
     }
 
     results.setLoading();
-    _task = launch(() async {
-      await Future.delayed(Duration(milliseconds: 300)); // Debounce
-      results.setData(await _repo.search(query));
+    _task = launch((cancellation) async {
+      await cancellation.wait(
+        Future<void>.delayed(const Duration(milliseconds: 300)),
+      );
+      final data = await cancellation.wait(_repo.search(query));
+      results.setData(data);
     });
   }
 }
