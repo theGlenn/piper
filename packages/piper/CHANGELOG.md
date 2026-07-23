@@ -7,20 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed
-
-- `launch()` and `launchWith()` now receive a `TaskCancellationToken` for
-  cooperative cancellation. This is a breaking callback-signature change.
-- `launchWith()` and `load()` now return their `Task` handles.
-- Cancelled task results settle immediately instead of waiting for the
-  underlying Future to finish.
+## [0.1.0] - 2026-07-23
 
 ### Added
 
-- `TaskCancellationToken.wait()` to interrupt task execution at async
-  boundaries.
-- `TaskCancellationToken.onCancel()` to connect underlying abort APIs.
-- `TaskCancellationToken.throwIfCancelled()` for explicit cancellation points.
+- `computed()` / `Computed<T>` — derived state that recomputes automatically
+  when its dependencies change, with configurable `equals` and cycle detection.
+- Automatic dependency tracking (`PiperTracker`, `Trackable`): reading
+  `StateHolder.value` inside a tracked scope subscribes the reader.
+- Configurable `equals` on `StateHolder`, `state()`, and `computed()`.
+- `AsyncError.from()` and `AsyncStateHolder.setErrorFrom()` — preserve the
+  original error object and stack trace instead of collapsing to a string.
+- `TaskCancellationToken` with `wait()`, `onCancel()`, and `throwIfCancelled()`
+  for cooperative task cancellation.
+
+### Changed
+
+- `launch()` and `launchWith()` now receive a `TaskCancellationToken`. This is
+  a breaking callback-signature change.
+- `launchWith()` and `load()` now return their `Task` handles.
+- Cancelled task results settle immediately instead of waiting for the
+  underlying Future to finish.
+- Notifications are batched so derived state settles before listeners fire
+  (glitch-free updates across diamond dependency graphs).
+
+### Removed
+
+- `reload()` — use `load()`.
+- `AsyncState.lift()` — use `when()`.
 
 ## [0.0.3] - 2025-12-09
 
