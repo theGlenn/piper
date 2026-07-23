@@ -48,7 +48,7 @@ class SearchResult {
 ## ViewModel
 
 ```dart
-import 'package:piper/piper.dart';
+import 'package:piper_state/piper_state.dart';
 
 class SearchViewModel extends ViewModel {
   final SearchRepository _repo;

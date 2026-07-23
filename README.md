@@ -21,6 +21,7 @@
 
 ---
 
+- ✅ **Automatic rebuilds** — read state in a `Watch`, no manual wiring
 - ✅ **Automatic cleanup** — streams and cooperative tasks cancel on dispose
 - ✅ **Explicit dependencies** — constructor injection, no magic
 - ✅ **Zero boilerplate** — no code generation required
@@ -84,11 +85,33 @@ _ => CircularProgressIndicator(),
 );
 ```
 
+## Reactive Rebuilds
+
+`Watch` rebuilds from whatever state you read inside it — one widget, many
+values, no dependency lists:
+```dart
+Watch((context) => vm.loading.value
+    ? const CircularProgressIndicator()
+    : Text(vm.name.value))
+```
+
+`computed` derives state that recomputes only when its dependencies change:
+```dart
+class TodosViewModel extends ViewModel {
+  late final todos = bindAsync<List<Todo>>(repo.todosStream);
+
+  late final pending = computed(
+    () => todos.value.dataOrNull?.where((t) => !t.done).toList() ?? const [],
+    equals: (a, b) => listEquals(a, b),
+  );
+}
+```
+
 ## Installation
 ```yaml
 dependencies:
-  piper_state: ^0.0.3
-  flutter_piper: ^0.0.3
+  piper_state: ^0.1.0
+  flutter_piper: ^0.1.0
 ```
 
 ## Documentation

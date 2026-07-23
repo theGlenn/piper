@@ -5,7 +5,7 @@ The classic example. Simple state management with increment and decrement.
 ## ViewModel
 
 ```dart
-import 'package:piper/piper.dart';
+import 'package:piper_state/piper_state.dart';
 
 class CounterViewModel extends ViewModel {
   late final count = state(0);
