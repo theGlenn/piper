@@ -100,7 +100,8 @@ class TodosViewModel extends ViewModel {
 
   void addTodo(String title, String description) {
     launchWith(
-      () => _repo.addTodo(title, description),
+      (cancellation) =>
+          cancellation.wait(_repo.addTodo(title, description)),
       onSuccess: (_) {},
       onError: (e) => todos.setError('Failed to add todo', error: e),
     );
@@ -108,7 +109,7 @@ class TodosViewModel extends ViewModel {
 
   void toggleTodo(String id) {
     launchWith(
-      () => _repo.toggleTodo(id),
+      (cancellation) => cancellation.wait(_repo.toggleTodo(id)),
       onSuccess: (_) {},
       onError: (e) => todos.setError('Failed to update todo', error: e),
     );
@@ -116,7 +117,7 @@ class TodosViewModel extends ViewModel {
 
   void deleteTodo(String id) {
     launchWith(
-      () => _repo.deleteTodo(id),
+      (cancellation) => cancellation.wait(_repo.deleteTodo(id)),
       onSuccess: (_) {},
       onError: (e) => todos.setError('Failed to delete todo', error: e),
     );

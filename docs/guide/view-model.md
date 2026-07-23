@@ -68,14 +68,14 @@ ChatViewModel(ChatRepository repo) {
 
 ```dart
 // launch() — returns Task for cancellation
-_task = launch(() async {
-  await _repo.save(data);
+_task = launch((cancellation) async {
+  await cancellation.wait(_repo.save(data));
   isSaved.value = true;
 });
 
 // launchWith() — callbacks
 launchWith(
-  () => _repo.delete(id),
+  (cancellation) => cancellation.wait(_repo.delete(id)),
   onSuccess: (_) => isDeleted.value = true,
   onError: (e) => error.value = e.toString(),
 );

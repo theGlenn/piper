@@ -9,7 +9,7 @@ Quick reference for Piper's main components.
 | [Stream Bindings](/guide/stream-bindings) | Bind streams to state | `bind(stream, initial: null)` |
 | [ViewModel](/guide/view-model) | Lifecycle-aware business logic | `extends ViewModel` |
 | [ViewModelScope](/guide/view-model-scope) | Provide VMs to widget tree | `context.vm<T>()` |
-| [Task](/guide/task) | Cancellable async work | `launch(() async { ... })` |
+| [Task](/guide/task) | Cancellable async work | `launch((cancel) async { ... })` |
 | [Building UI](/guide/building-ui) | Connect state to widgets | `.build()`, `.displayWhen()` |
 | [Testing](/guide/testing) | Test VMs without Flutter | `TestScope` |
 
@@ -36,9 +36,11 @@ class SearchViewModel extends ViewModel {
   void search(String q) {
     query.value = q;
     _searchTask?.cancel();
-    _searchTask = launch(() async {
-      await Future.delayed(Duration(milliseconds: 300));
-      final data = await _repo.search(q);
+    _searchTask = launch((cancellation) async {
+      await cancellation.wait(
+        Future<void>.delayed(const Duration(milliseconds: 300)),
+      );
+      final data = await cancellation.wait(_repo.search(q));
       results.setData(data);
     });
   }
@@ -48,4 +50,4 @@ class SearchViewModel extends ViewModel {
 When the ViewModel disposes:
 - State holders dispose
 - Stream subscriptions cancel
-- Tasks cancel (callbacks don't run)
+- Tasks cancel (task bodies unwind and callbacks don't run)

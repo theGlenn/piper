@@ -28,11 +28,13 @@ class SearchViewModel extends ViewModel {
 
     results.setLoading();
 
-    _searchTask = launch(() async {
+    _searchTask = launch((cancellation) async {
       // Debounce
-      await Future.delayed(const Duration(milliseconds: 300));
+      await cancellation.wait(
+        Future<void>.delayed(const Duration(milliseconds: 300)),
+      );
 
-      final data = await _repo.search(value);
+      final data = await cancellation.wait(_repo.search(value));
       results.setData(data);
     });
   }
