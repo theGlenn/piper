@@ -1,0 +1,21 @@
+packages/flutter_piper/example/ios/Runner.xcodeproj/project.pbxproj
+  s_a197f85db49ee5::t_e15a648f2f2ce4 365,372,545,552,568,575
+packages/flutter_piper/example/ios/Runner/Info.plist
+  s_a197f85db49ee5::t_6ce036d233f2ff 5-6,29-30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "c33cc51103c6cb864bdbe8e7399ebd9352baac0e",
+  "prompts": {},
+  "sessions": {
+    "s_a197f85db49ee5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "308f0daa-3c71-4ead-93b7-e0bfcdf40f3d",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Glenn Sonna <kenpachi.os@gmail.com>"
+    }
+  }
+}
