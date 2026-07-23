@@ -1,0 +1,34 @@
+docs/examples/search.md
+  s_ed4b57db73c544::t_54cfd36b491e79 51
+docs/examples/todos.md
+  s_ed4b57db73c544::t_54cfd36b491e79 80
+docs/public/llms-full.txt
+  s_ed4b57db73c544::t_54cfd36b491e79 18-19
+docs/examples/auth.md
+  s_ed4b57db73c544::t_54cfd36b491e79 34
+docs/examples/counter.md
+  s_ed4b57db73c544::t_54cfd36b491e79 8
+docs/guide/getting-started.md
+  s_ed4b57db73c544::t_7a81d1156c4887 123
+  s_ed4b57db73c544::t_f4954256567224 66-78
+  s_ed4b57db73c544::t_e861432903b226 9-10,19
+README.md
+  s_ed4b57db73c544::t_4e00e58db8f084 88-109,113-114
+  s_ed4b57db73c544::t_0a3b97b4a59e19 24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "cbb307dcbc95afae22c89ed12313431f330941b3",
+  "prompts": {},
+  "sessions": {
+    "s_ed4b57db73c544": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d5d6855b-2c29-4587-966e-22410cc7e35b",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Glenn Sonna <kenpachi.os@gmail.com>"
+    }
+  }
+}
