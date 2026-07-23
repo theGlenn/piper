@@ -1,0 +1,30 @@
+packages/piper/lib/src/piper_notifier.dart
+  s_c53baa264b30ba::t_22785605edea8d 1,45
+packages/piper/lib/src/computed.dart
+  s_c53baa264b30ba::t_22785605edea8d 1,28,53,72-74,76-82,84-85,105
+packages/piper/test/computed_test.dart
+  s_c53baa264b30ba::t_ab905734ac71f1 117-120
+  s_c53baa264b30ba::t_b429f73661bcf3 73,77
+  s_c53baa264b30ba::t_6c924f8590d6a8 47-72,74-76,78-84
+  s_c53baa264b30ba::t_40ce591f29e1fd 85-104
+packages/piper/lib/src/notification_batch.dart
+  s_c53baa264b30ba::t_22785605edea8d 1-33,36-37,45-47,51-53
+  s_c53baa264b30ba::t_e838891c68c6a4 34-35,38-40,42-44,48-50
+  s_c53baa264b30ba::t_c091eef20a5330 41
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "6e59e48e4ce4b03e2f13bdc898a96512c43ea406",
+  "prompts": {},
+  "sessions": {
+    "s_c53baa264b30ba": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f9031-c2a9-7f22-bf67-a4e5511bd4ac",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Glenn Sonna <kenpachi.os@gmail.com>"
+    }
+  }
+}
