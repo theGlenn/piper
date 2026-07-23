@@ -1,0 +1,36 @@
+docs/index.md
+  s_ed4b57db73c544::t_22eb6693990d62 23-24
+docs/concepts.md
+  s_ed4b57db73c544::t_76cb7e233c0e0a 13
+  s_ed4b57db73c544::t_b2689c7890a4b1 31-33
+docs/examples/form.md
+  s_ed4b57db73c544::t_43dbc5fbea2fb2 64-65,69,75-76,81,87-88,93,99-108
+  s_ed4b57db73c544::t_fd837004c090c3 119-123
+  s_a197f85db49ee5::t_90fbe70e72ee9e 14-16,20,22,26,28-29,33,35-36,39-41,44
+docs/guide/comparison.md
+  s_ed4b57db73c544::t_8c632a75d09c6f 12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "65e746a55051a7a86d5d21a64b3f439e1b259d8b",
+  "prompts": {},
+  "sessions": {
+    "s_a197f85db49ee5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "308f0daa-3c71-4ead-93b7-e0bfcdf40f3d",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Glenn Sonna <kenpachi.os@gmail.com>"
+    },
+    "s_ed4b57db73c544": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d5d6855b-2c29-4587-966e-22410cc7e35b",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Glenn Sonna <kenpachi.os@gmail.com>"
+    }
+  }
+}
