@@ -92,6 +92,21 @@ vm.saveResult.listenAsync(
 
 ## Multiple States
 
+For a widget that reads two or more values, prefer [`Watch`](/guide/reactive) —
+read the values inside the builder and it subscribes to exactly those:
+
+```dart
+Watch((context) => state.when(
+  data: (posts) => UserWithPosts(vm.user.value, posts),
+  loading: () => Skeleton(vm.user.value),
+  error: (msg) => Error(msg),
+  empty: () => Empty(),
+))
+```
+
+The builders below still work and remain useful for a fixed, small number of
+sources.
+
 ### StateBuilder2/3/4
 
 ```dart
