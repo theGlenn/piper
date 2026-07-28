@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-07-29
+
+### Added
+
+- Piper Search Race, a deterministic runnable example that visualizes
+  lifecycle-owned task cancellation preventing stale search results.
+
+### Changed
+
+- Updated the package README and pub.dev metadata to align with Piper's
+  lifecycle-owned cleanup positioning.
+- Bumped the `piper_state` dependency to `^0.1.1`.
+
 ## [0.1.0] - 2026-07-23
 
 ### Added
