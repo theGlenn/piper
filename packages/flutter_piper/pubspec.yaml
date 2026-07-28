@@ -1,5 +1,5 @@
 name: flutter_piper
-description: Flutter widgets for Piper State. ViewModelScope, Scoped, StateBuilder for lifecycle-aware state management.
+description: Flutter widgets for Piper State with lifecycle-aware ViewModel scopes, automatic dependency tracking, builders, listeners, and effects.
 version: 0.1.0
 repository: https://github.com/theGlenn/piper
 homepage: https://glennso.dev/piper
@@ -9,9 +9,9 @@ documentation: https://glennso.dev/piper/guide/view-model-scope
 topics:
   - state-management
   - viewmodel
+  - reactive-programming
   - widgets
   - flutter
-  - architecture
 
 platforms:
   android:

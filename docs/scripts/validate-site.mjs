@@ -3,6 +3,7 @@ import { join } from 'node:path'
 
 const dist = join(import.meta.dirname, '..', '.vitepress', 'dist')
 const siteBase = 'https://glennso.dev/piper'
+const siteDescription = 'Flutter state management that cleans up after itself. Plain Dart ViewModels with automatic rebuilds, stream cleanup, and cooperative task cancellation.'
 
 async function read(relativePath) {
   return readFile(join(dist, relativePath), 'utf8')
@@ -17,6 +18,11 @@ function assertIncludes(content, expected, source) {
 const home = await read('index.html')
 assertIncludes(home, '<title>Piper State', 'index.html')
 assertIncludes(home, `rel="canonical" href="${siteBase}/"`, 'index.html')
+assertIncludes(
+  home,
+  `property="og:description" content="${siteDescription}"`,
+  'index.html',
+)
 assertIncludes(
   home,
   `property="og:image" content="${siteBase}/og-image.png"`,

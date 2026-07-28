@@ -1,8 +1,10 @@
-# Piper - Complete API Reference
+# Piper State - Complete API Reference
 
-> Lifecycle-aware ViewModels for Flutter with automatic cleanup.
+> Flutter state management that cleans up after itself.
 
-Piper is a Flutter state management library that provides lifecycle-aware ViewModels with automatic cleanup. No "mounted" checks, no stream subscriptions to manage, no manual disposal.
+Piper puts state, derived values, streams, and async tasks in plain Dart
+ViewModels. Automatic rebuilds follow tracked reads, while stream cleanup and
+cooperative task cancellation follow the ViewModel lifecycle.
 
 ## Documentation
 
