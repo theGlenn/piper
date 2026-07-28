@@ -2,15 +2,15 @@
 layout: home
 title: Piper State
 titleTemplate: false
-description: Lifecycle-aware Flutter state management with automatic cleanup, explicit dependencies, and no code generation.
+description: Flutter state management that cleans up after itself. Plain Dart ViewModels with automatic rebuilds, stream cleanup, and cooperative task cancellation.
 
 hero:
   image:
     src: /logo.png
-    alt: Piper
-  name: Piper
-  text: State management simplified
-  tagline: Lifecycle-aware ViewModels for Flutter.
+    alt: Piper State
+  name: Piper State
+  text: State management that cleans up after itself.
+  tagline: Plain Dart ViewModels with automatic rebuilds, stream cleanup, and cooperative task cancellation.
   actions:
     - theme: brand
       text: Get Started
@@ -24,13 +24,13 @@ hero:
 
 features:
   - title: Automatic Rebuilds
-    details: Read state inside a Watch and it subscribes automatically. computed() derives state that recomputes only when its dependencies change.
-  - title: Automatic Lifecycle
-    details: No more "if (mounted)" checks. Subscriptions cancel, tasks stop, state disposes — all tied to widget lifecycle.
-  - title: Plain Dart
-    details: ViewModels are just Dart classes. Test without Flutter, mock without framework internals.
-  - title: No Magic
-    details: Constructor injection, explicit dependencies. Trace your entire dependency graph by reading the code.
+    details: Watch subscribes to the state it reads. computed() derives values without dependency lists.
+  - title: Cleanup Follows Ownership
+    details: Streams, derived state, and cooperative tasks stop when their ViewModel disposes.
+  - title: Plain Dart ViewModels
+    details: Test business logic without Flutter, generated files, or framework test containers.
+  - title: Dependencies Stay Visible
+    details: Constructor parameters make the dependency graph readable from the code that creates it.
 ---
 
 <div class="code-showcase">

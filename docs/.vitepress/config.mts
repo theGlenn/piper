@@ -2,7 +2,7 @@ import { defineConfig } from 'vitepress'
 
 const siteOrigin = 'https://glennso.dev'
 const siteBase = '/piper/'
-const siteDescription = 'Lifecycle-aware Flutter state management with automatic cleanup, explicit dependencies, and no code generation.'
+const siteDescription = 'Flutter state management that cleans up after itself. Plain Dart ViewModels with automatic rebuilds, stream cleanup, and cooperative task cancellation.'
 const socialImageUrl = `${siteOrigin}${siteBase}og-image.png`
 
 function pageUrl(relativePath: string) {
@@ -39,8 +39,8 @@ export default defineConfig({
     ['script', { type: 'application/ld+json' }, JSON.stringify({
       "@context": "https://schema.org",
       "@type": "SoftwareSourceCode",
-      "name": "Piper",
-      "description": "Flutter state management with lifecycle-aware ViewModels. Automatic cleanup, explicit dependencies, no boilerplate.",
+      "name": "Piper State",
+      "description": siteDescription,
       "codeRepository": "https://github.com/theGlenn/piper",
       "programmingLanguage": ["Dart", "Flutter"],
       "runtimePlatform": "Flutter",
@@ -71,7 +71,7 @@ export default defineConfig({
   transformHead: ({ pageData }) => {
     const canonicalUrl = pageUrl(pageData.relativePath)
     const title = pageData.title === 'Piper State'
-      ? 'Piper State — Lifecycle-aware Flutter state management'
+      ? 'Piper State — State management that cleans up after itself'
       : `${pageData.title} | Piper State`
     const description = pageData.description || siteDescription
 

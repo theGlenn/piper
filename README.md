@@ -1,12 +1,12 @@
 <p align="center">
-  <img src="docs/public/logo.png" alt="Piper" width="120" />
+  <img src="docs/public/logo.png" alt="Piper State" width="120" />
 </p>
 
-<h1 align="center">Piper</h1>
+<h1 align="center">Piper State</h1>
 
 <p align="center">
-  <strong>Flutter state management, simplified.</strong><br>
-  ViewModels with automatic lifecycle. Just Dart.
+  <strong>Flutter state management that cleans up after itself.</strong><br>
+  Plain Dart ViewModels with automatic rebuilds, stream cleanup, and cooperative task cancellation.
 </p>
 
 <p align="center">
@@ -22,11 +22,14 @@
 
 ---
 
-- ✅ **Automatic rebuilds** — read state in a `Watch`, no manual wiring
-- ✅ **Automatic cleanup** — streams and cooperative tasks cancel on dispose
-- ✅ **Explicit dependencies** — constructor injection, no magic
-- ✅ **Zero boilerplate** — no code generation required
-- ✅ **Testable** — plain Dart classes
+Piper gives every piece of state an owner. Put state, derived values, streams,
+and async tasks in a plain Dart ViewModel; when it disposes, Piper cleans up
+the work it started.
+
+- ✅ **Automatic rebuilds** — `Watch` subscribes to the state it reads
+- ✅ **Lifecycle-owned cleanup** — streams and cooperative tasks stop on dispose
+- ✅ **Explicit dependencies** — constructor injection keeps the graph visible
+- ✅ **Plain Dart** — no code generation, direct unit tests
 
 ## Quick Start
 ```dart
@@ -194,7 +197,8 @@ Issues and PRs welcome — bug reports and "this API felt awkward" feedback are
 equally useful at this stage. See [CONTRIBUTING.md](CONTRIBUTING.md) for the
 local workflow and pull-request checklist.
 
-If Piper saved you some boilerplate, a ⭐ helps other Flutter devs find it.
+If Piper made a screen easier to reason about, a ⭐ helps other Flutter devs
+find it.
 
 ## License
 

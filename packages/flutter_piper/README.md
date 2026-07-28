@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/theGlenn/piper/main/docs/public/logo.png" alt="Piper" width="100" />
+  <img src="https://raw.githubusercontent.com/theGlenn/piper/main/docs/public/logo.png" alt="Piper State" width="100" />
 </p>
 
 # Flutter Piper
@@ -14,7 +14,10 @@
 [![Flutter](https://img.shields.io/badge/Flutter-3.24+-02569B?logo=flutter)](https://flutter.dev)
 [![style: flutter lints](https://img.shields.io/badge/style-flutter__lints-4BC0F5.svg)](https://pub.dev/packages/flutter_lints)
 
-**Flutter widgets for [Piper State](https://pub.dev/packages/piper_state).**
+**Lifecycle-aware Flutter widgets for [Piper State](https://pub.dev/packages/piper_state).**
+
+Use plain Dart ViewModels in Flutter with auto-tracked rebuilds and cleanup
+owned by the widget scope.
 
 ## Installation
 

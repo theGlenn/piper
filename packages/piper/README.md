@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/theGlenn/piper/main/docs/public/logo.png" alt="Piper" width="100" />
+  <img src="https://raw.githubusercontent.com/theGlenn/piper/main/docs/public/logo.png" alt="Piper State" width="100" />
 </p>
 
 # Piper State
@@ -14,12 +14,12 @@
 [![Dart](https://img.shields.io/badge/Dart-3.5+-0175C2?logo=dart)](https://dart.dev)
 [![style: lints](https://img.shields.io/badge/style-flutter__lints-4BC0F5.svg)](https://pub.dev/packages/lints)
 
-**Flutter state management with lifecycle-aware ViewModels.**
+**Flutter state management that cleans up after itself.**
 
-- ✅ Automatic cleanup — streams and cooperative tasks cancel
-- ✅ Explicit dependencies — constructor injection
-- ✅ Zero boilerplate — no code generation
-- ✅ Testable — plain Dart classes
+- ✅ Automatic rebuilds — tracked reads, no dependency lists
+- ✅ Lifecycle-owned cleanup — streams and cooperative tasks stop on dispose
+- ✅ Explicit dependencies — constructor injection keeps the graph visible
+- ✅ Plain Dart — no code generation, direct unit tests
 
 ## Installation
 

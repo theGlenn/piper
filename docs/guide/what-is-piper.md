@@ -1,6 +1,9 @@
 # What is Piper?
 
-Lifecycle-aware ViewModels for Flutter with automatic cleanup.
+Piper is Flutter state management that cleans up after itself.
+
+State, derived values, streams, and async tasks live in plain Dart ViewModels.
+When a ViewModel disposes, Piper cleans up the work it owns.
 
 ```dart
 class SearchViewModel extends ViewModel {
@@ -24,28 +27,23 @@ class SearchViewModel extends ViewModel {
 }
 ```
 
-No "mounted" checks. No stream subscriptions to manage. No manual disposal.
+Cancel the search or leave the screen: the task body cannot write a stale
+result. No `mounted` checks, request sequence numbers, or subscriptions to
+dispose by hand.
 
 ## Why Piper?
 
-- **Explicit dependencies** — Constructor injection
-- **Automatic lifecycle** — Subscriptions cancel, tasks stop, state disposes
-- **Plain Dart** — Testable without Flutter
-- **Incremental** — Works alongside existing solutions
+- **Ownership is explicit** — ViewModel lifecycle owns state and async work
+- **Dependencies stay visible** — Constructor injection, readable in code
+- **Reactivity is automatic** — Tracked reads replace dependency lists
+- **Business logic stays plain Dart** — Test without Flutter or generated files
+- **Adoption is incremental** — Use Piper alongside existing solutions
 
 ## Core Principles
 
-### Explicit over Magic
+### State Has an Owner
 
-Dependencies are constructor parameters:
-
-```dart
-final vm = AuthViewModel(authRepository);
-```
-
-### Lifecycle-Aware
-
-When the ViewModel disposes, everything cleans up:
+When the ViewModel disposes, everything it owns cleans up:
 
 ```dart
 class AuthViewModel extends ViewModel {
@@ -54,7 +52,15 @@ class AuthViewModel extends ViewModel {
 }
 ```
 
-### Plain Dart
+### Dependencies Stay Visible
+
+Dependencies are constructor parameters:
+
+```dart
+final vm = AuthViewModel(authRepository);
+```
+
+### Business Logic Stays Plain Dart
 
 Test without Flutter:
 
@@ -69,11 +75,11 @@ test('search', () async {
 
 ## Good Fit If You:
 
-- Prefer constructor injection
-- Want lifecycle management without ceremony
-- Come from Android/iOS (familiar ViewModel patterns)
-- Want testable business logic
-- Are adopting incrementally
+- Want the screen or flow to own its state and async work
+- Prefer constructor injection over a global provider graph
+- Like the ViewModel pattern from Android, iOS, or desktop UI
+- Want business logic tests that instantiate ordinary Dart objects
+- Need to adopt a state library one feature at a time
 
 ## Next Steps
 
