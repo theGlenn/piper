@@ -1,0 +1,49 @@
+docs/public/llms-full.txt
+  s_e203c4aa12fbe8::t_418b379f233e4d 1,3,5-7
+docs/.vitepress/config.mts
+  s_e203c4aa12fbe8::t_418b379f233e4d 5,42-43,74
+packages/flutter_piper/pubspec.yaml
+  s_e203c4aa12fbe8::t_418b379f233e4d 2
+  s_e203c4aa12fbe8::t_c2804cdb7a9380 12
+docs/index.md
+  s_e203c4aa12fbe8::t_418b379f233e4d 5,10-13,27-33
+packages/piper/pubspec.yaml
+  s_e203c4aa12fbe8::t_418b379f233e4d 2
+  s_e203c4aa12fbe8::t_c2804cdb7a9380 12-13
+packages/flutter_piper/README.md
+  s_e203c4aa12fbe8::t_418b379f233e4d 2,17-20
+docs/guide/what-is-piper.md
+  s_e203c4aa12fbe8::t_418b379f233e4d 3-6,30-32,36-40,44,46,49-52,55,57,60,63,78-82
+README.md
+  s_e203c4aa12fbe8::t_418b379f233e4d 2,5,8-9,25-32,200-201
+docs/public/llms.txt
+  s_e203c4aa12fbe8::t_418b379f233e4d 1,3,5-7,92-95
+packages/piper/README.md
+  s_e203c4aa12fbe8::t_418b379f233e4d 2,17,19-22
+docs/scripts/validate-site.mjs
+  s_23fed3f48aa351::t_a271b87574adf0 6,21-25
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "9a919aa91eee4f4c9be43782269799ad256740d1",
+  "prompts": {},
+  "sessions": {
+    "s_23fed3f48aa351": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d6d518d5-142c-4cdc-b71a-d2f0428eaeff",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Glenn Sonna <kenpachi.os@gmail.com>"
+    },
+    "s_e203c4aa12fbe8": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019fa9ec-92b3-7ad1-b7e7-9dc5209242ac",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Glenn Sonna <kenpachi.os@gmail.com>"
+    }
+  }
+}
