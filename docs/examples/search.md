@@ -237,10 +237,14 @@ void main() {
 ### Debounce
 
 ```dart
-await Future.delayed(Duration(milliseconds: 300));
+await cancellation.wait(
+  Future<void>.delayed(const Duration(milliseconds: 300)),
+);
 ```
 
-Simple. Just wait before making the request.
+Wait before making the request. Awaiting through `cancellation.wait` rather
+than a bare `Future.delayed` is what lets a newer keystroke interrupt the
+delay instead of letting it run to completion.
 
 ### Cancellation
 
@@ -289,8 +293,14 @@ _queryController.stream
 
 ```dart
 _searchTask?.cancel();
-await Future.delayed(Duration(milliseconds: 300));
-results.setData(await _repo.search(value));
+_searchTask = launch((cancellation) async {
+  await cancellation.wait(
+    Future<void>.delayed(const Duration(milliseconds: 300)),
+  );
+  results.setData(await cancellation.wait(_repo.search(value)));
+});
 ```
 
-Same behavior. Easier to read.
+Same behavior, in plain `async`/`await` — no stream operators to learn. The
+`cancellation.wait` calls are load-bearing: drop them and the stale-result bug
+comes back.
