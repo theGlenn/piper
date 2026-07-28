@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://theglenn.github.io/piper/sitemap.xml
+Sitemap: https://glennso.dev/piper/sitemap.xml

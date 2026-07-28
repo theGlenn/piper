@@ -1,0 +1,30 @@
+name: Feature request
+description: Propose a use case or API improvement for Piper.
+title: "feature: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Flutter use case
+      description: What are you trying to build, and where does the current API get in the way?
+    validations:
+      required: true
+  - type: textarea
+    id: current
+    attributes:
+      label: Current workaround
+      description: How do you solve this today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Suggested direction
+      description: An API sketch is welcome, but the use case matters more than the exact shape.
+  - type: textarea
+    id: tradeoffs
+    attributes:
+      label: Trade-offs
+      description: Note any lifecycle, testing, compatibility, or migration considerations.

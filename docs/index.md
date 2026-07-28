@@ -1,5 +1,8 @@
 ---
 layout: home
+title: Piper State
+titleTemplate: false
+description: Lifecycle-aware Flutter state management with automatic cleanup, explicit dependencies, and no code generation.
 
 hero:
   image:

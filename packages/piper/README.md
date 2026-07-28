@@ -22,11 +22,16 @@
 - ✅ Testable — plain Dart classes
 
 ## Installation
+
+For Dart-only projects:
+
 ```yaml
 dependencies:
-  piper_state: ^0.0.3
-  flutter_piper: ^0.0.3  # Flutter widgets
+  piper_state: ^0.1.0
 ```
+
+Flutter apps can install `flutter_piper: ^0.1.0` instead; it re-exports this
+package and adds scopes, builders, and listeners.
 
 ## Quick Example
 ```dart
@@ -55,20 +60,25 @@ class AuthViewModel extends ViewModel {
 ```dart
 late final profile = asyncState<Profile>();
 
-void load() => load(profile, () => _repo.fetchProfile());
+void loadProfile() => load(profile, () => _repo.fetchProfile());
 ```
 
 ## Why Piper?
 
-| | Piper | Riverpod | Bloc |
-|---|:---:|:---:|:---:|
-| No codegen | ✅ | ❌ | ✅ |
-| Constructor injection | ✅ | ❌ | ✅ |
-| Auto lifecycle | ✅ | ✅ | ❌ |
+|  | Piper | Riverpod | Bloc |
+|---|---|---|---|
+| Dependencies | constructor | `ref.watch` / `ref.read` | constructor |
+| State changes | methods | providers + notifiers | methods (Cubit) or events (Bloc) |
+| Code generation | none | optional | optional |
+| Testing | plain Dart `test()` | `ProviderContainer.test()` | `blocTest` |
+
+Piper favors plain objects over a provider graph or event log. See the
+[full comparison](https://glennso.dev/piper/guide/comparison) for the
+trade-offs and async cancellation details.
 
 ## Documentation
 
-📖 **[Full docs](https://theglenn.github.io/piper)** · [GitHub](https://github.com/theGlenn/piper) · [flutter_piper](https://pub.dev/packages/flutter_piper)
+📖 **[Full docs](https://glennso.dev/piper/)** · [GitHub](https://github.com/theGlenn/piper) · [flutter_piper](https://pub.dev/packages/flutter_piper)
 
 ## License
 
