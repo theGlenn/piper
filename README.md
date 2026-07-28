@@ -162,11 +162,16 @@ you can construct in a test with `new`. If you want the graph or the log, take
 those instead — [full comparison →](https://glennso.dev/piper/guide/comparison)
 
 ## Installation
+
+For Flutter apps, install `flutter_piper`; it re-exports the core
+`piper_state` API:
+
 ```yaml
 dependencies:
-  piper_state: ^0.1.0
   flutter_piper: ^0.1.0
 ```
+
+Pure Dart projects can install `piper_state: ^0.1.0` directly.
 
 ## Documentation
 
@@ -186,7 +191,8 @@ cancellation story above.
 ## Contributing
 
 Issues and PRs welcome — bug reports and "this API felt awkward" feedback are
-equally useful at this stage.
+equally useful at this stage. See [CONTRIBUTING.md](CONTRIBUTING.md) for the
+local workflow and pull-request checklist.
 
 If Piper saved you some boilerplate, a ⭐ helps other Flutter devs find it.
 

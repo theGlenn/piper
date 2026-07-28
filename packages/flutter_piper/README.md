@@ -17,10 +17,13 @@
 **Flutter widgets for [Piper State](https://pub.dev/packages/piper_state).**
 
 ## Installation
+
+`flutter_piper` re-exports the complete `piper_state` API, so Flutter apps only
+need one direct dependency:
+
 ```yaml
 dependencies:
-  piper_state: ^0.0.3
-  flutter_piper: ^0.0.3
+  flutter_piper: ^0.1.0
 ```
 
 ## Quick Example
@@ -91,7 +94,7 @@ vm.isDeleted.listen(
 
 ## Documentation
 
-📖 **[Full docs](https://theglenn.github.io/piper)** · [GitHub](https://github.com/theGlenn/piper) · [piper_state](https://pub.dev/packages/piper_state)
+📖 **[Full docs](https://glennso.dev/piper/)** · [GitHub](https://github.com/theGlenn/piper) · [piper_state](https://pub.dev/packages/piper_state)
 
 ## License
 

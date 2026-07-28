@@ -6,7 +6,7 @@ Piper is a Flutter state management library that provides lifecycle-aware ViewMo
 
 ## Documentation
 
-- Documentation: https://theglenn.github.io/piper/
+- Documentation: https://glennso.dev/piper/
 - GitHub: https://github.com/theGlenn/piper
 
 ---
@@ -15,9 +15,10 @@ Piper is a Flutter state management library that provides lifecycle-aware ViewMo
 
 ```yaml
 dependencies:
-  piper_state: ^0.1.0   # Core library (ViewModel, StateHolder, Task). No Flutter dependency.
-  flutter_piper: ^0.1.0 # Flutter widgets (ViewModelScope, builders).
+  flutter_piper: ^0.1.0 # Flutter widgets and the re-exported core API.
 ```
+
+Pure Dart projects can install `piper_state: ^0.1.0` directly.
 
 ---
 
@@ -1346,8 +1347,8 @@ class SearchViewModel extends ViewModel {
 
 ## Links
 
-- Documentation: https://theglenn.github.io/piper/
-- Guide: https://theglenn.github.io/piper/guide/what-is-piper
-- Getting Started: https://theglenn.github.io/piper/guide/getting-started
-- Examples: https://theglenn.github.io/piper/examples/counter
+- Documentation: https://glennso.dev/piper/
+- Guide: https://glennso.dev/piper/guide/what-is-piper
+- Getting Started: https://glennso.dev/piper/guide/getting-started
+- Examples: https://glennso.dev/piper/examples/counter
 - GitHub: https://github.com/theGlenn/piper

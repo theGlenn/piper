@@ -1,15 +1,36 @@
 import { defineConfig } from 'vitepress'
 
+const siteOrigin = 'https://glennso.dev'
+const siteBase = '/piper/'
+const siteDescription = 'Lifecycle-aware Flutter state management with automatic cleanup, explicit dependencies, and no code generation.'
+const socialImageUrl = `${siteOrigin}${siteBase}og-image.png`
+
+function pageUrl(relativePath: string) {
+  const pagePath = relativePath
+    .replace(/index\.md$/, '')
+    .replace(/\.md$/, '')
+
+  return new URL(`${siteBase}${pagePath}`, siteOrigin).toString()
+}
+
 export default defineConfig({
-  title: 'Piper',
-  description: 'Simple Flutter state management with lifecycle-aware ViewModels. Automatic cleanup, explicit dependencies, no boilerplate.',
-  base: '/piper/',
+  title: 'Piper State',
+  description: siteDescription,
+  base: siteBase,
   lang: 'en-US',
   cleanUrls: true,
   lastUpdated: true,
 
   sitemap: {
-    hostname: 'https://theglenn.github.io/piper'
+    hostname: siteOrigin,
+    transformItems: (items) => items.map((item) => {
+      if (item.url.startsWith(siteBase)) {
+        return item
+      }
+
+      const separator = item.url.startsWith('/') ? '' : '/'
+      return { ...item, url: `${siteBase.slice(0, -1)}${separator}${item.url}` }
+    })
   },
 
   head: [
@@ -28,26 +49,41 @@ export default defineConfig({
         "@type": "Person",
         "name": "theGlenn"
       },
-      "url": "https://theglenn.github.io/piper/"
+      "url": `${siteOrigin}${siteBase}`
     })],
     ['link', { rel: 'icon', href: '/piper/favicon.ico' }],
     ['link', { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/piper/favicon-32x32.png' }],
     ['link', { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/piper/favicon-16x16.png' }],
     ['link', { rel: 'apple-touch-icon', sizes: '180x180', href: '/piper/apple-touch-icon.png' }],
-    ['link', { rel: 'canonical', href: 'https://theglenn.github.io/piper/' }],
     ['meta', { name: 'theme-color', content: '#3c82f6' }],
     ['meta', { name: 'author', content: 'theGlenn' }],
     ['meta', { name: 'keywords', content: 'flutter, dart, state management, viewmodel, mvvm, architecture, piper' }],
     ['meta', { property: 'og:type', content: 'website' }],
-    ['meta', { property: 'og:title', content: 'Piper - Flutter State Management' }],
-    ['meta', { property: 'og:description', content: 'Simple Flutter state management with lifecycle-aware ViewModels. Automatic cleanup, explicit dependencies, no boilerplate.' }],
-    ['meta', { property: 'og:url', content: 'https://theglenn.github.io/piper/' }],
-    ['meta', { property: 'og:image', content: 'https://theglenn.github.io/piper/og-image.png' }],
+    ['meta', { property: 'og:image', content: socialImageUrl }],
+    ['meta', { property: 'og:image:width', content: '1200' }],
+    ['meta', { property: 'og:image:height', content: '630' }],
+    ['meta', { property: 'og:image:alt', content: 'Piper State — Flutter state management that cleans up after itself.' }],
     ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
-    ['meta', { name: 'twitter:title', content: 'Piper - Flutter State Management' }],
-    ['meta', { name: 'twitter:description', content: 'Simple Flutter state management with lifecycle-aware ViewModels. Automatic cleanup, explicit dependencies, no boilerplate.' }],
-    ['meta', { name: 'twitter:image', content: 'https://theglenn.github.io/piper/og-image.png' }]
+    ['meta', { name: 'twitter:image', content: socialImageUrl }],
+    ['meta', { name: 'twitter:image:alt', content: 'Piper State — Flutter state management that cleans up after itself.' }]
   ],
+
+  transformHead: ({ pageData }) => {
+    const canonicalUrl = pageUrl(pageData.relativePath)
+    const title = pageData.title === 'Piper State'
+      ? 'Piper State — Lifecycle-aware Flutter state management'
+      : `${pageData.title} | Piper State`
+    const description = pageData.description || siteDescription
+
+    return [
+      ['link', { rel: 'canonical', href: canonicalUrl }],
+      ['meta', { property: 'og:title', content: title }],
+      ['meta', { property: 'og:description', content: description }],
+      ['meta', { property: 'og:url', content: canonicalUrl }],
+      ['meta', { name: 'twitter:title', content: title }],
+      ['meta', { name: 'twitter:description', content: description }]
+    ]
+  },
 
   themeConfig: {
     logo: '/logo.png',

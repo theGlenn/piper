@@ -1,0 +1,40 @@
+name: Bug report
+description: Report reproducible behavior that differs from Piper's documentation.
+title: "bug: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for taking the time to report a Piper bug.
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: Include Piper, Dart, and Flutter versions.
+      placeholder: "piper_state 0.1.0, flutter_piper 0.1.0, Flutter 3.x"
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Link to or paste the smallest example that demonstrates the problem.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
