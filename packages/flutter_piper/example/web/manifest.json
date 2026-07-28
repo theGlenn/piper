@@ -1,11 +1,11 @@
 {
-    "name": "example",
-    "short_name": "example",
+    "name": "Piper Search Race",
+    "short_name": "Search Race",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "A visual demo of Piper lifecycle-owned search cancellation.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

@@ -1,66 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_piper/flutter_piper.dart';
-
-import 'data/auth_repository.dart';
-import 'data/todo_repository.dart';
-import 'di/app_dependencies.dart';
-import 'features/auth/auth_view_model.dart';
-import 'features/auth/login_page.dart';
-import 'features/todos/todo_list_page.dart';
-import 'features/todos/todos_view_model.dart';
+import 'package:example/features/search_race/search_race_page.dart';
 
 void main() {
-  // Create dependencies at the composition root
-  final authRepo = AuthRepository();
-  final todoRepo = TodoRepository();
-
-  runApp(
-    // Provide dependencies to the entire app
-    AppDependencies(
-      authRepo: authRepo,
-      todoRepo: todoRepo,
-      // ViewModelScope provides ViewModels to descendants
-      child: ViewModelScope(
-        create: [() => AuthViewModel(authRepo), () => TodosViewModel(todoRepo)],
-        child: const MyApp(),
-      ),
-    ),
-  );
+  runApp(const PiperSearchRaceApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class PiperSearchRaceApp extends StatelessWidget {
+  const PiperSearchRaceApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Piper Example',
+      title: 'Piper Search Race',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF2457F5)),
         useMaterial3: true,
+        scaffoldBackgroundColor: const Color(0xFFF5F7FB),
       ),
-      home: const AuthGate(),
-    );
-  }
-}
-
-class AuthGate extends StatelessWidget {
-  const AuthGate({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final authVm = context.vm<AuthViewModel>();
-
-    // Rebuild when user changes (logged in/out)
-    return StateBuilder(
-      listenable: authVm.user.listenable,
-      builder: (context, user, __) {
-        if (user != null) {
-          return const TodoListPage();
-        }
-        return const LoginPage();
-      },
+      home: const SearchRacePage(),
     );
   }
 }
