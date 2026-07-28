@@ -1,0 +1,51 @@
+packages/flutter_piper/example/lib/main.dart
+  s_e203c4aa12fbe8::t_35bfb84e66f196 2,5,8-9,14,17,19,21
+README.md
+  s_e203c4aa12fbe8::t_3282ef15be1b86 188
+  s_e203c4aa12fbe8::t_c2625b0bcf54d2 187,189
+packages/flutter_piper/example/web/manifest.json
+  s_e203c4aa12fbe8::t_c6f2acc10087fc 2-3,8
+packages/flutter_piper/example/web/index.html
+  s_e203c4aa12fbe8::t_c6f2acc10087fc 21,26,32
+packages/flutter_piper/example/test/search_race_view_model_test.dart
+  s_e203c4aa12fbe8::t_3282ef15be1b86 31
+  s_e203c4aa12fbe8::t_27445038f894c4 1-30,32-40,42-43,49-62
+  s_e203c4aa12fbe8::t_8ed5f337603c28 41,44-48
+packages/flutter_piper/example/lib/features/search_race/search_race_view_model.dart
+  s_e203c4aa12fbe8::t_3f9b877fd67514 1-28,31-45,48-49,51-53,55,60,62,67-71,74-83,88-93,98,100-106
+  s_e203c4aa12fbe8::t_8ed5f337603c28 29-30,46-47,54,61,72-73,99
+  s_e203c4aa12fbe8::t_3282ef15be1b86 50,64
+  s_e203c4aa12fbe8::t_621823539fab35 56-59,63,65-66,84-87,94-97
+packages/flutter_piper/example/lib/features/search_race/search_race_repository.dart
+  s_e203c4aa12fbe8::t_3f9b877fd67514 1-23,28-29,41
+  s_e203c4aa12fbe8::t_621823539fab35 24-27,30-40
+packages/flutter_piper/example/lib/features/search_race/search_race_page.dart
+  s_e203c4aa12fbe8::t_35bfb84e66f196 1-134,139-169,173-176,181-183,187-277,283-302,307-326,330-393,398-402,405-422,427-450,458-469
+  s_e203c4aa12fbe8::t_621823539fab35 135-138,170-172,177-180,184-186,278-282,303-306,327-329,394-397,403-404,423-426,451-457
+packages/flutter_piper/example/README.md
+  s_e203c4aa12fbe8::t_c6f2acc10087fc 1,3,5-7,9,11-15,17-18
+packages/flutter_piper/README.md
+  s_e203c4aa12fbe8::t_c2625b0bcf54d2 102-103,105-106
+  s_e203c4aa12fbe8::t_3282ef15be1b86 104
+packages/flutter_piper/example/test/search_race_page_test.dart
+  s_e203c4aa12fbe8::t_3282ef15be1b86 18
+  s_e203c4aa12fbe8::t_22c7a4c0af40c0 22-24
+  s_e203c4aa12fbe8::t_d09ded5abcd3c3 2
+  s_e203c4aa12fbe8::t_fbccafad24ba18 1,3-17,19-21,25-26
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "5074fa5f71bd6437ab46e87b9f4bce6b2a4805cf",
+  "prompts": {},
+  "sessions": {
+    "s_e203c4aa12fbe8": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019fa9ec-92b3-7ad1-b7e7-9dc5209242ac",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Glenn Sonna <kenpachi.os@gmail.com>"
+    }
+  }
+}
