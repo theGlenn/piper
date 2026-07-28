@@ -1,0 +1,49 @@
+.github/ISSUE_TEMPLATE/feature_request.yml
+  s_e203c4aa12fbe8::t_e44c6722bcd6e3 1-30
+docs/public/llms.txt
+  s_e203c4aa12fbe8::t_e44c6722bcd6e3 9,20-22,98-100
+docs/package.json
+  s_e203c4aa12fbe8::t_b761f50ef6fe1f 8,11
+docs/scripts/validate-site.mjs
+  s_e203c4aa12fbe8::t_b761f50ef6fe1f 1-52
+docs/guide/getting-started.md
+  s_e203c4aa12fbe8::t_063aec2ab2bdba 12-13
+packages/flutter_piper/README.md
+  s_e203c4aa12fbe8::t_e44c6722bcd6e3 20-23,26,97,101
+docs/.vitepress/config.mts
+  s_e203c4aa12fbe8::t_eeeb89d667585b 17
+  s_e203c4aa12fbe8::t_e44c6722bcd6e3 3-15,18-19,25-33,52,62-65,67-68,71-86
+  s_e203c4aa12fbe8::t_3df28d34c5ca7a 87
+docs/public/robots.txt
+  s_e203c4aa12fbe8::t_e44c6722bcd6e3 4
+CONTRIBUTING.md
+  s_e203c4aa12fbe8::t_e44c6722bcd6e3 1-38
+docs/index.md
+  s_e203c4aa12fbe8::t_e44c6722bcd6e3 3-5
+docs/public/llms-full.txt
+  s_e203c4aa12fbe8::t_4146ccbb28751a 9,18,21-22,1350-1353
+.github/workflows/docs.yml
+  s_e203c4aa12fbe8::t_b761f50ef6fe1f 44
+packages/piper/README.md
+  s_e203c4aa12fbe8::t_e44c6722bcd6e3 25-27,30,33-35,63,68-77,81
+.github/ISSUE_TEMPLATE/bug_report.yml
+  s_e203c4aa12fbe8::t_e44c6722bcd6e3 1-40
+README.md
+  s_e203c4aa12fbe8::t_e44c6722bcd6e3 165-168,174-175,194-195
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "162f3aff0d5315da3a66ff8036fb5f12bc484112",
+  "prompts": {},
+  "sessions": {
+    "s_e203c4aa12fbe8": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019fa9ec-92b3-7ad1-b7e7-9dc5209242ac",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Glenn Sonna <kenpachi.os@gmail.com>"
+    }
+  }
+}
