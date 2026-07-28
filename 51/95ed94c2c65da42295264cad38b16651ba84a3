@@ -1,0 +1,28 @@
+docs/guide/comparison.md
+  s_ecaf534af2a8ad::t_7d235a063a74b3 11
+  s_ecaf534af2a8ad::t_530fa9c72f120f 14-15
+  s_ecaf534af2a8ad::t_7a3a7c874f0b9d 83
+  s_ecaf534af2a8ad::t_a7a8a6c37dfb95 80-82
+  s_ecaf534af2a8ad::t_c83f81c3aaf982 84-86
+  s_ecaf534af2a8ad::t_caffe3027ea137 37-40,70-79,87-95,156-159
+packages/flutter_piper/pubspec.yaml
+  s_ecaf534af2a8ad::t_1cf0111d02cae0 5,7
+packages/piper/pubspec.yaml
+  s_ecaf534af2a8ad::t_3a338d65cf5a4a 5,7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "5195ed94c2c65da42295264cad38b16651ba84a3",
+  "prompts": {},
+  "sessions": {
+    "s_ecaf534af2a8ad": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "bd30cbbc-6110-4d64-b9c1-a52e097866ba",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Glenn Sonna <kenpachi.os@gmail.com>"
+    }
+  }
+}
