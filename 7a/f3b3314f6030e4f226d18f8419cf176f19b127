@@ -1,0 +1,25 @@
+packages/flutter_piper/pubspec.yaml
+  s_e203c4aa12fbe8::t_80ea0702da7ea0 3,33
+packages/piper/CHANGELOG.md
+  s_e203c4aa12fbe8::t_80ea0702da7ea0 10-17
+packages/flutter_piper/CHANGELOG.md
+  s_e203c4aa12fbe8::t_80ea0702da7ea0 10-22
+packages/piper/pubspec.yaml
+  s_e203c4aa12fbe8::t_80ea0702da7ea0 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "7af3b3314f6030e4f226d18f8419cf176f19b127",
+  "prompts": {},
+  "sessions": {
+    "s_e203c4aa12fbe8": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019fa9ec-92b3-7ad1-b7e7-9dc5209242ac",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Glenn Sonna <kenpachi.os@gmail.com>"
+    }
+  }
+}
