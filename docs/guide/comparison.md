@@ -8,11 +8,11 @@ Side-by-side comparison with other Flutter state management solutions.
 |--------|----------|-------|
 | Dependencies | `ref.watch`, `ref.read` | Constructor |
 | Learning curve | Provider types, modifiers, scoping | Plain Dart |
-| State | Providers with annotations | `state()` |
+| State | Providers + notifiers | `state()` |
 | Reactivity | `ref.watch` auto-tracks | `Watch` / `computed` auto-track |
 | Async | `AsyncValue` | `AsyncState` |
-| Code generation | Common | None |
-| Testing | `ProviderContainer` | Plain tests |
+| Code generation | Optional | None |
+| Testing | `ProviderContainer.test()` | Plain tests |
 
 ### Riverpod
 
@@ -33,6 +33,10 @@ class UserPage extends ConsumerWidget {
   }
 }
 ```
+
+Shown here in Riverpod's code-generated syntax. A manual, codegen-free syntax is
+equally supported — since the Dart macros cancellation, Riverpod's docs treat
+code generation as optional rather than the default.
 
 ### Piper
 
@@ -63,12 +67,32 @@ class UserPage extends StatelessWidget {
 
 ## vs. Bloc
 
-| Aspect | Bloc | Piper |
-|--------|------|-------|
-| State changes | Events → Bloc → States | Methods → State |
-| Boilerplate | Event + State classes | Methods |
-| Async | `emit()` in handlers | `launch()`, `load()` |
-| Testing | `blocTest()` | Plain tests |
+The `bloc` package ships two primitives, and they compare differently. `Cubit`
+needs only a state plus methods — close to a ViewModel in shape. `Bloc` adds an
+event hierarchy and handlers, buying traceability and event transformers.
+
+| Aspect | Cubit | Bloc | Piper |
+|--------|-------|------|-------|
+| State changes | Methods → `emit()` | Events → handlers → states | Methods → State |
+| Boilerplate | State class | Event + State classes | Methods |
+| Async | `emit()` in methods | `emit()` in handlers | `launch()`, `load()` |
+| Cancellation | Manual | `bloc_concurrency` `restartable()` | `cancellation.wait` |
+| Testing | `blocTest()` | `blocTest()` | Plain tests |
+
+### Cubit
+
+```dart
+class CounterCubit extends Cubit<int> {
+  CounterCubit() : super(0);
+
+  void increment() => emit(state + 1);
+  void decrement() => emit(state - 1);
+}
+
+BlocBuilder<CounterCubit, int>(
+  builder: (context, count) => Text('$count'),
+)
+```
 
 ### Bloc
 
@@ -128,6 +152,10 @@ vm.count.build((count) => Text('$count'))
 - Want strict event/state separation
 - Need event logging/replay
 - Prefer event-driven architecture
+
+(If you like the Bloc ecosystem but not the event boilerplate, `Cubit` is the
+library's own recommended starting point — its docs suggest starting with Cubit
+and scaling up to Bloc when you need transformers or an event log.)
 
 ### Choose Provider if you:
 - Need the simplest solution

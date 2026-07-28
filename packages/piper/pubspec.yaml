@@ -2,9 +2,9 @@ name: piper_state
 description: Simple Flutter state management with lifecycle-aware ViewModels. Automatic cleanup, explicit dependencies, no boilerplate.
 version: 0.1.0
 repository: https://github.com/theGlenn/piper
-homepage: https://theglenn.github.io/piper
+homepage: https://glennso.dev/piper
 issue_tracker: https://github.com/theGlenn/piper/issues
-documentation: https://theglenn.github.io/piper/guide/getting-started
+documentation: https://glennso.dev/piper/guide/getting-started
 
 topics:
   - state-management

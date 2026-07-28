@@ -74,7 +74,7 @@ Loading, error, and data states handled automatically:
 ```dart
 late final profile = asyncState<Profile>();
 
-void load() => load(profile, () => _repo.fetchProfile());
+void loadProfile() => load(profile, () => _repo.fetchProfile());
 ```
 ```dart
 vm.profile.build(
@@ -85,6 +85,40 @@ _ => CircularProgressIndicator(),
 },
 );
 ```
+
+## Cancellation
+
+Search-as-you-type, without RxDart and without stale results:
+```dart
+class SearchViewModel extends ViewModel {
+  SearchViewModel(this._repo);
+  final SearchRepository _repo;
+
+  late final results = asyncState<List<Result>>();
+  Task<void>? _search;
+
+  void onQueryChanged(String query) {
+    _search?.cancel();               // drop the in-flight search
+    if (query.isEmpty) {
+      results.setEmpty();
+      return;
+    }
+
+    results.setLoading();
+    _search = launch((cancellation) async {
+      // debounce
+      await cancellation.wait(Future<void>.delayed(Duration(milliseconds: 300)));
+      final data = await cancellation.wait(_repo.search(query));
+      results.setData(data);         // unreachable if cancelled
+    });
+  }
+}
+```
+
+Awaiting through `cancellation.wait` unwinds the task body at the next
+suspension point, so a slow `"f"` can never overwrite a fast `"flutter"`. No
+`mounted` checks, no request sequence numbers. Navigating away disposes the
+ViewModel and cancels the task with it.
 
 ## Reactive Rebuilds
 
@@ -108,6 +142,25 @@ class TodosViewModel extends ViewModel {
 }
 ```
 
+## How It Compares
+
+|  | Piper | Riverpod | Bloc |
+|---|---|---|---|
+| Dependencies | constructor | `ref.watch` / `ref.read` | constructor |
+| State changes | methods | providers + notifiers | methods (Cubit) or events → handlers (Bloc) |
+| Classes per feature | 1 ViewModel | provider + notifier | 1 Cubit, or event + state + bloc |
+| Code generation | none | optional | optional |
+| Cancelling async work | `launch` + `cancellation.wait` | `ref.onDispose` + abort API | `bloc_concurrency` `restartable()` |
+| Testing | plain Dart `test()` | `ProviderContainer.test()` | `blocTest` |
+
+None of the three abort the underlying network call on their own — each unwinds
+your code at an `await` boundary and leaves the socket to an abort API you wire
+up. What differs is how much machinery sits between you and correct ordering.
+
+Piper trades Riverpod's provider graph and Bloc's event log for plain objects
+you can construct in a test with `new`. If you want the graph or the log, take
+those instead — [full comparison →](https://glennso.dev/piper/guide/comparison)
+
 ## Installation
 ```yaml
 dependencies:
@@ -117,7 +170,11 @@ dependencies:
 
 ## Documentation
 
-📖 **[Full Documentation](https://theglenn.github.io/piper)**
+📖 **[Full Documentation](https://glennso.dev/piper/)** — guides, examples, and API reference.
+
+New here? Start with [Getting Started](https://glennso.dev/piper/guide/getting-started),
+then the [Search example](https://glennso.dev/piper/examples/search) for the
+cancellation story above.
 
 ## Packages
 
@@ -125,6 +182,13 @@ dependencies:
 |---------|---------|
 | [piper_state](packages/piper) | [![pub](https://img.shields.io/pub/v/piper_state.svg)](https://pub.dev/packages/piper_state) |
 | [flutter_piper](packages/flutter_piper) | [![pub](https://img.shields.io/pub/v/flutter_piper.svg)](https://pub.dev/packages/flutter_piper) |
+
+## Contributing
+
+Issues and PRs welcome — bug reports and "this API felt awkward" feedback are
+equally useful at this stage.
+
+If Piper saved you some boilerplate, a ⭐ helps other Flutter devs find it.
 
 ## License
 
