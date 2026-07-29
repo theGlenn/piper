@@ -1,0 +1,35 @@
+.github/workflows/docs.yml
+  s_1c5079b146c8fe::t_cbc3a87a3f6f1d 8,48-64
+README.md
+  s_1c5079b146c8fe::t_e3bc6659605b50 187-190
+docs/index.md
+  s_1c5079b146c8fe::t_42d43df1980467 18-20
+packages/flutter_piper/README.md
+  s_52c5e3f6d74854::t_9d6c958e24e8b7 102-104,106
+packages/flutter_piper/example/README.md
+  s_1c5079b146c8fe::t_18d7410b02a22a 4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "6aa2d8ddeab90bd683db9ee6fd58867ad8f2ab46",
+  "prompts": {},
+  "sessions": {
+    "s_1c5079b146c8fe": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019faf97-9204-75c0-90de-cd3aa8c30357",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Glenn Sonna <kenpachi.os@gmail.com>"
+    },
+    "s_52c5e3f6d74854": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019fa8cd-ec31-7710-a226-66add1ea813d",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Glenn Sonna <kenpachi.os@gmail.com>"
+    }
+  }
+}
