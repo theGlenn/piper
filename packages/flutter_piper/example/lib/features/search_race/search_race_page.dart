@@ -4,13 +4,16 @@ import 'package:flutter_piper/flutter_piper.dart';
 import 'search_race_repository.dart';
 import 'search_race_view_model.dart';
 
-// THESIS: The demo makes lifecycle-owned cancellation visible before a stale
-// response can overwrite fresh search results.
+// THESIS: The demo makes the stale-response bug happen on screen, then makes
+// lifecycle-owned cancellation visibly prevent it.
 // OWN-WORLD: A calm, high-contrast product lab: blue action surfaces, green
-// completion signals, and a compact request timeline.
-// STORY: Run the race, see “f” get cancelled, then see “flutter” win.
-// FIRST VIEWPORT: The action and live result share the left; event proof sits
-// beside it so the causal chain is readable in one glance.
+// completion signals, red only for the stale overwrite, and a compact
+// request timeline.
+// STORY: Run the race without Piper and watch the wrong results win; switch
+// Piper on and watch the late response get discarded.
+// FIRST VIEWPORT: The question, the mode toggle, and the live result share
+// the left; event proof sits beside it so the causal chain is readable in
+// one glance.
 // FORM: A responsive operating surface that keeps the interaction primary.
 class SearchRacePage extends StatelessWidget {
   const SearchRacePage({super.key});
@@ -40,17 +43,22 @@ class _SearchRaceScreen extends StatelessWidget {
               padding: const EdgeInsets.all(24),
               child: Watch((context) {
                 final query = viewModel.query.value;
+                final submittedQuery = viewModel.submittedQuery.value;
+                final piperEnabled = viewModel.piperEnabled.value;
                 final resultState = viewModel.results.value;
+                final resultsAreStale = viewModel.resultsAreStale.value;
                 final events = viewModel.events.value;
                 final cancellations = viewModel.cancelledRequests.value;
+                final staleOverwrites = viewModel.staleOverwrites.value;
                 final hasRun = viewModel.hasRun.value;
 
                 return LayoutBuilder(
                   builder: (context, constraints) {
                     final isWide = constraints.maxWidth >= 840;
                     final resultPanel = _ResultPanel(
-                      query: query,
+                      submittedQuery: submittedQuery,
                       resultState: resultState,
+                      isStale: resultsAreStale,
                     );
                     final timelinePanel = _TimelinePanel(events: events);
 
@@ -61,19 +69,27 @@ class _SearchRaceScreen extends StatelessWidget {
                           const _Header(),
                           const SizedBox(height: 40),
                           Text(
-                            'The slow request should lose.',
+                            'You typed “flutter”. The “f” response arrives last.',
                             style: Theme.of(context).textTheme.displaySmall,
                           ),
                           const SizedBox(height: 12),
                           const SizedBox(
                             width: 640,
                             child: Text(
-                              'Piper ties async work to its ViewModel. When a newer search starts, the old task cannot write a stale result.',
+                              'Typing “f” starts a slow request. Finishing the '
+                              'word starts a fast one. Responses come back in '
+                              'the wrong order — run the race in both modes '
+                              'and watch which results end up on screen.',
                             ),
                           ),
                           const SizedBox(height: 28),
+                          _ModeToggle(
+                            piperEnabled: piperEnabled,
+                            onChanged: viewModel.setPiperEnabled,
+                          ),
+                          const SizedBox(height: 16),
                           _SearchControls(
-                            activeQuery: query,
+                            typedQuery: query,
                             hasRun: hasRun,
                             onRun: viewModel.runRace,
                             onReset: viewModel.reset,
@@ -96,7 +112,9 @@ class _SearchRaceScreen extends StatelessWidget {
                           const SizedBox(height: 24),
                           _ProofStrip(
                             hasRun: hasRun,
+                            piperEnabled: piperEnabled,
                             cancellations: cancellations,
+                            staleOverwrites: staleOverwrites,
                           ),
                           const SizedBox(height: 32),
                           const _Explanation(),
@@ -141,14 +159,41 @@ class _Header extends StatelessWidget {
   }
 }
 
+class _ModeToggle extends StatelessWidget {
+  final bool piperEnabled;
+  final ValueChanged<bool> onChanged;
+
+  const _ModeToggle({required this.piperEnabled, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    return SegmentedButton<bool>(
+      segments: const [
+        ButtonSegment(
+          value: false,
+          icon: Icon(Icons.warning_amber_rounded),
+          label: Text('Without Piper'),
+        ),
+        ButtonSegment(
+          value: true,
+          icon: Icon(Icons.shield_outlined),
+          label: Text('With Piper'),
+        ),
+      ],
+      selected: {piperEnabled},
+      onSelectionChanged: (selection) => onChanged(selection.first),
+    );
+  }
+}
+
 class _SearchControls extends StatelessWidget {
-  final String activeQuery;
+  final String typedQuery;
   final bool hasRun;
   final VoidCallback onRun;
   final VoidCallback onReset;
 
   const _SearchControls({
-    required this.activeQuery,
+    required this.typedQuery,
     required this.hasRun,
     required this.onRun,
     required this.onReset,
@@ -156,7 +201,7 @@ class _SearchControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final label = activeQuery.isEmpty ? 'Run search race' : activeQuery;
+    final label = typedQuery.isEmpty ? 'Run search race' : typedQuery;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -181,9 +226,9 @@ class _SearchControls extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    activeQuery.isEmpty
-                        ? 'Ready to simulate a slow search'
-                        : activeQuery,
+                    typedQuery.isEmpty
+                        ? 'Press play — the demo types “flutter” for you'
+                        : typedQuery,
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                 ),
@@ -208,8 +253,8 @@ class _SearchControls extends StatelessWidget {
                 icon: const Icon(Icons.refresh_rounded),
                 label: const Text('Reset'),
               ),
-            const _LatencyBadge(query: 'f', duration: '1.2s'),
-            const _LatencyBadge(query: 'flutter', duration: '280ms'),
+            const _LatencyBadge(query: 'f', duration: 'slow · 1.2s'),
+            const _LatencyBadge(query: 'flutter', duration: 'fast · 280ms'),
           ],
         ),
       ],
@@ -230,22 +275,52 @@ class _LatencyBadge extends StatelessWidget {
 }
 
 class _ResultPanel extends StatelessWidget {
-  final String query;
+  final String submittedQuery;
   final AsyncState<List<SearchHit>> resultState;
+  final bool isStale;
 
-  const _ResultPanel({required this.query, required this.resultState});
+  const _ResultPanel({
+    required this.submittedQuery,
+    required this.resultState,
+    required this.isStale,
+  });
 
   @override
   Widget build(BuildContext context) {
     return _Panel(
       title: 'Search results',
+      trailing: isStale ? const _StaleBadge() : null,
       child: AnimatedSwitcher(
         duration: const Duration(milliseconds: 220),
         child: resultState.when(
           empty: () => const _EmptyResult(),
-          loading: () => _LoadingResult(query: query),
+          loading: () => _LoadingResult(query: submittedQuery),
           error: (message) => Text(message),
-          data: (results) => _SearchResults(results: results),
+          data: (results) => _SearchResults(results: results, isStale: isStale),
+        ),
+      ),
+    );
+  }
+}
+
+class _StaleBadge extends StatelessWidget {
+  const _StaleBadge();
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: scheme.errorContainer,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        'STALE',
+        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+          color: scheme.onErrorContainer,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 1.2,
         ),
       ),
     );
@@ -259,7 +334,7 @@ class _EmptyResult extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Padding(
       padding: EdgeInsets.symmetric(vertical: 30),
-      child: Text('Run the race to see the request timeline in action.'),
+      child: Text('Run the race to see which response wins.'),
     );
   }
 }
@@ -290,23 +365,37 @@ class _LoadingResult extends StatelessWidget {
 
 class _SearchResults extends StatelessWidget {
   final List<SearchHit> results;
+  final bool isStale;
 
-  const _SearchResults({required this.results});
+  const _SearchResults({required this.results, required this.isStale});
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         for (final result in results)
           ListTile(
             contentPadding: EdgeInsets.zero,
             leading: Icon(
-              Icons.check_circle_rounded,
-              color: Theme.of(context).colorScheme.primary,
+              isStale
+                  ? Icons.error_outline_rounded
+                  : Icons.check_circle_rounded,
+              color: isStale ? scheme.error : scheme.primary,
             ),
             title: Text(result.title),
             subtitle: Text(result.detail),
           ),
+        if (isStale) ...[
+          const SizedBox(height: 8),
+          Text(
+            'These answer “f” — you asked for “flutter”.',
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall?.copyWith(color: scheme.error),
+          ),
+        ],
       ],
     );
   }
@@ -325,7 +414,7 @@ class _TimelinePanel extends StatelessWidget {
           ? const Padding(
               padding: EdgeInsets.symmetric(vertical: 18),
               child: Text(
-                'Start with “f”. Then Piper cancels it for “flutter”.',
+                'Press play. “f” goes out slow, “flutter” goes out fast.',
               ),
             )
           : Column(
@@ -344,16 +433,21 @@ class _TimelineEvent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     final color = switch (event.kind) {
-      SearchRaceEventKind.request => Theme.of(context).colorScheme.primary,
-      SearchRaceEventKind.cancelled => Theme.of(context).colorScheme.error,
+      SearchRaceEventKind.request => scheme.primary,
+      SearchRaceEventKind.cancelled => Colors.amber.shade900,
       SearchRaceEventKind.success => Colors.green.shade700,
-      SearchRaceEventKind.lifecycle => Theme.of(context).colorScheme.tertiary,
+      SearchRaceEventKind.stale => scheme.error,
+      SearchRaceEventKind.lateArrival => scheme.onSurfaceVariant,
+      SearchRaceEventKind.lifecycle => scheme.tertiary,
     };
     final icon = switch (event.kind) {
       SearchRaceEventKind.request => Icons.play_circle_outline_rounded,
       SearchRaceEventKind.cancelled => Icons.cancel_outlined,
       SearchRaceEventKind.success => Icons.check_circle_outline_rounded,
+      SearchRaceEventKind.stale => Icons.error_outline_rounded,
+      SearchRaceEventKind.lateArrival => Icons.history_rounded,
       SearchRaceEventKind.lifecycle => Icons.auto_delete_outlined,
     };
 
@@ -373,35 +467,69 @@ class _TimelineEvent extends StatelessWidget {
 
 class _ProofStrip extends StatelessWidget {
   final bool hasRun;
+  final bool piperEnabled;
   final int cancellations;
+  final int staleOverwrites;
 
-  const _ProofStrip({required this.hasRun, required this.cancellations});
+  const _ProofStrip({
+    required this.hasRun,
+    required this.piperEnabled,
+    required this.cancellations,
+    required this.staleOverwrites,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final message = hasRun
-        ? '$cancellations stale request${cancellations == 1 ? '' : 's'} prevented'
-        : 'Run the race to inspect the lifecycle';
+    final scheme = Theme.of(context).colorScheme;
+
+    final String message;
+    final Color background;
+    final Color foreground;
+    final IconData icon;
+
+    if (staleOverwrites > 0) {
+      message =
+          'Without Piper: the late “f” response replaced the '
+          '“flutter” results you asked for.';
+      background = scheme.errorContainer;
+      foreground = scheme.onErrorContainer;
+      icon = Icons.error_outline_rounded;
+    } else if (piperEnabled && cancellations > 0) {
+      message =
+          'With Piper: the “flutter” results stayed — the slow task was '
+          'cancelled before its response could land.';
+      background = scheme.primaryContainer;
+      foreground = scheme.onPrimaryContainer;
+      icon = Icons.verified_rounded;
+    } else if (hasRun) {
+      message = 'Race in progress…';
+      background = scheme.surfaceContainerHighest;
+      foreground = scheme.onSurface;
+      icon = Icons.timer_outlined;
+    } else {
+      message = 'Run the race in both modes and compare the outcome.';
+      background = scheme.surfaceContainerHighest;
+      foreground = scheme.onSurface;
+      icon = Icons.flag_outlined;
+    }
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primaryContainer,
+        color: background,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
         children: [
-          Icon(
-            Icons.verified_rounded,
-            color: Theme.of(context).colorScheme.onPrimaryContainer,
-          ),
+          Icon(icon, color: foreground),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
               message,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onPrimaryContainer,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(color: foreground),
             ),
           ),
         ],
@@ -420,13 +548,16 @@ class _Explanation extends StatelessWidget {
       children: [
         Divider(color: Theme.of(context).colorScheme.outlineVariant),
         const SizedBox(height: 20),
-        Text(
-          'What this prevents',
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
+        Text('What this shows', style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 8),
         const Text(
-          'Without cancellation, the slow “f” response could arrive last and replace the correct “flutter” results. Piper interrupts the task body at its next cancellation-aware await, so that stale write never happens.',
+          'Every keystroke can start a request, and responses come back in '
+          'any order. Without cancellation, whichever response lands last '
+          'wins — even when it answers a query the user has moved past. '
+          'Piper ties each task to its ViewModel: starting a newer search '
+          'cancels the old task, so the late response has nowhere to write. '
+          'Leaving the screen disposes the ViewModel and cancels everything '
+          'with it.',
         ),
       ],
     );
@@ -435,9 +566,10 @@ class _Explanation extends StatelessWidget {
 
 class _Panel extends StatelessWidget {
   final String title;
+  final Widget? trailing;
   final Widget child;
 
-  const _Panel({required this.title, required this.child});
+  const _Panel({required this.title, required this.child, this.trailing});
 
   @override
   Widget build(BuildContext context) {
@@ -459,7 +591,17 @@ class _Panel extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: Theme.of(context).textTheme.titleMedium),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  title,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ),
+              if (trailing != null) trailing!,
+            ],
+          ),
           const SizedBox(height: 12),
           child,
         ],
