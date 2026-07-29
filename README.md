@@ -184,8 +184,10 @@ New here? Start with [Getting Started](https://glennso.dev/piper/guide/getting-s
 then the [Search example](https://glennso.dev/piper/examples/search) for the
 cancellation story above.
 
-Want the visual version? [Explore the Piper Search Race demo](packages/flutter_piper/example/)
-to watch a slow search task get cancelled before it can overwrite fresh results.
+Want the visual version? [Try the live Piper Search Race demo](https://glennso.dev/piper/demo/)
+to watch a slow search response overwrite fresh results — then watch Piper
+cancel it first. The source lives in
+[packages/flutter_piper/example](packages/flutter_piper/example/).
 
 ## Packages
 

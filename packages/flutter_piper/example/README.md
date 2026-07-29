@@ -1,7 +1,7 @@
 # Piper Search Race
 
 A runnable, visual proof of Piper's lifecycle-owned async work — including
-the bug it prevents.
+the bug it prevents. [Try it live](https://glennso.dev/piper/demo/).
 
 Press **Run search race** and the demo types `flutter` for you: typing `f`
 fires a deliberately slow request, finishing the word fires a fast one, and
