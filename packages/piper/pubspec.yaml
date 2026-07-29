@@ -1,6 +1,6 @@
 name: piper_state
 description: Flutter state management that cleans up after itself. Plain Dart ViewModels, computed state, explicit dependencies, and cooperative task cancellation.
-version: 0.1.0
+version: 0.1.1
 repository: https://github.com/theGlenn/piper
 homepage: https://glennso.dev/piper
 issue_tracker: https://github.com/theGlenn/piper/issues

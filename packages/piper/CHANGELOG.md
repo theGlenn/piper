@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-07-29
+
+### Changed
+
+- Refined the package description, README, and pub.dev topics around Piper's
+  lifecycle-owned cleanup, automatic rebuilds, visible dependencies, and plain
+  Dart ViewModels.
+
 ## [0.1.0] - 2026-07-23
 
 ### Added
