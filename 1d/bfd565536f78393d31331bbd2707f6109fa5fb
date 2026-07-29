@@ -1,0 +1,31 @@
+packages/flutter_piper/example/lib/features/search_race/search_race_view_model.dart
+  s_3136a61fdfd48c::t_303578cd2ead69 104,146
+  s_3136a61fdfd48c::t_344a53f66d2334 7-14,26-28,31,33-39,41-44,47,55-59,64-70,78,80-97,100,103,109,112-145,157,159,162
+packages/flutter_piper/example/README.md
+  s_3136a61fdfd48c::t_715b5a7faa9aa5 3-4,6-14,21
+packages/flutter_piper/example/lib/features/search_race/search_race_page.dart
+  s_3136a61fdfd48c::t_5be9a3f68d71fe 7-8,10-16,46-47,49,52,59,61,72,79-82,86-90,92,115,117,162-188,190,196,204,229-231,256-257,278,280,282-286,292,297,299-323,337,368,370,374,376,382-385,390-398,417,436,438-439,441-443,449-450,470,472,474-479,483-515,520,525,530-532,554-560,569,572,594-604
+  s_3136a61fdfd48c::t_303578cd2ead69 551
+packages/flutter_piper/example/test/search_race_view_model_test.dart
+  s_3136a61fdfd48c::t_303578cd2ead69 9-42
+  s_3136a61fdfd48c::t_01884083a9157c 43-44,49-50,59,64-66,69
+packages/flutter_piper/example/test/search_race_page_test.dart
+  s_3136a61fdfd48c::t_303578cd2ead69 58
+  s_3136a61fdfd48c::t_3224adb209b58d 6-16,21-25,27-52,54-55,57,61
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "1dbfd565536f78393d31331bbd2707f6109fa5fb",
+  "prompts": {},
+  "sessions": {
+    "s_3136a61fdfd48c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "71fe91f9-6c1d-4b6b-a7d8-4f1d34f4d3cf",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Glenn Sonna <kenpachi.os@gmail.com>"
+    }
+  }
+}
