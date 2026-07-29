@@ -16,6 +16,9 @@ hero:
       text: Get Started
       link: /guide/getting-started
     - theme: alt
+      text: Live Demo
+      link: https://glennso.dev/piper/demo/
+    - theme: alt
       text: View on GitHub
       link: https://github.com/theGlenn/piper
     - theme: alt

@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'docs/**'
+      - 'packages/**'
       - '.github/workflows/docs.yml'
   workflow_dispatch:
 
@@ -43,6 +44,23 @@ jobs:
       - name: Build docs
         run: pnpm docs:check
         working-directory: docs
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.x'
+          channel: stable
+
+      - name: Build Search Race demo
+        run: |
+          flutter pub get
+          flutter build web --release --base-href /piper/demo/
+        working-directory: packages/flutter_piper/example
+
+      - name: Add demo to site
+        run: |
+          cp -R packages/flutter_piper/example/build/web docs/.vitepress/dist/demo
+          test -f docs/.vitepress/dist/demo/index.html
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

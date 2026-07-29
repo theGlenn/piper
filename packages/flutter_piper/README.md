@@ -99,10 +99,11 @@ vm.isDeleted.listen(
 
 📖 **[Full docs](https://glennso.dev/piper/)** · [GitHub](https://github.com/theGlenn/piper) · [piper_state](https://pub.dev/packages/piper_state)
 
-Want to watch lifecycle cancellation happen? Run the
-[Piper Search Race demo](https://github.com/theGlenn/piper/tree/main/packages/flutter_piper/example):
+Want to watch lifecycle cancellation happen? Try the
+[live Piper Search Race demo](https://glennso.dev/piper/demo/)
+([source](https://github.com/theGlenn/piper/tree/main/packages/flutter_piper/example)):
 the deliberately slow `f` task is cancelled before it can overwrite the
-faster `flutter` result.
+faster `flutter` result — and you can toggle the protection off to see the bug.
 
 ## License
 
