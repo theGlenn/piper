@@ -1,0 +1,20 @@
+docs/blog/state-management-that-knows-when-to-let-go.md
+  s_6a58064f035b3b::t_4ee17596aa3d5b 297-301
+  s_6a58064f035b3b::t_932db579da1b36 277-290
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "387b0f252c40ed95c168434e0f2c4f834274b199",
+  "prompts": {},
+  "sessions": {
+    "s_6a58064f035b3b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4c13ff8c-993d-4fd7-98d7-99c282c2b89f",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Glenn Sonna <kenpachi.os@gmail.com>"
+    }
+  }
+}
