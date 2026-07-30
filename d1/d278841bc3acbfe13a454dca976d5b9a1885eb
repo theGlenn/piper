@@ -1,0 +1,33 @@
+docs/blog/state-management-that-knows-when-to-let-go.md
+  s_6a58064f035b3b::t_96ca939b1a2447 222-224
+  s_6a58064f035b3b::t_ef4c7316b02102 79-80,82-133
+  s_6a58064f035b3b::t_dc51faa9ab1637 26-28
+  s_6a58064f035b3b::t_a5e52d6efd8a74 3,8-25,29-46,59-78,81,135,137-139,173,176-182,184-205,207-210,212-213,215-216,218,226,228-229,231-233,235-239,241,244-256
+  s_3136a61fdfd48c::t_836cc9c838749b 1-2,4-7,47-58,134,136,140-172,174-175,183,206,211,214,217,219-221,225,227,230,234,240,242-243
+docs/.vitepress/config.mts
+  s_3136a61fdfd48c::t_ffe2f197a9e86c 98-100
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "d1d278841bc3acbfe13a454dca976d5b9a1885eb",
+  "prompts": {},
+  "sessions": {
+    "s_3136a61fdfd48c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "71fe91f9-6c1d-4b6b-a7d8-4f1d34f4d3cf",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Glenn Sonna <kenpachi.os@gmail.com>"
+    },
+    "s_6a58064f035b3b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4c13ff8c-993d-4fd7-98d7-99c282c2b89f",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Glenn Sonna <kenpachi.os@gmail.com>"
+    }
+  }
+}
