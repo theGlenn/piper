@@ -1,0 +1,59 @@
+docs/blog/state-management-that-knows-when-to-let-go.md
+  s_ecaf534af2a8ad::t_5698fe06fd4939 218-219
+  s_ecaf534af2a8ad::t_958e56c8a2a410 221
+  s_6a58064f035b3b::t_fa7c04b7cc0500 11-15,17-19,21-24
+  s_ecaf534af2a8ad::t_c20079621ef75a 131
+  s_9b95529fefe760::t_097cea8de62b89 3,29-31,33-34,38-43,62-67,70-71,74-77,79,81-82,84,87-94,98-104,110-114,139-140,143-144,180,182-187,189-192,194-198,202-206,208-209,262,265,267-268,271-274,285-290
+  s_ecaf534af2a8ad::t_f369c98b988198 154
+  s_ecaf534af2a8ad::t_1e454617197c09 148-151
+  s_9b95529fefe760::t_cb816dcbfd3bee 8-9,48-49,95-97,105-109,115-120,128-130
+  s_ecaf534af2a8ad::t_192d20d06bc216 222,225,229
+  s_ecaf534af2a8ad::t_0ffe37d3f16adc 172
+  s_9b95529fefe760::t_3200b5e6c66e8c 121-127,132-138,245-260
+  s_6a58064f035b3b::t_e604c99ffe41d6 16
+  s_ecaf534af2a8ad::t_1bd3e4f2e40109 213-215,224,226,228,233-242
+  s_5530c1a2c2062f::t_c5fbd77a393697 223,243,261
+packages/flutter_piper/example/test/blog_search_view_model_test.dart
+  s_ecaf534af2a8ad::t_00728d9a783425 64-65
+  s_ecaf534af2a8ad::t_ca8d10c0f39c9b 1-63,66-89
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "bbe9cc18a7880d0afdf68747f1f87bdb15f9ff12",
+  "prompts": {},
+  "sessions": {
+    "s_5530c1a2c2062f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "847b812e-4e6a-4262-82c2-97507c2c3690",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Glenn Sonna <kenpachi.os@gmail.com>"
+    },
+    "s_6a58064f035b3b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4c13ff8c-993d-4fd7-98d7-99c282c2b89f",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Glenn Sonna <kenpachi.os@gmail.com>"
+    },
+    "s_9b95529fefe760": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019fb2cf-2b4b-78c2-a7f3-b422c2ed1003",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Glenn Sonna <kenpachi.os@gmail.com>"
+    },
+    "s_ecaf534af2a8ad": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "bd30cbbc-6110-4d64-b9c1-a52e097866ba",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Glenn Sonna <kenpachi.os@gmail.com>"
+    }
+  }
+}
