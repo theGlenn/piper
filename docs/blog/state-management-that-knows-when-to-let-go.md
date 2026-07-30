@@ -274,11 +274,30 @@ rebuilds exactly where it watches. Values reach the screen without a library
 base class or a builder wrapping every screen. The UI layer stays the Flutter
 you already know.
 
+```dart
+class SearchPage extends ConsumerWidget {   // Riverpod: new base class
+  @override
+  Widget build(BuildContext context, WidgetRef ref) =>
+      ResultsList(ref.watch(searchProvider));
+}
+
+class SearchPage extends StatelessWidget {  // Piper: still a Flutter widget
+  @override
+  Widget build(BuildContext context) =>
+      context.vm<SearchViewModel>().results.build(ResultsList.new);
+}
+```
+
 **Your dependencies stay visible.** Dart already ships a dependency injection
 mechanism: the constructor. A ViewModel takes its repository as a parameter,
 and in a test the fake goes in through the same door. There is nothing to
 override because nothing was hidden. If you prefer a DI framework, Piper does
 not compete with it; it just does not require one.
+
+```dart
+final vm = SearchViewModel(HttpSearchRepository(client)); // in the app
+final vm = SearchViewModel(FakeSearchRepository());       // in a test
+```
 
 **Your architecture stays yours.** Separating presentation from business logic
 is a discipline, not a feature a package can install. Piper's contribution is
