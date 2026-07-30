@@ -1,0 +1,31 @@
+docs/blog/state-management-that-knows-when-to-let-go.md
+  s_6a58064f035b3b::t_f3731f6a630a57 232-233
+  s_6a58064f035b3b::t_e98de28e2c2d71 99-100
+  s_6a58064f035b3b::t_6e635c273df1d3 264-266
+  s_6a58064f035b3b::t_16df0cbc728d29 47-48
+  s_6a58064f035b3b::t_cef28ebcbd2bd5 46
+  s_6a58064f035b3b::t_b1cca6326e5207 245
+  s_6a58064f035b3b::t_325a065cc71844 237-238
+  s_6a58064f035b3b::t_32a9350c239a93 19,23-24
+  s_6a58064f035b3b::t_c9df920cd86246 274-275
+  s_6a58064f035b3b::t_07fe059e0bf6bb 83-87,90
+  s_6a58064f035b3b::t_c091b6232453c4 246-248
+  s_6a58064f035b3b::t_c9c964cdd68895 231
+  s_6a58064f035b3b::t_37ef4dde4e4cff 40
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "4dc3e28c6b56df4f7d8f3652dc661e7807997039",
+  "prompts": {},
+  "sessions": {
+    "s_6a58064f035b3b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4c13ff8c-993d-4fd7-98d7-99c282c2b89f",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Glenn Sonna <kenpachi.os@gmail.com>"
+    }
+  }
+}
