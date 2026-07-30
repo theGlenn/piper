@@ -95,7 +95,9 @@ export default defineConfig({
 
     nav: [
       { text: 'Guide', link: '/guide/what-is-piper' },
-      { text: 'Examples', link: '/examples/counter' }
+      { text: 'Examples', link: '/examples/counter' },
+      { text: 'Demo', link: 'https://glennso.dev/piper/demo/' },
+      { text: 'Writing', link: '/blog/state-management-that-knows-when-to-let-go' }
     ],
 
     sidebar: {
