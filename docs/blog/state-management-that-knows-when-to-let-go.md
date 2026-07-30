@@ -5,39 +5,45 @@ description: Riverpod and Bloc manage state well. Piper focuses on the async wor
 
 # State management that knows when to let go
 
-Riverpod and Bloc already manage state well, so for years I thought Flutter did
-not need another state management library.
+Riverpod and Bloc already manage state well, so for years I thought Flutter did not need another state management library.
 
 Yet the same questions kept coming back, in codebase after codebase, with or
-without a state library. Why does showing a search result need a `mounted`
-check? Why can a response the user has stopped caring about overwrite the one
-they asked for? Why does every `dispose` read like a checklist of everything
-the screen ever started? Why does testing a screen's logic mean pumping a
-widget tree instead of calling a method?
+without a state library.
 
-Four questions, one answer. The bugs that kept reaching my production apps
-were never in the state itself. They came from the async work that *produces*
-state: requests, streams, and timers that outlive the keystroke, the screen,
-or the session that started them. In Flutter, that work has no owner by
-default. Its lifetime gets assembled by hand, at each call site, by whoever
-remembers. The libraries that managed my state so well still left its lifetime
+* Why does showing a search result need a `mounted` check?
+* Why can a response the user has stopped caring about overwrite the one they asked for?
+* Why does every `dispose` read like a checklist of everything the screen ever started?
+* Why does testing a screen's logic mean pumping a widget tree instead of calling a method?
+
+Four questions, one answer. The bugs that kept reaching my production apps always came from the async work that *produces* state: requests, streams, and timers that outlive the keystroke, the screen, or the session that started them.
+
+In Flutter, that work has no owner by default. Its lifetime gets assembled by hand, at each call site, by whoever remembers. The libraries that managed my state so well still left its lifetime
 to me.
 
 Piper is a state management library built around one rule: **the thing that
 owns the state owns the work that produces it, and when the owner goes, the
-work goes.** State, async tasks, stream subscriptions, and derived values live
-in plain Dart ViewModels, a pattern Android and MVVM codebases have relied on
-for years. When the ViewModel is disposed or a newer request takes over, the
-old work is cancelled before it can touch your state.
+work goes.**
 
-Piper owns lifetime. Dependency injection, widget base classes, and
-architecture stay yours.
+Piper comes from three personal pain points:
 
-Piper exists for two reasons. One is that recurring bug: async work with no
-owner, a problem Android solved years ago with `viewModelScope` and that
-Flutter's libraries each patch with their own added machinery. The other is an
-opinion about how much of your app a state library should own. The rest of
-this article is the bug, the fix, and the opinion, in that order.
+1. **Async work with no owner.** The bug behind all four questions above.
+   Android solved it years ago with `viewModelScope`; Flutter's libraries each
+   patch it with their own added machinery. In Piper, state, async tasks,
+   stream subscriptions, and derived values live in plain Dart ViewModels.
+   When the ViewModel is disposed or a newer request takes over, the old work
+   is cancelled before it can touch your state.
+
+2. **Libraries that own too much.** A state library should own lifetime and
+   little else. With Piper, dependency injection, widget base classes, and
+   architecture stay yours.
+
+3. **Widgets that stop being Flutter widgets.** Flutter already ships the
+   widget primitives. I did not want to adopt a library's superset of them,
+   extending `ConsumerWidget` here and wrapping screens in `BlocBuilder`
+   there, before a value could reach the screen. A plain `StatelessWidget`
+   can read a Piper ViewModel where it needs it.
+
+The rest of this article is the bug, the fix, and the opinion, in that order.
 
 ## The problem: async work has no owner
 
@@ -80,18 +86,44 @@ still wanted.
 
 ## Riverpod and Bloc can do this
 
-In Riverpod, `autoDispose` tears state down when the last listener leaves, and
-`ref.onDispose` gives you a hook to cancel work when a provider is rebuilt. In
-Bloc, the `bloc_concurrency` package's `restartable()` transformer processes
-only the latest event and cancels previous event handlers. Both work, and
-teams ship excellent apps with them.
+Riverpod disposes state automatically. Since Riverpod 3, providers written
+with code generation are auto-disposed by default, and `ref.onDispose` gives
+you a hook to cancel in-flight work when a provider is torn down:
 
-The difference is where the safety lives. In each case it is a mechanism you
-opt into, per provider or per handler, after you have learned that it exists.
+```dart
+final searchProvider = FutureProvider.autoDispose((ref) {
+  ref.onDispose(cancelToken.cancel); // you wire the interruption
+  return repo.search(query, cancelToken);
+});
+```
+
+Bloc cancels handlers. The `bloc_concurrency` package's `restartable()`
+transformer processes only the latest event and cancels the previous handler:
+
+```dart
+on<QueryChanged>(_onQueryChanged, transformer: restartable());
+```
+
+Both work, and teams ship excellent apps with them.
+
+The difference is what happens when you write nothing. Disposing *state* is
+increasingly automatic; interrupting the *work* still means wiring a token
+per provider, or picking the right transformer per handler, after you have
+learned that these exist.
+
 On Android, a `ViewModel`'s `viewModelScope` taught me the opposite
-arrangement: work lives under an owner and dies with it, by default, and
-*leaking* work is what takes effort. Flutter did not have that default, so I
-built it.
+arrangement:
+
+```kotlin
+class SearchViewModel : ViewModel() {
+    fun search(query: String) = viewModelScope.launch {
+        results.value = repo.search(query) // cancelled with the ViewModel
+    }
+}
+```
+
+Work launched in that scope lives under an owner and dies with it. *Leaking*
+work is what takes effort. Flutter did not have that default, so I built it.
 
 ## Lifetime follows ownership
 
@@ -155,11 +187,29 @@ array to keep in sync. Ownership governs tasks, streams, and derived state.
 
 ## The value: what you stop writing
 
-That ViewModel contains the state, one task, and the method that coordinates
-them. Ownership replaces the `mounted` check, request ID, `Timer?` field,
-`CancelToken?` field, `dispose` override, `autoDispose` annotation, concurrency
-transformer, and generated files. It answers "does this still matter?" once
-instead of at every call site.
+Literally. This is the search screen's lifetime bookkeeping, the code that
+disappears:
+
+```diff
+- Timer? _debounce;
+- CancelToken? _cancelToken;
+- int _latestRequestId = 0;
+-
+- @override
+- void dispose() {
+-   _debounce?.cancel();
+-   _cancelToken?.cancel();
+-   super.dispose();
+- }
+-
+- // and at every await:
+- if (!mounted || id != _latestRequestId) return;
+```
+
+None of it moved into the ViewModel. The question all of it answered, "does
+this still matter?", is now answered once, by ownership, instead of at every
+call site. The same deletion covers the `autoDispose` annotation, the
+concurrency transformer, and the generated files.
 
 Because the ViewModel is plain Dart with constructor-injected dependencies,
 the stale-result race that started this article is a regular `test()`:
@@ -217,9 +267,7 @@ lifetime of your async work is probably still owned by a widget.
 
 ## How much should a state library own?
 
-That is the mechanism. The opinion behind it is about scope: a state library
-should give you control and clarity, and take as little of your app as
-possible in exchange.
+This is a personal opinion: a state library should give you control and clarity, and take as little of your app as possible in exchange.
 
 **Your widgets stay widgets.** A plain `StatelessWidget` reads a ViewModel and
 rebuilds exactly where it watches. Values reach the screen without a library
